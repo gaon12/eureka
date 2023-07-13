@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageAPI", "WebApplication1\ImageAPI.csproj", "{96D09FE7-96F7-4648-97E2-2B3BB17C5D63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageAPI", "ImageAPI\ImageAPI.csproj", "{65EC78D4-9783-4461-A42E-B211AD49DC2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{96D09FE7-96F7-4648-97E2-2B3BB17C5D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96D09FE7-96F7-4648-97E2-2B3BB17C5D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96D09FE7-96F7-4648-97E2-2B3BB17C5D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96D09FE7-96F7-4648-97E2-2B3BB17C5D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65EC78D4-9783-4461-A42E-B211AD49DC2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65EC78D4-9783-4461-A42E-B211AD49DC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65EC78D4-9783-4461-A42E-B211AD49DC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65EC78D4-9783-4461-A42E-B211AD49DC2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A407968E-46A0-44ED-9DC3-49B21544A10B}
+		SolutionGuid = {37781D95-83B3-4E8F-8670-C77CFB7542E8}
 	EndGlobalSection
 EndGlobal

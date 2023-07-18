@@ -1,3 +1,41 @@
-.ui.raised.very.padded.center.aligned.text.container.segment {
-    margin-top: 250px;
-  }
+.container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 250px;
+  max-width: 500px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.login-head {
+    text-align: center;
+    font-size: 30px;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-style: normal;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 400px;
+    margin: auto;
+}
+
+.center-button {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 20px;
+  /* 다른 스타일 속성 추가 가능 */
+}
+
+.login-button-text{
+  text-align: center;
+  margin-top: 15px;
+}
+
+  

@@ -1,0 +1,21 @@
+.cardform{
+    margin-top: 200px;
+    height: 500px;
+    width: 1100px;
+    margin-left: 400px;
+}
+
+.center-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of viewport */
+    padding: 20px; /* Add some padding for aesthetic */
+}
+
+.form-control{
+    width: 800px;
+    height: 10px;
+    resize: none;
+}

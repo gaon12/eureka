@@ -1,8 +1,17 @@
+.header{
+  text-align: center;
+  margin-top: 150px;
+}
+
+.main{
+  margin-top: 50px;
+}
 .container {
   border: 1px solid #ccc;
-  padding: 20px;
-  margin-top: 250px;
-  max-width: 500px;
+  padding: 100px;
+  margin-top: 50px;
+  width: 900px;
+  height: 400px;
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -21,7 +30,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
-    width: 400px;
+    height: 56px;
     margin: auto;
 }
 

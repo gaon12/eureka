@@ -1,0 +1,108 @@
+.u-imgResponsive {
+  max-width: 100%;
+}
+
+.u-btn {
+  flex: 0 0 100%;
+  padding: 14px 20px;
+  border: 0;
+  background: red;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;;
+}
+.u-btn:hover {
+  opacity: 0.9;
+}
+.u-btn.u-btn--success {
+  background: blue;
+}
+
+/* Global 
+====================== */
+html {
+  box-sizing: border-box;
+  height: 100%;
+}
+html *,
+html *:before *:after {
+  box-sizing: inherit;
+}
+
+body,
+.wrapper {
+  min-height: 100vh;
+}
+
+/* Modal 
+====================== */
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+}
+
+.modal {
+  width: 100%;
+  max-width: 530px;
+  box-shadow: 0 60px 80px 0 rgba(0, 0, 0, 0.4);
+}
+
+.modal-icon {
+  display: block;
+  max-width: 207px;
+  margin: 0 auto 65px;
+}
+
+.modal-header {
+  margin-bottom: 10px;
+  font-size: 25.5px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.modal-subheader {
+  max-width: 350px;
+  margin: 0 auto;
+  font-size: 19px;
+  line-height: 1.3;
+  letter-spacing: 1.25px;
+  text-align: center;
+  color: #999;
+}
+
+.modal-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 15px 55px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background: #fff;
+}
+
+.modal-btn {
+  margin: 10px auto;
+}
+
+/* Media Queries */
+@media (min-width: 456px) {
+  .modal-top {
+    padding: 69px 0 65px;
+  }
+
+  .modal-bottom {
+    padding: 30px 60px;
+  }
+
+  .modal-btn {
+    flex: 1;
+    margin: 0;
+    max-width: 190px;
+  }
+  .modal-btn:nth-of-type(2) {
+    margin-left: 30px;
+  }
+}

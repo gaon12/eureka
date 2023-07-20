@@ -6,17 +6,8 @@ import os
 import json
 from flask_sqlalchemy import SQLAlchemy
 
-# Download Image -> AI Model Predict -> Delete Image
-# POST /predict
-# GET /predict -> delete request
-# Request JSON
-'''
-    {
-        "url" : "Image URL"
-    }
-'''
-
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 app = Flask(__name__)
 CORS(app)
 
@@ -28,19 +19,43 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+# Download Image -> AI Model Predict -> Delete Image
+# POST /predict
+# GET /predict -> delete request
+# Request JSON
+'''
+    {
+        "url" : "Image URL"
+    }
+'''
+@app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        # Custom User-Agent
         data = request.get_json()
         url = data['url']
+        slash = url.rfind('/')
+
+        # File Name Parsing
+        # at URL, split after find '/'
+        if slash != -1:
+            file_name = url[slash + 1:]
+        else:
+            file_name = 'image.png'
+
+        # Verify Code Parsing
+        # at File Name, split between '_' and '.'
+        # Random 6 character
+        # Using delete file
+        vc_ub = file_name.rfind('_')
+        vc_dot = file_name.rfind('.')
+        vc = file_name[vc_ub:vc_dot]
 
         # Custom User-Agent
-        # cua = 'vwaiolet'
-        # params = {'useragent': cua}
+        cua = 'vwaiolet'
+        params = {'useragent': cua}
 
         # address?useragent=vwaiolet
-        response = requests.get(url)
+        response = requests.get(url, params=params)
         if response.status_code == 200:
             # Download Image
             # Directory is temp/file_name
@@ -63,8 +78,6 @@ def predict():
             return Response(json_response, status=201, mimetype='application/json')
         else:
             return Response(status=400, mimetype='application/json')
-    elif request.method == 'GET':
-        return "GET request received"
 
 
 @app.route('/user', methods=['GET', 'POST', 'PUT', 'DELETE'])

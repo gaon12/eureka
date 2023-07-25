@@ -1,6 +1,6 @@
 module.exports = {
-    host: 'host',
-    user: 'user',
-    password: 'password',
-    database: 'database'
+    host: 'localhost',
+    user: 'root',
+    password: 'Qlalfqjsgh1!',
+    database: 'aptmanager'
 };

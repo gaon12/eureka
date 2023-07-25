@@ -11,7 +11,7 @@ const connection = mysql.createConnection(dbconfig);
  *  회원가입 페이지 반환
  */
 router.get('/signup', (req, res) => {
-    const filePath = path.join('../', 'static', 'index1.html');
+    const filePath = path.join('../', 'static', 'index.html');
     res.sendFile(filePath);
 })
 
@@ -90,7 +90,7 @@ router.get('/signin', (req, res) => {
  *  동, 호, 비밀번호 입력
  *  세션으로 로그인 유지 예정
  */
-router.post('/signup', (req, res) => {
+router.post('/signin', (req, res) => {
     /** 로그인 로직 처리 */
 })
 

@@ -11,7 +11,7 @@ const connection = mysql.createConnection(dbconfig);
  *  회원가입 페이지 반환
  */
 router.get('/signup', (req, res) => {
-    const filePath = path.join('../', 'static', 'index.html');
+    const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
     res.sendFile(filePath);
 })
 
@@ -46,32 +46,28 @@ router.post('/signup', (req, res) => {
                 connection.query('INSERT INTO user (dong, ho, username, pw, phone1, phone2, movein) VALUES (?, ?, ?, ?, ?, ?, ?)', [dong, ho, username, pw1, phone1, phone2, movein], (error, data) => {
                     if (error) throw error;
                     /** 프론트엔드로 회원가입 성공 반환하는 코드 작성
-                     *  1안 : 메시지만 전달해서 프론트엔드에서 alert
-                     *  2안 : 백엔드에서 스크립트 전송해서 alert
-                     *  프론트엔드 팀과 협의 필요
+                     *  메시지만 전달해서 프론트엔드에서 alert
+                     *  JSON으로 전달
                      */
                 });
             } else if (pw1 != pw2) {
                 /** 프론트엔드로 비밀번호와 비밀번호 확인이 불일치 하다는 결과 반환하는 코드 작성
-                 *  1안 : 메시지만 전달해서 프론트엔드에서 alert
-                 *  2안 : 백엔드에서 스크립트 전송해서 alert
-                 *  프론트엔드 팀과 협의 필요
+                 *  메시지만 전달해서 프론트엔드에서 alert
+                 *  JSON으로 전달
                  */
             }
             else {
                 /** 프론트엔드로 이미 존재하는 회원이라고 반환하는 코드 작성
-                 *  1안 : 메시지만 전달해서 프론트엔드에서 alert
-                 *  2안 : 백엔드에서 스크립트 전송해서 alert
-                 *  프론트엔드 팀과 협의 필요
+                 *  메시지만 전달해서 프론트엔드에서 alert
+                 *  JSON으로 전달
                  */
             }
         });
     }
     else {
         /** 프론트엔드로 입력되지 않은 정보가 있다고 반환하는 코드 작성
-         *  1안 : 메시지만 전달해서 프론트엔드에서 alert
-         *  2안 : 백엔드에서 스크립트 전송해서 alert
-         *  프론트엔드 팀과 협의 필요
+         *  메시지만 전달해서 프론트엔드에서 alert
+         *  JSON으로 전달
          */
     }
 });
@@ -81,7 +77,7 @@ router.post('/signup', (req, res) => {
  *  로그인 페이지 반환
  */
 router.get('/signin', (req, res) => {
-    const filePath = path.join('../', 'static', 'index2.html');
+    const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
     res.sendFile(filePath);
 })
 

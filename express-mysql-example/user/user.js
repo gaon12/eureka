@@ -10,10 +10,10 @@ const connection = mysql.createConnection(dbconfig);
  *  /user/signup으로 접속
  *  회원가입 페이지 반환
  */
-router.get('/signup', (req, res) => {
-    const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
-    res.sendFile(filePath);
-})
+// router.get('/signup', (req, res) => {
+//     const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
+//     res.sendFile(filePath);
+// })
 
 /** 회원가입
  *  /user/signup으로 POST 요청
@@ -76,10 +76,10 @@ router.post('/signup', (req, res) => {
  *  /user/signin으로 접속
  *  로그인 페이지 반환
  */
-router.get('/signin', (req, res) => {
-    const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
-    res.sendFile(filePath);
-})
+// router.get('/signin', (req, res) => {
+//     const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
+//     res.sendFile(filePath);
+// })
 
 /** 로그인
  *  /user/signin으로 POST 요청
@@ -94,7 +94,7 @@ router.post('/signin', (req, res) => {
  *  /user/signout으로 GET 요청
  *  세션 종료 후 /로 리다이렉트
  */
-router.get('/signout', (req, res) => {
+router.post('/signout', (req, res) => {
     /** 로그아웃 로직 처리 */
 })
 

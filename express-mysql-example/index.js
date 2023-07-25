@@ -11,6 +11,10 @@ app.use(cors());
 app.use(express.static(__dirname + '/react-project/build'));
 app.use('/user', userRouter);
 
+app.get("*", (req, res) => {
+    res.sendFile("index.html");
+});
+
 app.listen(app.get('port'),() => {
     console.log('Express server listening on port ' + app.get('port'));
 });

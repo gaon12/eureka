@@ -85,4 +85,21 @@ router.get('/signin', (req, res) => {
     res.sendFile(filePath);
 })
 
+/** 로그인
+ *  /user/signin으로 POST 요청
+ *  동, 호, 비밀번호 입력
+ *  세션으로 로그인 유지 예정
+ */
+router.post('/signup', (req, res) => {
+    /** 로그인 로직 처리 */
+})
+
+/** 로그아웃
+ *  /user/signout으로 GET 요청
+ *  세션 종료 후 /로 리다이렉트
+ */
+router.get('/signout', (req, res) => {
+    /** 로그아웃 로직 처리 */
+})
+
 module.exports = router;

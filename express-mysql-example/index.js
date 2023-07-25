@@ -13,7 +13,9 @@ app.use(cors());
 app.use(express.static(__dirname + '/react-project/build'));
 app.use('/user', userRouter);
 app.use(session({
-    secret: 'eureka'
+    secret: 'eureka',
+    resave: false,
+    saveUninitialized: true
 }))
 
 /** 리액트 파일 반환

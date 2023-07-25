@@ -1,19 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const path = require("path");
 
 const mysql = require("mysql");
 const dbconfig = require('../config/database.js');
 const connection = mysql.createConnection(dbconfig);
-
-/** 회원가입
- *  /user/signup으로 접속
- *  회원가입 페이지 반환
- */
-// router.get('/signup', (req, res) => {
-//     const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
-//     res.sendFile(filePath);
-// })
 
 /** 회원가입
  *  /user/signup으로 POST 요청
@@ -22,7 +12,7 @@ const connection = mysql.createConnection(dbconfig);
  */
 router.post('/signup', (req, res) => {
     const jsonData = req.body;
-    console.log('Received data: ', jsonData);
+    // console.log('Received data: ', jsonData);
 
     /** 요청받은 JSON 데이터 파싱해서 변수로 저장 */
     const dong = jsonData.dong;
@@ -73,29 +63,50 @@ router.post('/signup', (req, res) => {
 });
 
 /** 로그인
- *  /user/signin으로 접속
- *  로그인 페이지 반환
- */
-// router.get('/signin', (req, res) => {
-//     const filePath = path.join(__dirname, '..', 'react-project', 'build', 'index.html');
-//     res.sendFile(filePath);
-// })
-
-/** 로그인
  *  /user/signin으로 POST 요청
  *  동, 호, 비밀번호 입력
  *  세션으로 로그인 유지 예정
  */
 router.post('/signin', (req, res) => {
     /** 로그인 로직 처리 */
-})
+    const jsonData = req.body;
+
+    const dong = jsonData.dong;
+    const ho = jsonData.ho;
+    const pw = jsonData.pw;
+
+    if (dong && ho && pw) {
+        connection.connect();
+        connection.query('SELECT * FROM user WHERE dong = ? AND ho = ? AND pw = ?', [dong, ho, pw], (error, results, fields) => {
+            if (error) throw error;
+            if (results.length > 0) {
+                req.session.is_logined = true;
+                req.session.save(() => {
+                    res.redirect("/");
+                });
+            } else {
+                /** 프론트엔드로 로그인 정보가 잘못되었다고 반환하는 코드 작성
+                 *  메시지만 전달해서 프론트엔드에서 alert
+                 *  JSON으로 전달
+                 */
+            }
+        });
+    } else {
+        /** 프론트엔드로 입력되지 않은 정보가 있다고 반환하는 코드 작성
+         *  메시지만 전달해서 프론트엔드에서 alert
+         *  JSON으로 전달
+         */
+    }
+});
 
 /** 로그아웃
- *  /user/signout으로 GET 요청 (POST로 할 수도 있음)
+ *  /user/signout으로 POST 요청 (아예 기능 자체를 안쓸들수도)
  *  세션 종료 후 메인페이지로 리다이렉트
  */
-router.get('/signout', (req, res) => {
-    /** 로그아웃 로직 처리 */
-})
+router.post('/signout', (req, res) => {
+    req.session.destroy((err) => {
+        res.redirect("/");
+    });
+});
 
 module.exports = router;

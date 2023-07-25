@@ -91,10 +91,10 @@ router.post('/signin', (req, res) => {
 })
 
 /** 로그아웃
- *  /user/signout으로 GET 요청
- *  세션 종료 후 /로 리다이렉트
+ *  /user/signout으로 GET 요청 (POST로 할 수도 있음)
+ *  세션 종료 후 메인페이지로 리다이렉트
  */
-router.post('/signout', (req, res) => {
+router.get('/signout', (req, res) => {
     /** 로그아웃 로직 처리 */
 })
 

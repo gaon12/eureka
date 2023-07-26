@@ -12,7 +12,7 @@ const connection = mysql.createConnection(dbconfig);
  */
 router.post('/signup', (req, res) => {
     const jsonData = req.body;
-    // console.log('Received data: ', jsonData);
+    console.log('Received data: ', jsonData);
 
     /** 요청받은 JSON 데이터 파싱해서 변수로 저장 */
     const dong = jsonData.dong;
@@ -34,23 +34,26 @@ router.post('/signup', (req, res) => {
             /** DB에 동과 호가 존재하지 않고 비밀번호와 비밀번호 확인이 일치하는지 확인 */
             if (results.length <= 0 && pw1 == pw2) {
                 connection.query('INSERT INTO user (dong, ho, username, pw, phone1, phone2, movein) VALUES (?, ?, ?, ?, ?, ?, ?)', [dong, ho, username, pw1, phone1, phone2, movein], (error, data) => {
-                    if (error) throw error;
+                    //if (error) throw error;
                     /** 프론트엔드로 회원가입 성공 반환하는 코드 작성
                      *  메시지만 전달해서 프론트엔드에서 alert
                      *  JSON으로 전달
                      */
+                    res.json([{ "message": "success" }]);
                 });
             } else if (pw1 != pw2) {
                 /** 프론트엔드로 비밀번호와 비밀번호 확인이 불일치 하다는 결과 반환하는 코드 작성
                  *  메시지만 전달해서 프론트엔드에서 alert
                  *  JSON으로 전달
                  */
+                res.json([{ "message": "password not equal" }]);
             }
             else {
                 /** 프론트엔드로 이미 존재하는 회원이라고 반환하는 코드 작성
                  *  메시지만 전달해서 프론트엔드에서 alert
                  *  JSON으로 전달
                  */
+                res.json([{ "message": "already register" }]);
             }
         });
     }
@@ -59,6 +62,7 @@ router.post('/signup', (req, res) => {
          *  메시지만 전달해서 프론트엔드에서 alert
          *  JSON으로 전달
          */
+        res.json([{ "message": "exist empty" }]);
     }
 });
 
@@ -70,6 +74,7 @@ router.post('/signup', (req, res) => {
 router.post('/signin', (req, res) => {
     /** 로그인 로직 처리 */
     const jsonData = req.body;
+    console.log(jsonData);
 
     const dong = jsonData.dong;
     const ho = jsonData.ho;
@@ -78,17 +83,18 @@ router.post('/signin', (req, res) => {
     if (dong && ho && pw) {
         connection.connect();
         connection.query('SELECT * FROM user WHERE dong = ? AND ho = ? AND pw = ?', [dong, ho, pw], (error, results, fields) => {
-            if (error) throw error;
             if (results.length > 0) {
                 req.session.is_logined = true;
-                req.session.save(() => {
-                    res.redirect("/");
-                });
+                req.session.nickname = dong + '-' + ho;
+                req.session.save();
+                //res.json([{ "message": "success" }]);
+                res.redirect("/");
             } else {
                 /** 프론트엔드로 로그인 정보가 잘못되었다고 반환하는 코드 작성
                  *  메시지만 전달해서 프론트엔드에서 alert
                  *  JSON으로 전달
                  */
+                res.json([{ "message": "wrong regist" }]);
             }
         });
     } else {
@@ -96,14 +102,15 @@ router.post('/signin', (req, res) => {
          *  메시지만 전달해서 프론트엔드에서 alert
          *  JSON으로 전달
          */
+        res.json([{ "message": "exist empty" }]);
     }
 });
 
 /** 로그아웃
- *  /user/signout으로 POST 요청 (아예 기능 자체를 안쓸들수도)
+ *  /user/signout으로 GET 요청 (아예 기능 자체를 안쓸들수도)
  *  세션 종료 후 메인페이지로 리다이렉트
  */
-router.post('/signout', (req, res) => {
+router.get('/signout', (req, res) => {
     req.session.destroy((err) => {
         res.redirect("/");
     });

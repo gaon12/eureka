@@ -34,8 +34,8 @@ class LicensePlateRecognizer:
             for i, p in enumerate(pred):
                 x1, y1, x2, y2 = p[:4]
                 cropped_img = img[int(y1):int(y2), int(x1):int(x2)]
-                file_path = os.path.join(self.save_dir, f'image_{image_index}.jpg')
-                cv2.imwrite(file_path, cropped_img)
+                # file_path = os.path.join(self.save_dir, f'image_{image_index}.jpg')
+                # cv2.imwrite(file_path, cropped_img)
 
                 preprocessed_img = self._preprocess_image(cropped_img)
                 ocr_result = self.ocr.ocr(preprocessed_img)
@@ -43,10 +43,10 @@ class LicensePlateRecognizer:
                     line_text = ' '.join([word_info[1][0] for word_info in line])
                     result_text += line_text
 
-                result_file_path = os.path.join(self.save_dir, f'image_{image_index}.txt')
+                # result_file_path = os.path.join(self.save_dir, f'image_{image_index}.txt')
 
-                with open(result_file_path, 'w') as f:
-                    f.write(result_text)
+                # with open(result_file_path, 'w') as f:
+                #     f.write(result_text)
 
                 image_index += 1
 

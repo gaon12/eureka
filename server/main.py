@@ -5,12 +5,16 @@ from detect import LicensePlateRecognizer
 import os
 import json
 import re
+from db_connector import db, Car
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 app = Flask(__name__)
 CORS(app)
-
+app.config[
+    'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://guest1:0YYL!i[-}F)UTkt8G@apt-manager.mysql.database.azure.com/car'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
 
 # Download Image -> AI Model Predict -> Delete Image
 # POST /predict
@@ -55,24 +59,56 @@ def predict():
         if response.status_code == 200:
             # Download Image
             # Directory is temp/file_name
-            with open('temp/image.png', 'wb') as f:
+            with open('temp/' + file_name, 'wb') as f:
                 f.write(response.content)
 
             # 이미지 인식을 위한 클래스 인스턴스 생성
             recognizer = LicensePlateRecognizer(model_path='Model/best.pt')
 
             # 이미지 인식 및 결과 반환
-            result = recognizer.recognize_license_plates('temp/image.png')
+            result = recognizer.recognize_license_plates('temp/' + file_name)
+
+            # DB에서 "car_number"로 조회하여 결과 가져오기
+            data_from_db = Car.query.filter_by(car_number=result).first()
 
             # 결과를 JSON 형식으로 변환
-            response_data = {
-                "result": "success",
-                "car_number": "1234",
-                "is_regist": "Y/N",
-                "is_guest": "(Y/N)/null",
-                "is_electric": "(Y/N)/null",
-                "is_disabled": "(Y/N)/null",
-            }
+            # response_data = {
+            #     "result": "success",
+            #     "car_number": "1234",
+            #     "is_regist": "Y/N",
+            #     "is_guest": "(Y/N)/null",
+            #     "is_electric": "(Y/N)/null",
+            #     "is_disabled": "(Y/N)/null"
+            # }
+
+            if result:
+                if data_from_db.is_regist == 0:
+                    response_data = {
+                        "result": "success",
+                        "car_number": result,
+                        "is_regist": "X",
+                        "is_guest": None,
+                        "is_electric": None,
+                        "is_disabled": None
+                    }
+                else:
+                    is_guest = 'O' if data_from_db.is_guest == 1 else 'X'
+                    is_electric = 'O' if data_from_db.is_electric == 1 else 'X'
+                    is_disabled = 'O' if data_from_db.is_disabled == 1 else 'X'
+
+                    response_data = {
+                        "result": "success",
+                        "car_number": result,
+                        "is_regist": 'O',
+                        "is_guest": is_guest,
+                        "is_electric": is_electric,
+                        "is_disabled": is_disabled
+                    }
+            else:
+                response_data = {
+                    "result": "false"
+                }
+
             json_response = json.dumps(response_data)
 
             return Response(json_response, status=201, mimetype='application/json')

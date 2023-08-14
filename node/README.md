@@ -83,7 +83,7 @@ curl --request POST \
 ``` JSON
 {
   "status": 200,
-  "message": "로그인 성공"
+  "message": "123-456 로그인 성공"
 }
 ```
 ##### 응답 예시 - 필수 항목 입력 필요
@@ -104,7 +104,7 @@ curl --request POST \
 ``` JSON
 {
   "status": 401,
-  "message": "등록되지 않은 사용"
+  "message": "등록되지 않은 사용자"
 }
 ```
 

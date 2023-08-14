@@ -74,7 +74,6 @@ router.get('/info', (req, res) => {
                     "guestCar": result[0].guest_car,
                     "electricCar": result[0].electric_car,
                     "disabledCar": result[0].disabled_car,
-                    "registered": result[0].registered
                 })
             })
         }

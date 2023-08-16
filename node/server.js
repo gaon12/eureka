@@ -11,6 +11,7 @@ const port = 3000;
 const userRouter = require('./route/userRouter');
 const carRouter = require('./route/carRouter');
 const noticeRouter = require('./route/noticeRouter');
+const workRouter = require('./route/workRouter');
 
 app.set('port', process.env.port||port);
 app.use(cors({
@@ -39,6 +40,7 @@ app.use(session({
 app.use('/user', userRouter);
 app.use('/car', carRouter);
 app.use('/notice', noticeRouter);
+app.use('/work', workRouter);
 
 /** /GET, 서비스 접속 메서드
  *  라우팅은 리액트에서 관리하므로 다른 페이지로 이동하는 별도의 API는 제공하지 않음

@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 router.get('/signout', (req, res) => {
     try {
         if (req.session.is_logined) {
-            req.session.destroy((err) => {
+            req.session.destroy(() => {
                 res.json({
                     "status": 200,
                     "message": "로그아웃 성공"
@@ -41,7 +41,7 @@ router.post('/signin', (req, res) => {
     // 동, 호, 비밀번호 입력되었는지 확인
     if (dong && ho && pw) {
         // DB에 일치하는 동과 호가 있는지 확인
-        db.query('SELECT * FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result, fields) => {
+        db.query('SELECT * FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result) => {
             if (err)
                 console.log(err);
             // 일치하는 동과 호가 있을 때
@@ -102,7 +102,7 @@ router.post('/signup', (req, res) => {
     // phone2 제외 모든 항목 입력 필수
     if (dong && ho && username && pw1 && pw2 && phone1 && movein) {
         // DB에 같은 동, 호가 있는지 확인
-        db.query('SELECT * FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result, fields) => {
+        db.query('SELECT * FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result) => {
             if (err)
                 console.log(err);
             // DB에 같은 동, 호가 없고 비밀번호와 비밀번호 확인이 일치할 때
@@ -110,7 +110,7 @@ router.post('/signup', (req, res) => {
                 const hasedPw = bcrypt.hashSync(pw1, 10);
                 // phone2가 입력되었을 때
                 if (phone2) {
-                    db.query('INSERT INTO user (dong, ho, username, pw, phone1, phone2, movein) VALUES(?, ?, ?, ?, ?, ?, ?)', [dong, ho, username, hasedPw, phone1, phone2, movein], (err, result, fields) => {
+                    db.query('INSERT INTO user (dong, ho, username, pw, phone1, phone2, movein) VALUES(?, ?, ?, ?, ?, ?, ?)', [dong, ho, username, hasedPw, phone1, phone2, movein], (err) => {
                         if (err)
                             console.log(err);
                         req.session.save(() => {
@@ -123,7 +123,7 @@ router.post('/signup', (req, res) => {
                 }
                 // phone2가 빈칸일 때
                 else {
-                    db.query('INSERT INTO user (dong, ho, username, pw, phone1, movein) VALUES(?, ?, ?, ?, ?, ?)', [dong, ho, username, hasedPw, phone1, movein], (err, result, fields) => {
+                    db.query('INSERT INTO user (dong, ho, username, pw, phone1, movein) VALUES(?, ?, ?, ?, ?, ?)', [dong, ho, username, hasedPw, phone1, movein], (err) => {
                         if (err)
                             console.log(err);
                         req.session.save(() => {

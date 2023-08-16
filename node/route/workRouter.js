@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 
+/** /GET, 업무일지 조회 메서드 */
+router.get("/", (req, res) => {
+    db.query('SELECT * FROM worklog ORDER BY w_l_id DESC', (err, result) => {
+        res.json(result);
+    })
+})
+
 /** /POST, 업무일지 작성 메서드
  *  내용, 시작일(DATE), 종료일(DATE) 입력
  *  시작일과 종료일 예시 "20230815"

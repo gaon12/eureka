@@ -9,7 +9,7 @@ const clovaSummary = require('../secret/clovaSummary.json');
  */
 router.get('/recent', (req, res) => {
     try {
-        db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 6', (err, result, fields) => {
+        db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5', (err, result, fields) => {
             res.json(result)
         })
     } catch (err) {

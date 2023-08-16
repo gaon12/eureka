@@ -136,6 +136,63 @@ curl --request GET \
 }
 ```
 
+### 최근 공지사항 조회
+##### 요청 예시
+```shell
+curl --request GET \
+  --url http://server/notice/recent
+```
+##### 응답 예시
+```JSON
+[
+  {
+    "notice_id": 28,
+    "noti_w_id": 1,
+    "title": "제목",
+    "content": "내용",
+    "summary": "요약",
+    "noti_w_date": "2023-08-13T23:09:54.000Z",
+    "noti_category": 1
+  },
+  {
+    "notice_id": 27,
+    "noti_w_id": 1,
+    "title": "제목",
+    "content": "내용",
+    "summary": "요약",
+    "noti_w_date": "2023-08-12T23:09:54.000Z",
+    "noti_category": 1
+  },
+  {
+    "notice_id": 26,
+    "noti_w_id": 1,
+    "title": "제목",
+    "content": "내용",
+    "summary": "요약",
+    "noti_w_date": "2023-08-11T23:09:54.000Z",
+    "noti_category": 1
+  },
+  {
+    "notice_id": 25,
+    "noti_w_id": 1,
+    "title": "제목",
+    "content": "내용",
+    "summary": "요약",
+    "noti_w_date": "2023-08-10T23:09:54.000Z",
+    "noti_category": 1
+  },
+  {
+    "notice_id": 24,
+    "noti_w_id": 1,
+    "title": "제목",
+    "content": "내용",
+    "summary": "요약",
+    "noti_w_date": "2023-08-09T23:09:54.000Z",
+    "noti_category": 1
+  }
+]
+```
+
 ### 공지사항 등록
 ##### 요청 예시
 ``` shell

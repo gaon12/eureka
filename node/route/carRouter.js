@@ -10,7 +10,7 @@ router.post('/regist', (req, res) => {
     const ho = nickname[1];
     let userid = '';
 
-    db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result, fields) => {
+    db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result) => {
         userid = result[0].id
     })
 
@@ -20,7 +20,7 @@ router.post('/regist', (req, res) => {
     const disabled = req.body.disabled_car;
 
     /** 이미 등록 되어 있는 차량인지 확인 */
-    db.query('SELECT * FROM car WHERE car_number = ?', [carNumber], (err, result, fields) => {
+    db.query('SELECT * FROM car WHERE car_number = ?', [carNumber], (err, result) => {
         if (err)
             console.log(err);
         /** 이미 등록 되어 있는 차량일 때 */
@@ -32,7 +32,7 @@ router.post('/regist', (req, res) => {
         }
         /** 신규 등록 차량일 때 */
         else {
-            db.query('INSERT INTO car (car_r_id, car_number, guest_car, electric_car, disabled_car) VALUES (?, ?, ?, ?, ?)', [userid, carNumber, guest, electric, disabled], (err, result, fields) => {
+            db.query('INSERT INTO car (car_r_id, car_number, guest_car, electric_car, disabled_car) VALUES (?, ?, ?, ?, ?)', [userid, carNumber, guest, electric, disabled], (err, result) => {
                 if (err)
                     console.log(err);
                 if (result.length > 0) {
@@ -54,13 +54,13 @@ router.get('/info', (req, res) => {
     const carNumber = req.body.car_number;
 
     /** 등록 되어 있는 차량인지 검색 */
-    db.query('SELECT * FROM car WHERE car_number = ?', [carNumber], (err, result, fields) => {
+    db.query('SELECT * FROM car WHERE car_number = ?', [carNumber], (err, result) => {
         if (err)
             console.log(err);
         /** 등록 되어 있는 차량일 때 */
         if (result.length > 0) {
             /** 차량 번호를 기반으로 사용자 정보와 차량 정보 검색 */
-            db.query('SELECT u.username, u.dong, u.ho, u.phone1, u.phone2, c.car_number, c.guest_car, c.electric_car, c.disabled_car, c.registered FROM user u JOIN car c ON u.id = c.car_r_id WHERE c.car_number = ?', [carNumber], (err, result, fields) => {
+            db.query('SELECT u.username, u.dong, u.ho, u.phone1, u.phone2, c.car_number, c.guest_car, c.electric_car, c.disabled_car, c.registered FROM user u JOIN car c ON u.id = c.car_r_id WHERE c.car_number = ?', [carNumber], (err, result) => {
                 // DB에서 차량과 관련된 정보 JSON으로 반환
                 res.json({
                     "status": 200,

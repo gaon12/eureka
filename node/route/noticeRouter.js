@@ -9,7 +9,7 @@ const clovaSummary = require('../secret/clovaSummary.json');
  */
 router.get('/recent', (req, res) => {
     try {
-        db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5', (err, result, fields) => {
+        db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5', (err, result) => {
             res.json(result)
         })
     } catch (err) {
@@ -34,7 +34,7 @@ router.post('/write', async (req, res) => {
     let userid = '';
     let summary = '';
 
-    db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result, fields) => {
+    db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result) => {
         userid = result[0].id
     })
 
@@ -63,7 +63,7 @@ router.post('/write', async (req, res) => {
                 }
             }).then((response) => {
                 summary = response.data.summary
-                db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], (err, result, fields) => {
+                db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], () => {
                     res.json({
                         "status": 201,
                         "message": "요약 성공",

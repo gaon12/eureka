@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import requests
 from detect import LicensePlateRecognizer
@@ -37,7 +37,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # send_request 함수
 def send_request(data_to_send, retries=3):
-    nodejs_server_url = "http://your-nodejs-server-url.com/api/data"
+    nodejs_server_url = "http://118.67.130.191:3000/car/info"  # Node.js 서버의 API 엔드포인트
 
     for _ in range(retries):
         try:
@@ -56,38 +56,18 @@ def send_request(data_to_send, retries=3):
 def predict():
     if request.method == 'POST':
         f = request.files['file']
-        # img 폴더에 저장하기 위한 경로 생성
         upload_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
         f.save(upload_path)
-        # Custom User-Agent
-        cua = 'vwaiolet'
-        params = {'useragent': cua}
 
-        # 이미지 인식을 위한 클래스 인스턴스 생성
         recognizer = LicensePlateRecognizer(model_path='Model/best.pt')
+        result = recognizer.recognize_license_plates(upload_path)
 
-        # 이미지 인식 및 결과 반환
-        result = recognizer.recognize_license_plates('temp/' + f.filename)
-
-        # address?useragent=vwaiolet
-        # response = requests.get(url, params=params)
-
-        nodejs_server_url = "http://118.67.130.191:3000/car/info"  # Node.js 서버의 API 엔드포인트
         data_to_send = {
             "car_number": result
         }
-
+        print(result)
         # send_request 함수를 통해 요청 보내고 결과 받기
         response_data = send_request(data_to_send)
-        # 결과를 JSON 형식으로 변환
-        # response_data = {
-        #     "result": "success",
-        #     "car_number": "1234",
-        #     "is_regist": "Y/N",
-        #     "is_guest": "(Y/N)/null",
-        #     "is_electric": "(Y/N)/null",
-        #     "is_disabled": "(Y/N)/null"
-        # }
         try:
             os.remove(upload_path)
             print("File deleted successfully.")
@@ -95,39 +75,13 @@ def predict():
             print("Error:", e)
 
         if response_data is not None:
-            if result:
-                if response_data['is_regist'] == 0:
-                    response_data = {
-                        "result": "success",
-                        "car_number": result,
-                        "is_regist": "X",
-                        "is_guest": None,
-                        "is_electric": None,
-                        "is_disabled": None
-                    }
-                else:
-                    is_guest = 'O' if response_data['is_guest'] == 1 else 'X'
-                    is_electric = 'O' if response_data['is_electric'] == 1 else 'X'
-                    is_disabled = 'O' if response_data['is_disabled'] == 1 else 'X'
-                    response_data = {
-                        "result": "success",
-                        "car_number": result,
-                        "is_regist": 'O',
-                        "is_guest": is_guest,
-                        "is_electric": is_electric,
-                        "is_disabled": is_disabled
-                    }
-
-                json_response = json.dumps(response_data)
-                return Response(json_response, status=201, mimetype='application/json')
-            else:
-                response_data = {"result": "false"}
-                json_response = json.dumps(response_data)
-                return Response(json_response, status=400, mimetype='application/json')
-
+            # JSON 데이터를 그대로 클라이언트로 전송
+            response = Response(json.dumps(response_data), status=200, mimetype='application/json')
+            return response
         else:
             # Node.js 서버 응답이 실패한 경우
-            return Response(status=400, mimetype='application/json')
+            error_response = {"error": "Failed to get response from Node.js server"}
+            return Response(json.dumps(error_response), status=500, mimetype='application/json')
 
 
 if __name__ == '__main__':

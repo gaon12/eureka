@@ -7,18 +7,19 @@ const clovaSummary = require('../secret/clovaSummary.json');
 /** /GET, 최근 공지사항 조회 메서드(6개)
  *  JSON으로 반환
  */
-router.get('/recent', (req, res) => {
+router.get('/recent', async (req, res) => {
     try {
-        db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5', (err, result) => {
-            res.json(result)
-        })
+        const recentNotice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5');
+        res.json(recentNotice[0]);
     } catch (err) {
+        console.log(err);
+        
         res.json({
             "status": 500,
-            "message": err
-        })
+            "message": "Server Error"
+        });
     }
-})
+});
 
 /** /POST, 공지사항 작성 메서드
  *  카테고리, 제목, 내용 입력

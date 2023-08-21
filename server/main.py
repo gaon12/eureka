@@ -36,8 +36,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # send_request 함수
-def send_request(data_to_send, retries=3):
-    nodejs_server_url = "http://118.67.130.191:3000/car/info"  # Node.js 서버의 API 엔드포인트
+def send_request(data_to_send, retries=3, config_path='config.json'):
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+
+    nodejs_server_url = config.get('nodejs_car_info', '')
 
     for _ in range(retries):
         try:
@@ -59,8 +62,12 @@ def predict():
         upload_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
         f.save(upload_path)
 
-        recognizer = LicensePlateRecognizer(model_path='Model/best.pt')
-        result = recognizer.recognize_license_plates(upload_path)
+        recognizer = LicensePlateRecognizer()
+        license_plate_images = recognizer.recognize_license_plates(upload_path)
+
+        # 각 번호판 이미지의 텍스트 추출 및 출력
+        for image in license_plate_images:
+            result = recognizer.read_text(image)
 
         data_to_send = {
             "car_number": result

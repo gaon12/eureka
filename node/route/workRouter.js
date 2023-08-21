@@ -32,14 +32,6 @@ router.post("/write", async (req, res) => {
 
         const userSearch = await db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho])
 
-        if (userSearch.length <= 0) {
-            return res.json({
-                "status": 400,
-                "message": "등록되지 않은 사용자"
-            });
-            return;
-        }
-
         const userid = userSearch[0][0].id;
 
         if (content && start && end) {

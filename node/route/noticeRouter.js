@@ -4,7 +4,7 @@ const router = express.Router();
 const db = require('../lib/db');
 const clovaSummary = require('../secret/clovaSummary.json');
 
-/** /GET, 최근 공지사항 조회 메서드(6개)
+/** /GET, 최근 공지사항 조회 메서드(5개)
  *  JSON으로 반환
  */
 router.get('/recent', async (req, res) => {

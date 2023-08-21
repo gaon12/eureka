@@ -3,6 +3,42 @@ const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
 
+/** /GET, 유저 정보 조회 */
+router.get('/info', async (req, res) => {
+    try {
+        if (req.session.is_logined) {
+            const nickname = req.session.nickname.split('-');
+            const dong = nickname[0];
+            const ho = nickname[1];
+
+            const userSearch = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho])
+            const isAdmin = userSearch[0][0].isAdmin;
+
+            if (isAdmin === 0) {
+                return res.json({
+                    "status": 200,
+                    "message": "입주민"
+                });
+            } else if (isAdmin === 1) {
+                return res.json({
+                    "status": 200,
+                    "message": "관리자"
+                });
+            }
+        } else {
+            return res.json({
+                "status": 400,
+                "message": "로그인 되지 않음"
+            })
+        }
+    } catch (err) {
+        return res.json({
+            "status": 500,
+            "message": "Server Error"
+        });
+    }
+})
+
 /** /GET, 로그아웃 메서드
  *  세션 파괴
  *  JSON 형식으로 http 상태 코드, 메시지 반환
@@ -19,18 +55,18 @@ router.get('/signout', async (req, res) => {
                 });
             });
             
-            res.json({
+            return res.json({
                 "status": 200,
                 "message": "로그아웃 성공"
             });
         } else {
-            res.json({
+            return res.json({
                 "status": 400,
                 "message": "로그인 되지 않음"
             })
         }
     } catch(err) {
-        res.json({
+        return res.json({
             "status": 500,
             "message": "Server Error"
         });
@@ -71,13 +107,13 @@ router.post('/signin', async (req, res) => {
                         "message": req.session.nickname + " 로그인 성공"
                     });
                 } else {
-                    res.json({
+                    return res.json({
                         "status": 401,
                         "message": "비밀번호 불일치"
                     });
                 }
             } else {
-                res.json({
+                return res.json({
                     "status": 401,
                     "message": "등록되지 않은 사용자"
                 });
@@ -85,14 +121,12 @@ router.post('/signin', async (req, res) => {
         }
         // 입력되지 않은 값이 있는 경우
         else {
-            res.json({
+            return res.json({
                 "status": 400,
                 "message": "필수 항목 입력 필요"
             });
         }
     } catch (err) {
-        console.error(error);
-
         return res.json({
             "status": 500,
             "message": "Server Error"
@@ -130,31 +164,29 @@ router.post('/signup', async (req, res) => {
                 }
 
                 req.session.save(() => {
-                    res.json({
+                    return res.json({
                         "status": 201,
                         "message": "회원가입 성공"
                     });
                 });
             } else if (pw1 !== pw2) {
-                res.json({
+                return res.json({
                     "status": 400,
                     "message": "비밀번호 재확인 필요"
                 });
             } else {
-                res.json({
+                return res.json({
                     "status": 409,
                     "message": "이미 존재하는 회원"
                 });
             }
         } else {
-            res.json({
+            return res.json({
                 "status": 400,
                 "message": "필수 항목 입력 필요"
             });
         } 
     } catch (err) {
-        console.error(err);
-
         return res.json({
             "status": 500,
             "message": "Server Error"

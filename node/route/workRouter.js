@@ -6,10 +6,9 @@ const db = require('../lib/db');
 router.get("/", async (req, res) => {
     try {
         const worklog = await db.query('SELECT * FROM worklog ORDER BY w_l_id DESC');
-        res.json(worklog[0]);
+        return res.json(worklog[0]);
     } catch (err) {
-        console.log(err);
-        res.json({
+        return res.json({
             "status": 500,
             "message": "Server Error"
         });
@@ -34,7 +33,7 @@ router.post("/write", async (req, res) => {
         const userSearch = await db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho])
 
         if (userSearch.length <= 0) {
-            res.json({
+            return res.json({
                 "status": 400,
                 "message": "등록되지 않은 사용자"
             });
@@ -45,20 +44,18 @@ router.post("/write", async (req, res) => {
 
         if (content && start && end) {
             await db.query('INSERT INTO worklog (w_w_id, w_content, w_start, w_end) VALUES (?, ?, ?, ?)', [userid, content, start, end]);
-            res.json({
+            return res.json({
                 "status": 201,
                 "message": "업무일지 작성 완료"
             });
         } else {
-            res.json({
+            return res.json({
                 "status": 400,
                 "message": "필수 항목 입력 필요"
             });
         }
     } catch (err) {
-        console.log(err);
-
-        res.json({
+        return res.json({
             "status": 500,
             "message": "Server Error"
         });

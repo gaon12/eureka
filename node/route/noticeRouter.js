@@ -10,11 +10,9 @@ const clovaSummary = require('../secret/clovaSummary.json');
 router.get('/recent', async (req, res) => {
     try {
         const recentNotice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5');
-        res.json(recentNotice[0]);
+        return res.json(recentNotice[0]);
     } catch (err) {
-        console.log(err);
-        
-        res.json({
+        return res.json({
             "status": 500,
             "message": "Server Error"
         });
@@ -65,7 +63,7 @@ router.post('/write', async (req, res) => {
             }).then((response) => {
                 summary = response.data.summary
                 db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], () => {
-                    res.json({
+                    return res.json({
                         "status": 201,
                         "message": "요약 성공",
                         "title": title,
@@ -75,12 +73,12 @@ router.post('/write', async (req, res) => {
                 });
             });
         } catch (err) {
-            res.json({
+            return res.json({
                 "message": err
             })
         }
     } else {
-        res.json({
+        return res.json({
             "message": "필수 항목 입력 필요"
         })
     }

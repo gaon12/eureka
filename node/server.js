@@ -16,7 +16,8 @@ const workRouter = require('./route/workRouter');
 
 app.set('port', process.env.port||port); // 포트 지정
 // CORS 설정
-const allowedOrigins = ['http://43.202.151.155'];
+const address = require('../secret/address.json');
+const allowedOrigins = address.host;
 app.use(cors({
     origin: allowedOrigins,
 }));

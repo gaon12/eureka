@@ -4,13 +4,13 @@ const router = express.Router();
 const db = require('../lib/db');
 const clovaSummary = require('../secret/clovaSummary.json');
 
-/** /GET, 최근 공지사항 조회 메서드(5개)
+/** /GET, 모든 공지사항 조회 메서드
  *  JSON으로 반환
  */
-router.get('/recent', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const recentNotice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC LIMIT 5');
-        return res.json(recentNotice[0]);
+        const notice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC');
+        return res.json(notice[0]);
     } catch (err) {
         return res.json({
             "status": 500,

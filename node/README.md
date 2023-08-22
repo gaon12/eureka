@@ -563,11 +563,11 @@
 ```
 
 
-## 최근 공지사항 조회
+## 공지사항 조회
 ### 요청
 |HTTP|
 |--|
-|GET http://{address}:{port}/notice/recent/|
+|GET http://{address}:{port}/notice/|
 
 ### 응답
 #### 응답 바디

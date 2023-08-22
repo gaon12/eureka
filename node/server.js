@@ -16,8 +16,9 @@ const workRouter = require('./route/workRouter');
 
 app.set('port', process.env.port||port); // 포트 지정
 // CORS 설정
+const allowedOrigins = ['http://43.202.151.155'];
 app.use(cors({
-    origin: '*',
+    origin: allowedOrigins,
 }));
 
 app.use(express.static(path.join(__dirname, '/build'))); // 정적 파일 경로
@@ -31,7 +32,7 @@ var sessionStore = new MySQLStore(sessionOption); // MySQL에 세션 저장
 
 /** set session */
 app.use(session({
-    httpOnly: false,
+    httpOnly: true,
     key: 'eureka',
     secret: 'eureka',
     store: sessionStore,

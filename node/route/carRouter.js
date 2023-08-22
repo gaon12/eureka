@@ -28,7 +28,6 @@ router.post('/regist', async (req, res) => {
 
         /** 이미 등록 되어 있는 차량인지 확인 */
         const existCar = await db.query('SELECT * FROM car WHERE car_number = ?', carNumber);
-        console.log("existCar : ", existCar[0]);
         if (existCar[0].length > 0) {
             return res.json({
                 "status": 400,

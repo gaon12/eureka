@@ -152,7 +152,6 @@ router.post('/signup', async (req, res) => {
         // phone2 제외 모든 항목 입력 필수
         if (dong && ho && username && pw1 && pw2 && phone1 && movein) {
             const existUser = await db.query('SELECT * FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
-
             // DB에 같은 동, 호가 없고 비밀번호와 비밀번호 확인이 일치할 때
             if (existUser.length <= 0 && pw1 === pw2) {
                 const hasedPw = bcrypt.hashSync(pw1, 10);

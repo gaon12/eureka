@@ -33,9 +33,10 @@ router.post('/write', async (req, res) => {
     let userid = '';
     let summary = '';
 
-    db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho], (err, result) => {
-        userid = result[0].id
-    })
+    const userSearch = await db.query('SELECT id FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
+    if (userSearch[0].length > 0) {
+        userid = userSearch[0][0].id;
+    }
 
     // 카테고리, 제목, 내용 입력되었는지 확인
     if (category && title && content) {
@@ -61,7 +62,7 @@ router.post('/write', async (req, res) => {
                     "Content-Type": 'application/json'
                 }
             }).then((response) => {
-                summary = response.data.summary
+                summary = response.data.summary;
                 db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], () => {
                     return res.json({
                         "status": 201,

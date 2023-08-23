@@ -13,14 +13,16 @@ const userRouter = require('./route/userRouter');
 const carRouter = require('./route/carRouter');
 const noticeRouter = require('./route/noticeRouter');
 const workRouter = require('./route/workRouter');
+const complaintRouter = require('./route/complaintRouter');
 
 app.set('port', process.env.port||port); // 포트 지정
 // CORS 설정
-const address = require('./secret/address.json');
-const allowedOrigins = address.host;
-app.use(cors({
-    origin: allowedOrigins,
-}));
+// const address = require('./secret/address.json');
+// const allowedOrigins = address.host;
+// app.use(cors({
+//     origin: allowedOrigins,
+// }));
+app.use(cors('*'));
 
 app.use(express.static(path.join(__dirname, '/build'))); // 정적 파일 경로
 app.use(bodyParser.json());
@@ -46,6 +48,7 @@ app.use('/user', userRouter);
 app.use('/car', carRouter);
 app.use('/notice', noticeRouter);
 app.use('/work', workRouter);
+app.use('/complaint', complaintRouter);
 
 /** /GET, 서비스 접속 메서드
  *  라우팅은 리액트에서 관리하므로 다른 페이지로 이동하는 별도의 API는 제공하지 않음

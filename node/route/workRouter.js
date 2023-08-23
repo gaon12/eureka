@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 
+const { isAdmin } = require('../middleware/isAdmin');
+
 /** /GET, 업무일지 조회 메서드 */
-router.get("/", async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
     try {
         const worklog = await db.query('SELECT * FROM worklog ORDER BY w_l_id DESC');
         return res.json(worklog[0]);
@@ -19,7 +21,7 @@ router.get("/", async (req, res) => {
  *  내용, 시작일(DATE), 종료일(DATE) 입력
  *  시작일과 종료일 예시 "20230815"
  */
-router.post("/write", async (req, res) => {
+router.post("/write", isAdmin, async (req, res) => {
     try {
         const content = req.body.content;
         const start = req.body.start;

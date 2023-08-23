@@ -3,6 +3,7 @@ const axios = require('axios');
 const router = express.Router();
 const db = require('../lib/db');
 const clovaSummary = require('../secret/clovaSummary.json');
+const { isAdmin } = require('../middleware/isAdmin');
 
 /** /GET, 모든 공지사항 조회 메서드
  *  JSON으로 반환
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
  *  카테고리, 제목, 내용 입력
  *  내용 토대로 요약
  */
-router.post('/write', async (req, res) => {
+router.post('/write', isAdmin, async (req, res) => {
     const category = req.body.category;
     const title = req.body.title;
     const content = req.body.content;

@@ -21,18 +21,24 @@ router.post('/write', async (req, res) => {
             await db.query('INSERT INTO complaint (title, content, c_w_id) VALUES (?, ?, ?)', [title, content, userid]);
             return res.json({
                 "status": 201,
-                "message": "제출 성공"
+                "message": "민원 제출 성공"
             });
         } catch (err) {
             return res.json({
                 "status": 500,
-                "message": "Server Error"
+                "error": {
+                    "errorCode": "E500",
+                    "message": "서버 에러"
+                }
             });
         }
     } else {
         return res.json({
             "status": 400,
-            "message": "필수 항목 입력 필요"
+            "error": {
+                "errorCode": "E400",
+                "message": "필수 항목 미입력"
+            }
         });
     }
 });

@@ -10,7 +10,10 @@ router.post('/regist', async (req, res) => {
         if (!req.session.nickname) {
             return res.json({
                 "status": 400,
-                "message": "세션에 닉네임 정보가 없습니다"
+                "error": {
+                    "errorCode": "E404",
+                    "message": "세션 정보 없음"
+                }
             });
         }
 
@@ -33,7 +36,10 @@ router.post('/regist', async (req, res) => {
         if (existCar[0].length > 0) {
             return res.json({
                 "status": 400,
-                "message": "이미 등록된 차량"
+                "error": {
+                    "errorCode": "E411",
+                    "message": "이미 등록 된 차량"
+                }
             });
         }
 
@@ -48,14 +54,20 @@ router.post('/regist', async (req, res) => {
         } else {
             return res.json({
                 "status": 500,
-                "message": "차량 등록 실패"
+                "error": {
+                    "errorCode": "E501",
+                    "message": "차량 등록 실패"
+                }
             });
         }
     } catch (err) {
         console.log(err);
         return res.json({
             "status": 500,
-            "message": "Server Error"
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
         });
     }
 });
@@ -90,19 +102,28 @@ router.post('/info', isAdmin, async (req, res) => {
             } else {
                 return res.json({
                     "status": 500,
-                    "message": "Server Error"
+                    "error": {
+                        "errorCode": "E500",
+                        "message": "서버 에러"
+                    }
                 });
             }
         } else {
             return res.json({
-                "status": 404,
-                "message": "미등록 차량"
+                "status": 400,
+                "error": {
+                    "errorCode": "E410",
+                    "message": "등록되지 않은 차량"
+                }
             });
         }
     } catch (err) {
         return res.json({
             "status": 500,
-            "message": "Server Error"
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
         });
     }
 });

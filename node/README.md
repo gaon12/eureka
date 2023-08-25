@@ -244,50 +244,6 @@
 ```
 
 
-## 유저 정보 조회
-### 요청
-|HTTP|
-|--|
-|GET http://{address}:{port}/user/info/|
-
-### 응답
-#### 응답 바디
-|필드 이름|데이터 타입|설명|
-|--|--|--|
-|status|Int|상태 코드|
-|message|String|응답 메시지|
-
-### 응답 예시
-```JSON
-    {
-        "status": 200,
-        "message": "입주민"
-    }
-```
-
-### 오류
-#### 오류 예시 - 세션 정보 없음
-```JSON
-    {
-        "status": 400,
-        "error": {
-            "errorCode": "E404",
-            "message": "세션 정보 없음"
-        }
-    }
-```
-#### 오류 예시 - 서버 에러
-```JSON
-    {
-        "status": 500,
-        "error": {
-            "errorCode": "E500",
-            "message": "서버 에러"
-        }
-    }
-```
-
-
 ## 차량 등록
 ### 요청
 |HTTP|
@@ -459,32 +415,36 @@
 
 ### 응답 예시
 ```JSON
-    [
-        {
-            "w_l_id": 3,
-            "w_w_id": 3,
-            "w_content": "업무일지 내용",
-            "w_start": "2023-08-18T15:00:00.000Z",
-            "w_end": "2023-08-18T15:00:00.000Z",
-            "w_w_datetime": "2023-08-19T11:04:54.000Z"
-        },
-        {
-            "w_l_id": 2,
-            "w_w_id": 2,
-            "w_content": "업무일지 내용",
-            "w_start": "2023-08-18T15:00:00.000Z",
-            "w_end": "2023-08-18T15:00:00.000Z",
-            "w_w_datetime": "2023-08-19T11:04:54.000Z"
-        },
-        {
-            "w_l_id": 1,
-            "w_w_id": 1,
-            "w_content": "업무일지 내용",
-            "w_start": "2023-08-18T15:00:00.000Z",
-            "w_end": "2023-08-18T15:00:00.000Z",
-            "w_w_datetime": "2023-08-19T11:03:01.000Z"
-        }
-    ]
+    {
+	    "status": 200,
+	    "message": "업무일지 조회 성공",
+	    "results": [
+		    {
+			    "w_l_id": 3,
+			    "w_w_id": 12,
+			    "w_content": "업무일지 내용",
+			    "w_start": "2023-08-18T15:00:00.000Z",
+			    "w_end": "2023-08-18T15:00:00.000Z",
+			    "w_w_datetime": "2023-08-19T11:04:54.000Z"
+		    },
+		    {
+			    "w_l_id": 2,
+			    "w_w_id": 12,
+			    "w_content": "업무일지 내용",
+			    "w_start": "2023-08-18T15:00:00.000Z",
+			    "w_end": "2023-08-18T15:00:00.000Z",
+			    "w_w_datetime": "2023-08-19T11:04:54.000Z"
+		    },
+		    {
+			    "w_l_id": 1,
+			    "w_w_id": 12,
+			    "w_content": "업무일지 내용",
+			    "w_start": "2023-08-18T15:00:00.000Z",
+			    "w_end": "2023-08-18T15:00:00.000Z",
+			    "w_w_datetime": "2023-08-19T11:03:01.000Z"
+		    }
+	    ]
+    }
 ```
 
 ### 오류
@@ -583,53 +543,57 @@
 
 ### 응답 예시
 ```JSON
-    [
-        {
-            "notice_id": 5,
-            "noti_w_id": 1,
-            "title": "제목",
-            "content": "내용",
-            "summary": "요약 내용",
-            "noti_w_date": "2023-08-15T20:27:50.000Z",
-            "noti_category": 1
-        },
-        {
-            "notice_id": 4,
-            "noti_w_id": 1,
-            "title": "제목",
-            "content": "내용",
-            "summary": "요약 내용",
-            "noti_w_date": "2023-08-15T20:27:50.000Z",
-            "noti_category": 1
-        },
-        {
-            "notice_id": 3,
-            "noti_w_id": 1,
-            "title": "제목",
-            "content": "내용",
-            "summary": "요약 내용",
-            "noti_w_date": "2023-08-15T20:27:50.000Z",
-            "noti_category": 1
-        },
-        {
-            "notice_id": 2,
-            "noti_w_id": 1,
-            "title": "제목",
-            "content": "내용",
-            "summary": "요약 내용",
-            "noti_w_date": "2023-08-15T20:27:50.000Z",
-            "noti_category": 1
-        },
-        {
-            "notice_id": 1,
-            "noti_w_id": 1,
-            "title": "제목",
-            "content": "내용",
-            "summary": "요약 내용",
-            "noti_w_date": "2023-08-15T20:27:50.000Z",
-            "noti_category": 1
-        }
-    ]
+    {
+        "status": 200,
+	    "message": "공지사항 조회 성공",
+	    "results": [
+            {
+                "notice_id": 5,
+                "noti_w_id": 1,
+                "title": "제목",
+                "content": "내용",
+                "summary": "요약 내용",
+                "noti_w_date": "2023-08-15T20:27:50.000Z",
+                "noti_category": 1
+            },
+            {
+                "notice_id": 4,
+                "noti_w_id": 1,
+                "title": "제목",
+                "content": "내용",
+                "summary": "요약 내용",
+                "noti_w_date": "2023-08-15T20:27:50.000Z",
+                "noti_category": 1
+            },
+            {
+                "notice_id": 3,
+                "noti_w_id": 1,
+                "title": "제목",
+                "content": "내용",
+                "summary": "요약 내용",
+                "noti_w_date": "2023-08-15T20:27:50.000Z",
+                "noti_category": 1
+            },
+            {
+                "notice_id": 2,
+                "noti_w_id": 1,
+                "title": "제목",
+                "content": "내용",
+                "summary": "요약 내용",
+                "noti_w_date": "2023-08-15T20:27:50.000Z",
+                "noti_category": 1
+            },
+            {
+                "notice_id": 1,
+                "noti_w_id": 1,
+                "title": "제목",
+                "content": "내용",
+                "summary": "요약 내용",
+                "noti_w_date": "2023-08-15T20:27:50.000Z",
+                "noti_category": 1
+            }
+        ]
+    }
 ```
 
 ### 오류
@@ -718,5 +682,6 @@
 |400|E405|이미 존재하는 회원|
 |400|E410|등록되지 않은 차량|
 |400|E411|이미 등록 된 차량|
+|403|E420|관리자 권한 필요|
 |500|E500|서버 에러|
 |500|E501|차량 등록 실패|

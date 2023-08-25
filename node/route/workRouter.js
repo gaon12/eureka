@@ -8,11 +8,18 @@ const { isAdmin } = require('../middleware/isAdmin');
 router.get("/", isAdmin, async (req, res) => {
     try {
         const worklog = await db.query('SELECT * FROM worklog ORDER BY w_l_id DESC');
-        return res.json(worklog[0]);
+        return res.json({
+            "status": 200, 
+            "message": "업무일지 조회 성공", 
+            "results": worklog[0]
+        });
     } catch (err) {
         return res.json({
             "status": 500,
-            "message": "Server Error"
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
         });
     }
 });
@@ -45,13 +52,19 @@ router.post("/write", isAdmin, async (req, res) => {
         } else {
             return res.json({
                 "status": 400,
-                "message": "필수 항목 입력 필요"
+                "error": {
+                    "errorCode": "E400",
+                    "message": "필수 항목 미입력"
+                }
             });
         }
     } catch (err) {
         return res.json({
             "status": 500,
-            "message": "Server Error"
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
         });
     }
 });

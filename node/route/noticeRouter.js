@@ -11,11 +11,18 @@ const { isAdmin } = require('../middleware/isAdmin');
 router.get('/', async (req, res) => {
     try {
         const notice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC');
-        return res.json(notice[0]);
+        return res.json({
+            "status": 200,
+            "message": "공지사항 조회 성공",
+            "results": notice[0]
+        });
     } catch (err) {
         return res.json({
             "status": 500,
-            "message": "Server Error"
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
         });
     }
 });
@@ -67,22 +74,28 @@ router.post('/write', isAdmin, async (req, res) => {
                 db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], () => {
                     return res.json({
                         "status": 201,
-                        "message": "요약 성공",
-                        "title": title,
-                        "content": content,
-                        "summary": summary
-                    })
+                        "message": "공지사항 작성 완료"
+                    });
                 });
             });
         } catch (err) {
+            console.log(err);
             return res.json({
-                "message": err
-            })
+                "status": 500,
+                "error": {
+                    "errorCode": "E500",
+                    "message": "서버 에러"
+                }
+            });
         }
     } else {
         return res.json({
-            "message": "필수 항목 입력 필요"
-        })
+            "status": 400,
+            "error": {
+                "errorCode": "E400",
+                "message": "필수 항목 미입력"
+            }
+        });
     }
 });
 

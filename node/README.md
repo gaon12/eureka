@@ -851,7 +851,76 @@
 
 
 # Flask 서버 API
+## 요청
+1. 클라이언트에서 다음의 주소로 이미지를 업로드 한다.
 
+```
+POST http://{address}:{port}/predict
+```
+
+```python
+if request.method == 'POST':
+        f = request.files['file']
+        upload_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
+        f.save(upload_path)
+
+        recognizer = LicensePlateRecognizer()
+        license_plate_images = recognizer.recognize_license_plates(upload_path)
+```
+
+2. 서버에서는 이미지를 받고, Yolov5를 이용해 차량 번호판 위치를 특정짓고, EasyOCR을 사용해 번호판값을 추출한다. [detect.py 파일](https://github.com/gaon12/eureka/blob/main/server/detect.py)에서 EasyOCR을 이용해 추출.
+
+```python
+# 각 번호판 이미지의 텍스트 추출 및 출력
+        for image in license_plate_images:
+            result = recognizer.read_text(image)
+
+        data_to_send = {
+            "car_number": result
+        }
+```
+
+3. Node.js 서버로 값을 보낸다.
+```python
+# send_request 함수
+def send_request(data_to_send, retries=3, config_path='config.json'):
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+
+    nodejs_server_url = config.get('nodejs_car_info', '')
+
+    for _ in range(retries):
+        try:
+            response = requests.post(nodejs_server_url, json=data_to_send)
+            response_data = response.json()
+
+            if response.status_code == 200:
+                return response_data
+        except requests.exceptions.RequestException:
+            pass
+
+    return None
+```
+
+4. Node.js의 결과값을 프론트엔드로 전송
+```python
+# send_request 함수를 통해 요청 보내고 결과 받기
+        response_data = send_request(data_to_send)
+        try:
+            os.remove(upload_path)
+            print("File deleted successfully.")
+        except OSError as e:
+            print("Error:", e)
+
+        if response_data is not None:
+            # JSON 데이터를 그대로 클라이언트로 전송
+            response = Response(json.dumps(response_data), status=200, mimetype='application/json')
+            return response
+        else:
+            # Node.js 서버 응답이 실패한 경우
+            error_response = {"error": "Failed to get response from Node.js server"}
+            return Response(json.dumps(error_response), status=500, mimetype='application/json')
+```
 
 # 오류 코드
 |HttpStatusCode|ErrorCode|ErrorMessage|

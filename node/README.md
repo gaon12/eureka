@@ -7,10 +7,13 @@
     5. [유저 정보 조회](#유저-정보-조회)
     6. [차량 등록](#차량-등록)
     7. [차량 조회](#차량-조회)
-    8. [업무 일지 작성](#업무-일지-작성)
-    9. [업무 일지 조회](#업무-일지-조회)
-    10. [공지사항 조회](#공지사항-조회)
-    11. [공지사항 작성](#공지사항-작성)
+    8. [모든 차량 조회](#모든-차량-조회)
+    9. [차량 등록 승인](#차량-등록-승인)
+    10. [차량 등록 거부](#차량-등록-거부)
+    11. [업무 일지 작성](#업무-일지-작성)
+    12. [업무 일지 조회](#업무-일지-조회)
+    13. [공지사항 조회](#공지사항-조회)
+    14. [공지사항 작성](#공지사항-작성)
 * [Flask 서버 API](#flask-서버-api)
 * [오류 코드](#오류-코드)
 
@@ -242,6 +245,55 @@
 ```
 
 
+## 유저 정보 조회
+### 요청
+|HTTP|
+|--|
+|GET http://{address}:{port}/user/info/|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|results|JSON|응답 메시지|
+|dong|String|아파트 동|
+|ho|String|아파트 호|
+|username|String|입주민 이름|
+|movein|String|전입일|
+|phone1|String|전화번호|
+|phone2|String|예비 전화번호|
+
+### 응답 예시
+```JSON
+    {
+	    "status": 200,
+	    "results": [
+		    {
+			    "dong": "111",
+			    "ho": "222",
+			    "username": "유레카",
+			    "movein": "2023-08-07T15:00:00.000Z",
+			    "phone1": "12345555",
+			    "phone2": "12345555"
+		    }
+        ]
+    }
+```
+
+### 오류
+#### 오류 예시 - 서버 에러
+```JSON
+    {
+        "status": 500,
+        "error": {
+            "errorCode": "E500",
+            "message": "서버 에러"
+        }
+    }
+```
+
+
 ## 차량 등록
 ### 요청
 |HTTP|
@@ -382,6 +434,141 @@
         }
     }
 ```
+#### 오류 예시 - 서버 에러
+```JSON
+    {
+        "status": 500,
+        "error": {
+            "errorCode": "E500",
+            "message": "서버 에러"
+        }
+    }
+```
+
+
+## 모든 차량 조회
+### 요청
+|HTTP|
+|--|
+|GET http://{address}:{port}/car/registered/|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|results|JSON|응답 메시지|
+|rcars|JSON|등록 된 차량|
+|nrcars|JSON|등록 되지 않은 차량|
+
+### 응답 예시
+```JSON
+    {
+	    "status": 200,
+	    "results": {
+		    "rcars": [],
+		    "nrcars": [
+			    {
+				    "car_id": 1,
+				    "car_r_id": 1,
+				    "car_number": "차량번호",
+				    "guest_car": 0,
+				    "electric_car": 1,
+				    "disabled_car": 0,
+				    "registered": 0,
+				    "registration_datetime": "2023-08-10T22:17:00.000Z",
+				    "application_datetime": null
+			    }
+            ]
+        }
+    }
+```
+
+### 오류
+#### 오류 예시 - 서버 에러
+```JSON
+    {
+        "status": 500,
+        "error": {
+            "errorCode": "E500",
+            "message": "서버 에러"
+        }
+    }
+```
+
+
+## 차량 등록 승인
+### 요청
+|HTTP|
+|--|
+|PUT http://{address}:{port}/car/approve/|
+#### 요청 헤더
+|헤더명|설명|
+|--|--|
+|Content-Type|바이너리 전송 형식<br>```Content-Type: application/json```|
+#### 요청 바디
+|필드명|필수 여부|타입|설명|
+|--|--|--|--|
+|car_number|Yes|String|차량 번호|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|message|String|응답 메시지|
+
+### 응답 예시
+```JSON
+    {
+	    "status": 201,
+	    "message": "차량 등록 성공"
+    }
+```
+
+### 오류
+#### 오류 예시 - 서버 에러
+```JSON
+    {
+        "status": 500,
+        "error": {
+            "errorCode": "E500",
+            "message": "서버 에러"
+        }
+    }
+```
+
+
+## 차량 등록 거부
+### 요청
+|HTTP|
+|--|
+|DELETE http://{address}:{port}/car/deny/|
+#### 요청 헤더
+|헤더명|설명|
+|--|--|
+|Content-Type|바이너리 전송 형식<br>```Content-Type: application/json```|
+#### 요청 바디
+|필드명|필수 여부|타입|설명|
+|--|--|--|--|
+|car_number|Yes|String|차량 번호|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|message|String|응답 메시지|
+
+### 응답 예시
+```JSON
+    {
+	    "status": 201,
+	    "message": "차량 등록 거부"
+    }
+```
+
+### 오류
 #### 오류 예시 - 서버 에러
 ```JSON
     {

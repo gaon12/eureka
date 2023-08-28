@@ -4,6 +4,77 @@ const db = require('../lib/db');
 
 const { isAdmin } = require('../middleware/isAdmin');
 
+/** 차량 등록 거부 메서드 */
+router.delete('/deny', async (req, res) => {
+    const car_number = req.body.car_number;
+
+    try {
+        await db.query('DELETE FROM car WHERE car_number = ?', [car_number]);
+
+        return res.json({
+            "status": 201,
+            "message": "차량 등록 거부"
+        })
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        });
+    }
+});
+
+/** 차량 등록 승인 메서드 */
+router.put('/approve', async (req, res) => {
+    const car_number = req.body.car_number;
+
+    try {
+        await db.query('UPDATE car SET registered = 1 WHERE car_number = ?', [car_number]);
+
+        return res.json({
+            "status": 201,
+            "message": "차량 등록 성공"
+        })
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        });
+    }
+});
+
+/** /GET, 모든 차량 조회 메서드 */
+router.get('/registered', async (req, res) => {
+    try {
+        const [rcars] = await db.query('SELECT * FROM car WHERE registered != 0');
+        const [nrcars] = await db.query('SELECT * FROM car WHERE registered != 1');
+
+        return res.json({
+            "status": 200,
+            "results": {
+                "rcars": rcars,
+                "nrcars": nrcars
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        });
+    }
+});
+
 /** /POST, 차량 추가 등록 메서드 */
 router.post('/regist', async (req, res) => {
     try {

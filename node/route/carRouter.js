@@ -32,7 +32,7 @@ router.put('/approve', async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
-        await db.query('UPDATE car SET registered = 1 WHERE car_number = ?', [car_number]);
+        await db.query('UPDATE car SET registered = 1, application_datetime = NOW() WHERE car_number = ?', [car_number]);
 
         return res.json({
             "status": 201,

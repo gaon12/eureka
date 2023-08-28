@@ -3,6 +3,27 @@ const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
 
+/** /GET, 유저 정보 조회 메서드 */
+router.get('/info', async (req, res) => {
+    try {
+        const [users] = await db.query('SELECT dong, ho, username, movein, phone1, phone2 FROM user WHERE isAdmin != 1');
+
+        return res.json({
+            "status": 200,
+            "results": users
+        });
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        });
+    }
+});
+
 /** /GET, 로그아웃 메서드
  *  세션 파괴
  *  JSON 형식으로 http 상태 코드, 메시지 반환

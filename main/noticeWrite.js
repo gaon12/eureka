@@ -3,9 +3,9 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Select, Input, Button } from 'antd';
 import axios from 'axios';
-import { BrowserRouter as Router, useNavigate } from 'react-router-dom'; // 변경된 부분
+import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 
-function AppInner() { // 변경된 부분: 내부 컴포넌트
+function AppInner() {
   const [category, setCategory] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -41,37 +41,44 @@ function AppInner() { // 변경된 부분: 내부 컴포넌트
     }
   };
 
+  const editorConfig = {
+    simpleUpload: {
+      uploadUrl: 'https://test.com/img.php',
+      onUpload: async (event, editor) => {
+        const data = new FormData();
+        data.append('file', event.loader.file);
+
+        try {
+          const response = await axios.post('https://test.com/img.php', data);
+          const imageUrl = response.data.url;
+          event.loader.uploadTotal = 100;
+          event.loader.uploaded = 100;
+          event.loader.url = imageUrl;
+        } catch (error) {
+          console.error('Image upload failed:', error);
+        }
+      },
+    },
+  };
+
   return (
     <div className="App">
       <div>
-        <Select
-          placeholder="분류 선택"
-          onChange={(value) => setCategory(value)}
-          style={{ width: 200 }}
-        >
+        <Select placeholder="분류 선택" onChange={(value) => setCategory(value)} style={{ width: 200 }}>
           <Option value="tech">공지1</Option>
           <Option value="life">공지2</Option>
-          {/* 다른 분류 추가 가능 */}
         </Select>
-        <Input
-          placeholder="제목"
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ width: 400, marginLeft: 20 }}
-        />
+        <Input placeholder="제목" onChange={(e) => setTitle(e.target.value)} style={{ width: 400, marginLeft: 20 }} />
       </div>
       <CKEditor
         editor={ClassicEditor}
-        config={{
-          simpleUpload: {
-            uploadUrl: "https://test.com/img.php"
-          }
-        }}
+        config={editorConfig}
         onChange={(event, editor) => {
           const data = editor.getData();
           setContent(data);
         }}
       />
-      <div style={{ textAlign: "right", marginTop: 10 }}>
+      <div style={{ textAlign: 'right', marginTop: 10 }}>
         <Button type="primary" onClick={handlePublish}>
           등록
         </Button>

@@ -1,9 +1,7 @@
 import cv2
 import os
-from paddleocr import PaddleOCR
 import yolov5
 import easyocr
-import pytesseract
 
 
 class LicensePlateRecognizer:

@@ -14,8 +14,8 @@
     12. [업무 일지 조회](#업무-일지-조회)
     13. [공지사항 조회](#공지사항-조회)
     14. [공지사항 작성](#공지사항-작성)
-* [Flask 서버 API](#flask-서버-api)
 * [오류 코드](#오류-코드)
+* [Flask 서버 API](#flask-서버-api)
 
 
 # Node.js 서버 API
@@ -867,6 +867,23 @@
 ```
 
 
+# 오류 코드
+|HttpStatusCode|ErrorCode|ErrorMessage|
+|--|--|--|
+|400|E400|필수 항목 미입력|
+|400|E401|아이디 or 비밀번호 오류|
+|400|E402|비밀번호 불일치|
+|400|E403|등록되지 않은 사용자|
+|400|E404|세션 정보 없음|
+|400|E405|이미 존재하는 회원|
+|400|E410|등록되지 않은 차량|
+|400|E411|이미 등록 된 차량|
+|400|E412|승인 대기 중 차량|
+|403|E420|관리자 권한 필요|
+|500|E500|서버 에러|
+|500|E501|차량 등록 실패|
+
+
 # Flask 서버 API
 ## 요청
 1. 클라이언트에서 다음의 주소로 이미지를 업로드 한다.
@@ -938,19 +955,3 @@ def send_request(data_to_send, retries=3, config_path='config.json'):
             error_response = {"error": "Failed to get response from Node.js server"}
             return Response(json.dumps(error_response), status=500, mimetype='application/json')
 ```
-
-# 오류 코드
-|HttpStatusCode|ErrorCode|ErrorMessage|
-|--|--|--|
-|400|E400|필수 항목 미입력|
-|400|E401|아이디 or 비밀번호 오류|
-|400|E402|비밀번호 불일치|
-|400|E403|등록되지 않은 사용자|
-|400|E404|세션 정보 없음|
-|400|E405|이미 존재하는 회원|
-|400|E410|등록되지 않은 차량|
-|400|E411|이미 등록 된 차량|
-|400|E412|승인 대기 중 차량|
-|403|E420|관리자 권한 필요|
-|500|E500|서버 에러|
-|500|E501|차량 등록 실패|

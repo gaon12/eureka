@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
+const { isAdmin } = require('../middleware/isAdmin');
+const { isSignin } = require('../middleware/isSignin');
+const { isSignout } = require('../middleware/isSignout');
 
 /** /GET, 유저 정보 조회 메서드 */
-router.get('/info', async (req, res) => {
+router.get('/info', isAdmin, async (req, res) => {
     try {
         const [users] = await db.query('SELECT dong, ho, username, movein, phone1, phone2 FROM user WHERE isAdmin != 1');
 
@@ -28,7 +31,7 @@ router.get('/info', async (req, res) => {
  *  세션 파괴
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.get('/signout', async (req, res) => {
+router.get('/signout', isSignin, async (req, res) => {
     try {
         if (req.session.is_logined) {
             await new Promise((resolve, reject) => {
@@ -67,7 +70,7 @@ router.get('/signout', async (req, res) => {
 /** /POST, 로그인 메서드
  *  JSON 형식으로 http 상태코드, 메시지 반환
  */
-router.post('/signin', async (req, res) => {
+router.post('/signin', isSignout, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const pw = req.body.pw;

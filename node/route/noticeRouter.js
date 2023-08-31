@@ -35,6 +35,7 @@ router.post('/write', isAdmin, async (req, res) => {
     const category = req.body.category;
     const title = req.body.title;
     const content = req.body.content;
+    const content2 = req.body.content2;
     const nickname = req.session.nickname.split('-');
     const dong = nickname[0];
     const ho = nickname[1];
@@ -47,7 +48,7 @@ router.post('/write', isAdmin, async (req, res) => {
     }
 
     // 카테고리, 제목, 내용 입력되었는지 확인
-    if (category && title && content) {
+    if (category && title && content && content2) {
         const requestSummary = {
             document: {
                 title: title,
@@ -60,7 +61,6 @@ router.post('/write', isAdmin, async (req, res) => {
                 summaryCount: 3
             }
         };
-
         try {
             /** 클로바 요약 API에 POST 요청 */
             const response = await axios.post('https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize', JSON.stringify(requestSummary), {
@@ -71,21 +71,17 @@ router.post('/write', isAdmin, async (req, res) => {
                 }
             }).then((response) => {
                 summary = response.data.summary;
-                db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, summary) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, summary], () => {
-                    return res.json({
-                        "status": 201,
-                        "message": "공지사항 작성 완료"
-                    });
+                db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, content2, summary) VALUES(?, ?, ?, ?, ?, ?)', [category, userid, title, content, content2, summary]);
+                return res.json({
+                    "status": 201,
+                    "message": "공지사항 작성 완료"
                 });
             });
         } catch (err) {
-            console.log(err);
+            db.query('INSERT INTO notice (noti_category, noti_w_id, title, content, content2) VALUES(?, ?, ?, ?, ?)', [category, userid, title, content, content2]);
             return res.json({
-                "status": 500,
-                "error": {
-                    "errorCode": "E500",
-                    "message": "서버 에러"
-                }
+                "status": 201,
+                "message": "요약 없이 작성"
             });
         }
     } else {

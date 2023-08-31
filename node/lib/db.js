@@ -1,11 +1,10 @@
-const dbAuth = require('../secret/db.json');
+const mysql = require('mysql2/promise');
 
-var mysql = require('mysql2/promise');
 const db = mysql.createPool({
-    host: dbAuth.host,
-    user: dbAuth.user,
-    password: dbAuth.password,
-    database: dbAuth.database
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_SCHEMA
 });
 
 module.exports = db;

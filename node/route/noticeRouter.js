@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 const db = require('../lib/db');
-const clovaSummary = require('../secret/clovaSummary.json');
 const { isAdmin } = require('../middleware/isAdmin');
 
 /** /GET, 모든 공지사항 조회 메서드
@@ -65,8 +64,8 @@ router.post('/write', isAdmin, async (req, res) => {
             /** 클로바 요약 API에 POST 요청 */
             const response = await axios.post('https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize', JSON.stringify(requestSummary), {
                 headers: {
-                    "X-NCP-APIGW-API-KEY-ID": clovaSummary["X-NCP-APIGW-API-KEY-ID"],
-                    "X-NCP-APIGW-API-KEY": clovaSummary["X-NCP-APIGW-API-KEY"],
+                    "X-NCP-APIGW-API-KEY-ID": process.env.CLOVA_KEY_ID,
+                    "X-NCP-APIGW-API-KEY": process.env.CLOVA_KEY,
                     "Content-Type": 'application/json'
                 }
             }).then((response) => {

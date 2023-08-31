@@ -4,10 +4,12 @@ const session = require('express-session'); // express 세션 설정
 const path = require('path'); // 경로 설정
 const bodyParser = require('body-parser'); // JSON 파싱
 const cors = require('cors'); // CORS 설정
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 /** node.js application initialize */
 const app = express();
-const port = 3000; // 접속 포트
 // 라우팅 파일 연결
 const userRouter = require('./route/userRouter');
 const carRouter = require('./route/carRouter');
@@ -15,15 +17,8 @@ const noticeRouter = require('./route/noticeRouter');
 const workRouter = require('./route/workRouter');
 const complaintRouter = require('./route/complaintRouter');
 
-app.set('port', process.env.port||port); // 포트 지정
-// CORS 설정
-// const address = require('./secret/address.json');
-// const allowedOrigins = address.host;
-// app.use(cors({
-//     origin: allowedOrigins,
-// }));
+app.set('port', process.env.NODE_PORT); // 포트 지정
 app.use(cors('*'));
-
 app.use(express.static(path.join(__dirname, '/build'))); // 정적 파일 경로
 app.use(bodyParser.json());
 app.use(express.urlencoded( {extended: false} ));
@@ -36,11 +31,15 @@ var sessionStore = new MySQLStore(sessionOption); // MySQL에 세션 저장
 /** set session */
 app.use(session({
     httpOnly: true,
-    key: 'eureka',
-    secret: 'eureka',
+    key: process.env.SESSION_KEY,
+    secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: false
+    }
 }));
 
 /** routing */
@@ -57,6 +56,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));
 });
 
-app.listen(process.env.port||port, () => {
-    console.log(`Node.js server listening at port ${process.env.port||port}`);
+app.listen(process.env.NODE_PORT, () => {
+    console.log(`Node.js server listening at port ${process.env.NODE_PORT}`);
 });

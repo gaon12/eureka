@@ -1,11 +1,9 @@
-const dbAuth = require('../secret/db.json');
-
-var options = {
-    host: dbAuth.host,
-    user: dbAuth.user,
-    password: dbAuth.password,
-    database: dbAuth.database,
-    port: dbAuth.port,
+const options = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_SCHEMA,
+    port: process.env.DB_PORT,
 
     // 만료된 세션 자동 확인 및 지우기 여부
     clearExpired: true,

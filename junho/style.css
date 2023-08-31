@@ -1,0 +1,16 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+ul,li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+    color:inherit;
+}
+.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+    height: 400px;
+    max-height: 750px;
+    overflow-y: scroll;
+}

@@ -4,6 +4,7 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import Modal from 'react-native-modal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ResultModal = ({ isVisible, data, onClose }) => (
   <Modal isVisible={isVisible}>
@@ -36,6 +37,35 @@ const ManualSearchModal = ({ isVisible, onSearch, onClose, setCarNumber, isLoadi
   </Modal>
 );
 
+const LoginModal = ({ isVisible, onLogin, onClose, isLoading }) => (
+  <Modal isVisible={isVisible}>
+    <View style={styles.loginModalContent}>
+      <TextInput
+        placeholder="동"
+        keyboardType="numeric"
+        style={styles.loginInput}
+        onChangeText={text => onLogin(text, 'dong')}
+      />
+      <TextInput
+        placeholder="호"
+        keyboardType="numeric"
+        style={styles.loginInput}
+        onChangeText={text => onLogin(text, 'ho')}
+      />
+      <TextInput
+        placeholder="비밀번호"
+        secureTextEntry
+        style={styles.loginInput}
+        onChangeText={text => onLogin(text, 'pw1')}
+      />
+      {isLoading ? <ActivityIndicator /> : null}
+      <Button title="로그인" onPress={() => onLogin(null, 'submit')} />
+      <View style={{ width: 20 }} />
+      <Button title="닫기" onPress={onClose} />
+    </View>
+  </Modal>
+);
+
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -43,14 +73,49 @@ export default function App() {
   const [isManualSearchVisible, setManualSearchVisible] = useState(false);
   const [carNumber, setCarNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginData, setLoginData] = useState({});
+  const [isLoginVisible, setLoginVisible] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태를 추적
   const cameraRef = useRef(null);
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
+	  const session = await AsyncStorage.getItem('session');
+      if (session) {
+        setIsLoggedIn(true);  // 세션 있으면 로그인 상태를 true로 설정
+      }
     })();
   }, []);
+  
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://example.com/user/signout');
+      await AsyncStorage.removeItem('session');
+      setIsLoggedIn(false);
+    } catch (error) {
+      Alert.alert('로그아웃 오류', error.response?.data?.error?.message || '알 수 없는 에러');
+    }
+  };
+  
+  const handleLoginInput = (value, key) => {
+    if (key !== 'submit') {
+      setLoginData(prevData => ({ ...prevData, [key]: value }));
+    } else {
+      // 로그인 API 호출
+      axios.post('http://example.com/user/signin', loginData)
+        .then(response => {
+          AsyncStorage.setItem('session', JSON.stringify(response.data));
+          setLoginVisible(false);
+          // 로그인 성공 처리
+        })
+        .catch(error => {
+          // 로그인 실패 처리
+          Alert.alert('로그인 오류', error.response?.data?.error?.message || '알 수 없는 에러');
+        });
+    }
+  };
 
   const showModal = (data) => {
     setModalData(data);
@@ -62,6 +127,14 @@ export default function App() {
   };
 
   const performManualSearch = async () => {
+	  
+	// 로그인 확인
+    const session = await AsyncStorage.getItem('session');
+    if (!session) {
+      Alert.alert('로그인 필요', '로그인 후에 검색할 수 있습니다.');
+      return;
+    }
+	
     setIsLoading(true);
     const source = axios.CancelToken.source();
     const timer = setTimeout(() => {
@@ -131,14 +204,26 @@ export default function App() {
     return <Text>카메라 접근 권한이 없습니다.</Text>;
   }
 
+  if (!isLoggedIn) {
+    return (
+      <LoginModal
+        isVisible={!isLoggedIn}
+        onLogin={handleLoginInput}
+        onClose={() => null}  // 로그인하지 않으면 닫지 못하게 설정
+        isLoading={false}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} ref={cameraRef} />
       <View style={styles.buttonContainer}>
-        <Button title="사진 업로드" onPress={pickImage} />
-        <Button title="사진 찍기" onPress={takePhoto} />
-        <Button title="수동 검색" onPress={handleManualSearchPopup} />
-      </View>
+		  <Button title="사진 업로드" onPress={pickImage} />
+		  <Button title="사진 찍기" onPress={takePhoto} />
+		  <Button title="수동 검색" onPress={handleManualSearchPopup} />
+		  <Button title="로그아웃" onPress={handleLogout} />
+		</View>
       <ResultModal
         isVisible={isModalVisible}
         data={modalData}
@@ -150,6 +235,12 @@ export default function App() {
         onClose={() => setManualSearchVisible(false)}
         setCarNumber={setCarNumber}
         isLoading={isLoading}
+      />
+      <LoginModal
+        isVisible={isLoginVisible}
+        onLogin={handleLoginInput}
+        onClose={() => setLoginVisible(false)}
+        isLoading={false}
       />
     </View>
   );
@@ -185,5 +276,16 @@ const styles = StyleSheet.create({
   manualButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  loginModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    justifyContent: 'space-between',
+    minHeight: 200,
+  },
+  loginInput: {
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 20,
   },
 });

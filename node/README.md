@@ -14,6 +14,8 @@
     12. [업무 일지 조회](#업무-일지-조회)
     13. [공지사항 조회](#공지사항-조회)
     14. [공지사항 작성](#공지사항-작성)
+    15. [민원 작성](#민원-작성)
+    16. [민원 조회](#민원-조회)
 * [오류 코드](#오류-코드)
 * [Flask 서버 API](#flask-서버-api)
 
@@ -819,6 +821,7 @@
 |category|Yes|Int|카테고리|
 |title|Yes|String|제목|
 |content|Yes|String|내용|
+|content2|Yes|String|html 태그 포함 내용|
 
 ### 응답
 #### 응답 바디
@@ -826,16 +829,14 @@
 |--|--|--|
 |status|Int|상태 코드|
 |message|String|응답 메시지|
-|title|String|제목|
-|content|String|내용|
-|summary|String|요약 내용|
 
 ### 요청 예시
 ```JSON
     {
-        "category": 3,
+        "category": 1,
 	    "title": "제목",
-	    "content": "내용"
+	    "content": "내용",
+        "content2": "<h1>내용</h1>"
     }
 ```
 
@@ -862,6 +863,110 @@
         "error": {
             "errorCode": "E400",
             "message": "필수 항목 미입력"
+        }
+    }
+```
+
+
+## 민원 작성
+### 요청
+|HTTP|
+|--|
+|POST http://{address}:{port}/complaint/write/|
+#### 요청 헤더
+|헤더명|설명|
+|--|--|
+|Content-Type|바이너리 전송 형식<br>```Content-Type: application/json```|
+#### 요청 바디
+|필드명|필수 여부|타입|설명|
+|--|--|--|--|
+|title|Yes|String|제목|
+|content|Yes|String|내용|
+|content2|Yes|String|html 태그 포함 내용|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|message|String|응답 메시지|
+
+### 요청 예시
+```JSON
+    {
+	    "title": "제목",
+	    "content": "내용",
+        "content2": "<h1>내용</h1>"
+    }
+```
+
+### 응답 예시
+```JSON
+    {
+        "status": 201,
+        "message": "제출 성공"
+    }
+```
+
+### 오류
+#### 오류 예시
+```JSON
+    {
+        "status": 400,
+        "error": {
+            "errorCode": "E400",
+            "message": "필수 항목 미입력"
+        }
+    }
+```
+
+
+## 민원 조회
+### 요청
+|HTTP|
+|--|
+|GET http://{address}:{port}/complaint/|
+
+### 응답
+#### 응답 바디
+|필드 이름|데이터 타입|설명|
+|--|--|--|
+|status|Int|상태 코드|
+|message|String|응답 메시지|
+|results|JSON|민원 목록|
+
+### 응답 예시
+```JSON
+    {
+	    "status": 200,
+	    "message": "민원 조회 성공",
+	    "results": [
+		    {
+			    "complaint_id": 2,
+			    "c_w_id": 1,
+			    "title": "민원 제목",
+			    "content": "민원 내용...",
+			    "created_datetime": "2023-08-31T05:41:26.000Z"
+		    },  
+		    {
+			    "complaint_id": 1,
+			    "c_w_id": 12,
+			    "title": "제목 테스트",
+			    "content": "내용 테스트",
+			    "created_datetime": "2023-08-23T05:11:13.000Z"
+		    }
+	    ]
+    }
+```
+
+### 오류
+#### 오류 예시
+```JSON
+    {
+        "status": 500,
+        "error": {
+            "errorCode": "E500",
+            "message": "서버 에러"
         }
     }
 ```

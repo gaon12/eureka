@@ -144,7 +144,7 @@ router.post('/signin', isSignout, async (req, res, next) => {
  *  phone2 항목이 빈칸이면 NULL로 채움
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.post('/signup', async (req, res) => {
+router.post('/signup', isSignout, async (req, res) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const username = req.body.username;

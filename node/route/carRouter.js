@@ -3,9 +3,10 @@ const router = express.Router();
 const db = require('../lib/db');
 
 const { isAdmin } = require('../middleware/isAdmin');
+const { isSignin } = require('../middleware/isSignin');
 
 /** 차량 등록 거부 메서드 */
-router.delete('/deny', async (req, res) => {
+router.delete('/deny', isAdmin, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
@@ -28,7 +29,7 @@ router.delete('/deny', async (req, res) => {
 });
 
 /** 차량 등록 승인 메서드 */
-router.put('/approve', async (req, res) => {
+router.put('/approve', isAdmin, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
@@ -51,7 +52,7 @@ router.put('/approve', async (req, res) => {
 });
 
 /** /GET, 모든 차량 조회 메서드 */
-router.get('/registered', async (req, res) => {
+router.get('/registered', isAdmin, async (req, res) => {
     try {
         const [rcars] = await db.query('SELECT * FROM car WHERE registered != 0');
         const [nrcars] = await db.query('SELECT * FROM car WHERE registered != 1');
@@ -76,18 +77,8 @@ router.get('/registered', async (req, res) => {
 });
 
 /** /POST, 차량 추가 등록 메서드 */
-router.post('/regist', async (req, res) => {
+router.post('/regist', isSignin, async (req, res) => {
     try {
-        if (!req.session.nickname) {
-            return res.json({
-                "status": 400,
-                "error": {
-                    "errorCode": "E404",
-                    "message": "세션 정보 없음"
-                }
-            });
-        }
-
         /** 세션 정보를 이용해서 동, 호 추출하고 이를 기반으로 유저 고유 id 확인 */
         const nickname = req.session.nickname.split('-');
         const dong = nickname[0];

@@ -3,11 +3,12 @@ const axios = require('axios');
 const router = express.Router();
 const db = require('../lib/db');
 const { isAdmin } = require('../middleware/isAdmin');
+const { isSignin } = require('../middleware/isSignin');
 
 /** /GET, 모든 공지사항 조회 메서드
  *  JSON으로 반환
  */
-router.get('/', async (req, res) => {
+router.get('/', isSignin, async (req, res) => {
     try {
         const notice = await db.query('SELECT * FROM notice ORDER BY notice_id DESC');
         return res.json({

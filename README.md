@@ -8,7 +8,7 @@
 ### 프론트엔드
 - React 18.2.0
 - Visual Studio Code
-- CodePen
+- CodeSandbox
 
 ### 백엔드 (Node.js)
 - Node.js 18.17.0
@@ -32,3 +32,8 @@
 
 ### Azure Database for MySQL
 - MySQL 8.0.34
+
+### Linode & Oracle Cloud
+- Ubuntu 20.04.6 / 22.04.01
+- PHP 7.4 / 8.1
+- MySQL 8.X

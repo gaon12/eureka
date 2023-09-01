@@ -19,6 +19,7 @@ router.get('/', isAdmin, async (req, res) => {
 router.post('/write', isSignin, async (req, res) => {
     const title = req.body.title;
     const content = req.body.content;
+    const content2 = req.body.content2;
     const nickname = req.session.nickname.split('-');
     const dong = nickname[0];
     const ho = nickname[1];
@@ -31,7 +32,7 @@ router.post('/write', isSignin, async (req, res) => {
 
     if (title && content) {
         try {
-            await db.query('INSERT INTO complaint (title, content, c_w_id) VALUES (?, ?, ?)', [title, content, userid]);
+            await db.query('INSERT INTO complaint (title, content, c_w_id, content2) VALUES (?, ?, ?, ?)', [title, content, userid, content2]);
             return res.json({
                 "status": 201,
                 "message": "민원 제출 성공"

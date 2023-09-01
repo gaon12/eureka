@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const { isSignin } = require('../middleware/isSignin');
 
 /** /POST, 민원 작성 메서드 */
-router.post('/write', async (req, res) => {
+router.post('/write', isSignin, async (req, res) => {
     const title = req.body.title;
     const content = req.body.content;
     const nickname = req.session.nickname.split('-');

@@ -2,6 +2,18 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const { isSignin } = require('../middleware/isSignin');
+const { isAdmin } = require('../middleware/isAdmin');
+
+/** /GET, 민원 조회 메서드 */
+router.get('/', isAdmin, async (req, res) => {
+    const complaint = await db.query('SELECT * FROM complaint ORDER BY complaint_id DESC');
+
+    return res.json({
+        "status": 200,
+        "message": "민원 조회 성공",
+        "results": complaint[0]
+    });
+})
 
 /** /POST, 민원 작성 메서드 */
 router.post('/write', isSignin, async (req, res) => {

@@ -5,6 +5,7 @@ const path = require('path'); // 경로 설정
 const bodyParser = require('body-parser'); // JSON 파싱
 const cors = require('cors'); // CORS 설정
 const dotenv = require('dotenv');
+const morgan = require('morgan');
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cors('*'));
 app.use(express.static(path.join(__dirname, '/build'))); // 정적 파일 경로
 app.use(bodyParser.json());
 app.use(express.urlencoded( {extended: false} ));
+app.use(morgan('dev'));
 
 /** connect config file */
 const sessionOption = require('./lib/sessionOption');

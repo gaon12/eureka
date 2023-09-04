@@ -85,47 +85,7 @@ function Main() {
         </Content>
 
         <style jsx global>{`
-          .responsive-container {
-            padding: 20px 50px;
-          }
-
-          .noticeRow,
-          .newsRow {
-            font-size: 16px;
-          }
-
-          @media only screen and (max-width: 480px) {
-            .responsive-container {
-              padding: 5px;
-            }
-
-            .ant-card-body {
-              padding: 5px;
-            }
-
-            .noticeRow,
-            .newsRow {
-              font-size: 12px;
-            }
-
-            .ant-table-cell {
-              word-wrap: break-word;
-              max-width: 100%;
-              white-space: pre-wrap;
-            }
-          }
-
-          @media only screen and (min-width: 481px) and (max-width: 768px) {
-            .responsive-container {
-              padding: 10px 20px;
-            }
-          }
-
-          @media only screen and (min-width: 769px) and (max-width: 1024px) {
-            .responsive-container {
-              padding: 20px 30px;
-            }
-          }
+          
         `}</style>
       </Layout>
     </>

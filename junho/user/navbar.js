@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ip_address } from "./ipaddress";
+import { ip_address } from "../user/ipaddress";
 import { Link } from "react-router-dom";
 import { Menu, Dropdown, Button, Drawer, Modal } from "antd";
 import { UserOutlined, MenuOutlined } from "@ant-design/icons";
-import axios from "axios";
+
 import Swal from "sweetalert2";
-import Carregister from "./carregister.js";
+import Carregister from "../user/carregister.js";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
@@ -16,12 +16,13 @@ const Navbar = () => {
     setIsModalOpen(true);
   };
 
-  function fetchDataWithAxios() {
-    axios
-      .get(`${ip_address}/user/signout`)
-      .then((response) => {
-        const status = response.data.status;
-
+  const handleClick = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(`${ip_address}/user/signout`);
+      if (response.ok) {
+        const data = await response.json();
+        const status = data.status;
         switch (status) {
           case 200:
             console.log("성공");
@@ -29,27 +30,22 @@ const Navbar = () => {
             break;
           case 400:
             console.log("정보 없음");
-            Swal.fire("오류", response.data.message, "error"); // 서버에서 반환하는 메시지를 사용
+            Swal.fire("오류", data.error.message, "error"); // 서버에서 반환하는 메시지를 사용
             break;
           case 500:
             console.log("서버 오류");
-            Swal.fire("오류", response.data.message, "error"); // 서버에서 반환하는 메시지를 사용
+            Swal.fire("오류", data.error.message, "error"); // 서버에서 반환하는 메시지를 사용
             break;
           default:
             console.log("알 수 없는 상태 코드:", status);
             Swal.fire("오류", "알 수 없는 오류가 발생했습니다.", "error");
         }
-      })
-      .catch((error) => {
-        console.log("Error fetching data:", error.message);
-        Swal.fire("오류", "데이터를 가져오는 중 오류가 발생했습니다.", "error");
-      });
-  }
-
-  function handleClick(event) {
-    event.preventDefault();
-    fetchDataWithAxios();
-  }
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error.message);
+      Swal.fire("오류", "데이터를 가져오는 중 오류가 발생했습니다.", "error");
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -120,10 +116,10 @@ const Navbar = () => {
         <Menu.Item key="news">최신뉴스</Menu.Item>
         <Menu.Item key="disasterMsg">재난 문자</Menu.Item>
         <Menu.Item key="publicTransport">
-        <Link to="/trash" style={{ textDecoration: "none" }}>
-          주변 쓰레기통 정보
+          <Link to="/trash" style={{ textDecoration: "none" }}>
+            주변 쓰레기통 정보
           </Link>
-          </Menu.Item>
+        </Menu.Item>
         <Menu.Item key="hospitalPharmacy">주변 병의원/약국정보</Menu.Item>
       </Menu.SubMenu>
     </Menu>
@@ -172,14 +168,14 @@ const Navbar = () => {
           placement="right"
           closable={false}
           onClose={() => setVisible(false)}
-          visible={visible}
+          open={visible}
           bodyStyle={{ padding: 0 }}
           width="80%"
         >
           <HorizontalMenu mode={"inline"} />
         </Drawer>
         <Modal
-          visible={isModalOpen}
+          open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
         >

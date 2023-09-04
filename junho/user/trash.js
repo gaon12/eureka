@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import NavBar from "./navbar";
-import axios from "axios";  // axios 라이브러리를 추가해주세요
-
+import NavBar from "../user/navbar";
 function Trash() {
   const mapRef = useRef(null);
 
@@ -19,36 +17,44 @@ function Trash() {
       window.naverMap = map;
 
       // Axios를 사용한 POST 요청
-      axios.post(
-        "https://apis.uiharu.dev/findbin/api.php",  // 절대 경로가 아니라 상대 경로를 사용
-        { latitude: 36.34898258, longitude: 127.43264, distance: 1000 },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      
-        .then((response) => {
-          const data = response.data;
-          console.log("API 응답:", data); // 응답 로깅
-          if (Array.isArray(data)) {
-            data.forEach((item) => {
-              if (item.latitude && item.longitude) {
-                new window.naver.maps.Marker({
-                  position: new window.naver.maps.LatLng(
-                    item.latitude,
-                    item.longitude
-                  ),
-                  map: map,
-                });
-              }
-            });
+      const fetchPost = async () => {
+        try {
+          const response = await fetch(
+            "https://apis.uiharu.dev/findbin/api.php",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                latitude: 36.34898258,
+                longitude: 127.43264,
+                distance: 1000,
+              }),
+            }
+          );
+          if (response.ok) {
+            const data = response.data.json();
+            console.log("API 응답:", data);
+            if (Array.isArray(data)) {
+              data.forEach((item) => {
+                if (item.latitude && item.longitude) {
+                  new window.naver.maps.Marker({
+                    position: new window.naver.maps.LatLng(
+                      item.latitude,
+                      item.longitude
+                    ),
+                    map: map,
+                  });
+                }
+              });
+            }
           }
-        })
-        .catch((error) =>
-          console.error("API 요청 중에 문제가 발생했습니다:", error)
-        );
+        } catch (error) {
+          console.error("API 요청 중에 문제가 발생했습니다:", error);
+        }
+      };
+      fetchPost();
     };
 
     document.head.appendChild(script);

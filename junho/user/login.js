@@ -9,17 +9,18 @@ import "./styles.css";
 
 const { Title } = Typography;
 
-export default function Login({ setUserRole }) {
+export default function Login(props) {
+  const { userRole, setUserRole } = props;
   const [dong, setDong] = useState("");
   const [ho, setHo] = useState("");
   const [password, setPassword] = useState("");
   const [adminMode, setAdminMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navi = useNavigate();
-
-  const goMain = useCallback(() => {
-    navi("/");
-  }, [navi]);
+  
+  const navigate = useNavigate();
+  const goMain = () => {
+    navigate(userRole === "admin" ? "/admin" : userRole ==='user' ? "/main": {});
+  };
 
   const handleDongChange = (e) => {
     const { value } = e.target;
@@ -65,74 +66,70 @@ export default function Login({ setUserRole }) {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = useCallback(
-    async (event) => {
-      event.preventDefault();
-  
-      if (isSubmitting) return;
-  
-      setIsSubmitting(true);
-  
-      if (!dong || !ho || !password) {
-        Swal.fire("Oops...", "모든 칸을 입력해 주세요!", "warning");
-        setIsSubmitting(false);
-        return;
-      }
-  
-      try {
-        const response = await fetch(`${ip_address}/user/signin`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            dong: dong,
-            ho: ho,
-            pw: password,
-          }),
-        });
-  
-        const data = await response.json();
-  
-        // 응답 코드와 메시지에 따라 적절한 알림을 출력합니다.
-        if (data.status === 200) {
-          setUserRole(true);
-          goMain();
-        } else {
-          switch(data.status) {
-            case 400:
-              switch(data.error.errorCode) {
-                case 'E400':
-                  Swal.fire("Message", "필수 항목 미입력", "error");
-                  break;
-                case 'E401':
-                  Swal.fire("Message", "아이디 or 비밀번호 오류", "error");
-                  break;
-                case 'E402':
-                  Swal.fire("Message", "비밀번호 불일치", "error");
-                  break;
-                case 'E403':
-                  Swal.fire("Message", "등록되지 않은 사용자", "error");
-                  break;
-                default:
-                  Swal.fire("Message", data.message || "서버로부터 메시지를 받지 못했습니다.", "warning");
-              }
-              break;
-            default:
-              Swal.fire("Oops...", data.message || "서버로부터 메시지를 받지 못했습니다.", "error");
-          }
-        }
-  
-      } catch (error) {
-        Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
-        console.error(error);
-      }
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    if (!dong || !ho || !password) {
+      Swal.fire("Oops...", "모든 칸을 입력해 주세요!", "warning");
       setIsSubmitting(false);
-    },
-    [dong, ho, password, isSubmitting, setUserRole, goMain]
-  );
-  
+      return;
+    }
+
+    try {
+      const response = await fetch(`${ip_address}/user/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dong: dong,
+          ho: ho,
+          pw: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 200) {
+        setUserRole('admin');
+        goMain();
+      } else {
+        switch(data.status) {
+          case 400:
+            switch(data.error.errorCode) {
+              case 'E400':
+                Swal.fire("Message", "필수 항목 미입력", "error");
+                break;
+              case 'E401':
+                Swal.fire("Message", "아이디 or 비밀번호 오류", "error");
+                break;
+              case 'E402':
+                Swal.fire("Message", "비밀번호 불일치", "error");
+                break;
+              case 'E403':
+                Swal.fire("Message", "등록되지 않은 사용자", "error");
+                break;
+              default:
+                Swal.fire("Message", data.message || "서버로부터 메시지를 받지 못했습니다.", "warning");
+            }
+            break;
+          default:
+            Swal.fire("Oops...", data.message || "서버로부터 메시지를 받지 못했습니다.", "error");
+        }
+      }
+
+    } catch (error) {
+      Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
+      console.error(error);
+    }
+
+    setIsSubmitting(false);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Enter") {

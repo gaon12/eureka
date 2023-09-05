@@ -7,12 +7,9 @@ import NavBar from "./navbar";
 const { Title } = Typography;
 const { Content } = Layout;
 
-function createNotice(name) {
-  return { name };
-}
-
 function Main() {
   const [newsData, setNewsData] = useState([]);
+  const [noticesData, setNoticesData] = useState([]); // 공지사항 데이터를 저장할 상태 추가
 
   useEffect(() => {
     const fetchRSS = async () => {
@@ -26,7 +23,7 @@ function Main() {
             .map((newsItem) => ({
               title: newsItem.title[0],
               link: newsItem.link[0],
-              pubDate: newsItem.pubDate[0]
+              pubDate: newsItem.pubDate[0],
             }));
           setNewsData(newsArray);
         });
@@ -34,16 +31,19 @@ function Main() {
         console.error("Error fetching RSS feed", error);
       }
     };
-    fetchRSS();
-  }, []);
 
-  const rows = [
-    createNotice("공지사항1"),
-    createNotice("공지사항2"),
-    createNotice("공지사항3"),
-    createNotice("공지사항4"),
-    createNotice("공지사항5")
-  ].slice(0, 6);
+    const fetchNotices = async () => {
+      try {
+        const response = await axios.get("/notice"); // 공지사항 API 엔드포인트로 요청
+        setNoticesData(response.data.results); // 결과를 상태에 저장
+      } catch (error) {
+        console.error("Error fetching notices", error);
+      }
+    };
+
+    fetchRSS();
+    fetchNotices(); // 공지사항 가져오기 함수 호출
+  }, []);
 
   const newsColumns = [
     {
@@ -59,7 +59,7 @@ function Main() {
         >
           {text}
         </a>
-      )
+      ),
     },
     {
       title: "날짜",
@@ -67,12 +67,39 @@ function Main() {
       key: "pubDate",
       render: (text, record) => (
         <span key={record.pubDate}>{new Date(text).toLocaleDateString()}</span>
-      )
-    }
+      ),
+    },
+  ];
+
+  const noticesColumns = [
+    {
+      title: "제목",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <a
+          href={`/noticeboard/${record.notice_id}`} // 링크 설정
+          target="_blank"
+          rel="noopener noreferrer"
+          key={record.notice_id}
+        >
+          {text}
+        </a>
+      ),
+    },
+    {
+      title: "작성일",
+      dataIndex: "noti_w_date",
+      key: "noti_w_date",
+      render: (text, record) => (
+        <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
+      ),
+    },
   ];
 
   return (
     <>
+      <NavBar />
       <Layout style={{ padding: 0, margin: 0 }}>
         <Content>
           <div className="responsive-container">
@@ -81,7 +108,7 @@ function Main() {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 <Title level={2}>최신뉴스</Title>
@@ -90,7 +117,7 @@ function Main() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  더보기(제공: 대한민국 정책브리핑)
+                  더보기
                 </a>
               </div>
               <Divider />
@@ -99,7 +126,27 @@ function Main() {
                 columns={newsColumns}
                 pagination={false}
                 rowClassName="newsRow"
-                rowKey={(record) => record.link}
+                rowKey="link"
+              />
+            </Card>
+
+            <Card style={{ border: "none", marginTop: 20 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Title level={2}>공지사항</Title>
+              </div>
+              <Divider />
+              <Table
+                dataSource={noticesData} // 공지사항 데이터 사용
+                columns={noticesColumns} // 공지사항 칼럼 사용
+                pagination={false}
+                rowClassName="newsRow"
+                rowKey="notice_id"
               />
             </Card>
           </div>

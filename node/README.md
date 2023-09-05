@@ -999,6 +999,12 @@
 POST http://{address}:{port}/predict
 ```
 
+```JSON
+    {
+        "file": "filedata"
+    }
+```
+
 ```python
 if request.method == 'POST':
         f = request.files['file']

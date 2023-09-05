@@ -17,7 +17,8 @@
     15. [민원 작성](#민원-작성)
     16. [민원 조회](#민원-조회)
 * [오류 코드](#오류-코드)
-* [Flask 서버 API](#flask-서버-api)
+* [Flask 서버 API](#Flask-서버-API)
+* [Flask 오류 코드](#Flask 오류 코드)
 
 
 # Node.js 서버 API
@@ -1062,7 +1063,7 @@ def send_request(data_to_send, retries=3, config_path='config.json'):
             return Response(json.dumps(error_response), status=500, mimetype='application/json')
 ```
 
-# 오류 코드
+# Flask 오류 코드
 |HttpStatusCode|ErrorCode|ErrorMessage|
 |--|--|--|
 |400|F400|올바르지 않는 확장자|

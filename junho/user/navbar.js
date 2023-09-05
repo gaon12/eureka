@@ -16,8 +16,7 @@ const Navbar = () => {
     setIsModalOpen(true);
   };
 
-  const handleClick = async (event) => {
-    event.preventDefault();
+  const handleClick = async () => {
     try {
       const response = await fetch(`${ip_address}/user/signout`);
       if (response.ok) {
@@ -64,27 +63,26 @@ const Navbar = () => {
     };
   }, []);
 
-  const profileMenu = (
-    <Menu>
-      <Menu.Item key="0">
-        <a href="#" style={{ textDecoration: "none" }}>
-          Profile
-        </a>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <a href="#" style={{ textDecoration: "none" }}>
-          Settings
-        </a>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="3">
-        <a onClick={handleClick} style={{ textDecoration: "none" }}>
-          Logout
-        </a>
-      </Menu.Item>
-    </Menu>
-  );
-
+  const items = [
+    {
+      key:'0',
+      label:'profile',
+      onClick: ()=>{}
+  },
+  {
+    key:'1',
+    label:'Setting',
+    onClick:()=>{}
+  },
+  {
+    key:'2',
+    label:'Logout',
+    onClick:handleClick
+  },
+  ]
+const itemsProps ={
+  items,
+};
   const HorizontalMenu = ({ mode }) => (
     <Menu mode={mode}>
       <Menu.Item key="home">
@@ -157,7 +155,7 @@ const Navbar = () => {
             />
           )}
           <Dropdown
-            overlay={profileMenu}
+            menu={itemsProps}
             trigger={isMobile ? ["click"] : ["hover"]}
           >
             <Button type="text" icon={<UserOutlined />} />

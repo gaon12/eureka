@@ -95,7 +95,7 @@ export default function Login(props) {
       const data = await response.json();
 
       if (data.status === 200) {
-        setUserRole('admin');
+        setUserRole('user');
         goMain();
       } else {
         switch(data.status) {

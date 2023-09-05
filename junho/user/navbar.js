@@ -3,6 +3,7 @@ import { ip_address } from "../user/ipaddress";
 import { Link } from "react-router-dom";
 import { Menu, Dropdown, Button, Drawer, Modal } from "antd";
 import { UserOutlined, MenuOutlined } from "@ant-design/icons";
+import Cookies from 'js-cookie';
 
 import Swal from "sweetalert2";
 import Carregister from "../user/carregister.js";
@@ -25,6 +26,7 @@ const Navbar = () => {
         switch (status) {
           case 200:
             console.log("성공");
+            Cookies.remove('eureka'); // 로그인 쿠키 삭제
             window.location.href = "/"; // 200 메시지가 뜨면 '/'로 이동
             break;
           case 400:

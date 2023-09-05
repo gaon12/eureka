@@ -18,7 +18,7 @@
     16. [민원 조회](#민원-조회)
 * [오류 코드](#오류-코드)
 * [Flask 서버 API](#Flask-서버-API)
-* [Flask 오류 코드](#Flask 오류 코드)
+* [Flask 오류 코드](#Flask-오류-코드)
 
 
 # Node.js 서버 API

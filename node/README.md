@@ -1061,3 +1061,11 @@ def send_request(data_to_send, retries=3, config_path='config.json'):
             error_response = {"error": "Failed to get response from Node.js server"}
             return Response(json.dumps(error_response), status=500, mimetype='application/json')
 ```
+
+# 오류 코드
+|HttpStatusCode|ErrorCode|ErrorMessage|
+|--|--|--|
+|400|F400|올바르지 않는 확장자|
+|400|F401|번호판 인식 실패|
+|400|F402|있을 수 없는 용도기호|
+|500|F500|Node.js서버와의 연결 실패|

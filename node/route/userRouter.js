@@ -6,8 +6,32 @@ const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 const { isSignout } = require('../middleware/isSignout');
 
+/** /GET, 관리자 여부 판단 메서드 */
+router.get('/isAdmin', isSignin, async (req, res, next) => {
+    try {
+        const nickname = req.session.nickname.split('-');
+        const dong = nickname[0];
+        const ho = nickname[1];
+        const isAdmin = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
+
+        return res.json({
+            "status": 200,
+            "message": isAdmin[0][0].isAdmin
+        })
+    } catch (error) {
+        console.error(error);
+        return res.json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        })
+    }
+})
+
 /** /GET, 유저 정보 조회 메서드 */
-router.get('/info', isAdmin, async (req, res) => {
+router.get('/info', isAdmin, async (req, res, next) => {
     try {
         const [users] = await db.query('SELECT dong, ho, username, movein, phone1, phone2 FROM user WHERE isAdmin != 1');
 
@@ -31,7 +55,7 @@ router.get('/info', isAdmin, async (req, res) => {
  *  세션 파괴
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.get('/signout', isSignin, async (req, res) => {
+router.get('/signout', isSignin, async (req, res, next) => {
     try {
         if (req.session.is_logined) {
             await new Promise((resolve, reject) => {
@@ -154,7 +178,7 @@ router.post('/signin', isSignout, async (req, res, next) => {
  *  phone2 항목이 빈칸이면 NULL로 채움
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.post('/signup', isSignout, async (req, res) => {
+router.post('/signup', isSignout, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const username = req.body.username;

@@ -59,6 +59,7 @@ router.get('/signout', isSignin, async (req, res, next) => {
     try {
         if (req.session.is_logined) {
             await new Promise((resolve, reject) => {
+                res.clearCookie(process.env.SESSION_KEY);
                 req.session.destroy(err => {
                     if (err) 
                         reject(err);

@@ -35,5 +35,11 @@
   .ck-editor__editable {
     height: 400px;
   }
+
+  /*carregister.js css 코드*/
+  .ant-table-thead .ant-table-cell {
+    text-align: center !important;
+  }
+  
   
   

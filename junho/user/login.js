@@ -113,12 +113,15 @@ export default function Login(props) {
               case 'E403':
                 Swal.fire("Message", "등록되지 않은 사용자", "error");
                 break;
+              case 'E406':
+                Swal.fire("Message", "이미 로그인 되어 있음", "error");
+                break;  
               default:
-                Swal.fire("Message", data.message || "서버로부터 메시지를 받지 못했습니다.", "warning");
+                Swal.fire("Message", data.message || "서버로부터 메시지를 받지 못했습니다.", "error");
             }
             break;
           default:
-            Swal.fire("Oops...", data.message || "서버로부터 메시지를 받지 못했습니다.", "error");
+            Swal.fire("Oops...", data.message || "서버로부터 메시지를 받지 못했습니다.", "warning");
         }
       }
 

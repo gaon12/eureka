@@ -14,6 +14,7 @@ import {
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 import UploadAdapter from "./uploadAdapter";
 import { Url } from "../admin/url";
 import Header from "./Header";
@@ -24,12 +25,17 @@ const API_ENDPOINTS = {
   imageUpload: "https://api.eureka.uiharu.dev/img.php",
 };
 
-export default function WorkWrite() {
+function WorkWrite() {
   const [form] = Form.useForm();
   const [editorInstance, setEditorInstance] = useState(null);
   const { Content } = Layout;
   const { Title } = Typography;
   const { RangePicker } = DatePicker;
+
+  const go = useNavigate();
+  const navi= (path)=>{
+    go(path)
+  }
 
   const [dateValue, setDateValue] = useState([]);
 
@@ -169,3 +175,5 @@ export default function WorkWrite() {
     </>
   );
 }
+
+export default WorkWrite;

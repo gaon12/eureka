@@ -1,20 +1,25 @@
 import React, { useState, useCallback } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
-import { Card, Upload, Input, Modal, List } from "antd";
-import Header from "./Header";
+import { Card, Upload, Input, Modal,List } from "antd";
+
 
 export default function SearchCar() {
   const { Content } = Layout;
   const { Dragger } = Upload;
   const { Search } = Input;
   const [modalContent, setModalContent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
 
+  const handleOk = () => {
+    setModalOpen(false);
+  };
+  
   const onSearch = (value) => {
     setIsModalVisible(!isModalVisible);
     console.log({ isModalVisible: false });
-  };
+  }
   const handleFileUpload = async (options) => {
     const { file } = options;
     try {
@@ -52,9 +57,8 @@ export default function SearchCar() {
           </Modal>
         );
         setModalContent(modal);
-      } else {
-        {
-        }
+      } else{
+        {}
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -67,38 +71,35 @@ export default function SearchCar() {
   };
 
   return (
-    <>
-      <Header />
-      <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
-        <Card
-          title="Image Upload"
-          style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
-        >
-          <Dragger {...uploadProps}>
-            <div
-              style={{
-                height: "350px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-              }}
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibited from
-                uploading company data or other banned files.
-              </p>
-            </div>
-          </Dragger>
-        </Card>
-        {modalContent}
-      </Content>
-    </>
+    <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
+      <Card
+        title="Image Upload"
+        style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}
+      >
+        <Dragger {...uploadProps}>
+          <div
+            style={{
+              height: "350px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              uploading company data or other banned files.
+            </p>
+          </div>
+        </Dragger>
+      </Card>
+      {modalContent}
+    </Content>
   );
 }

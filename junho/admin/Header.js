@@ -13,8 +13,8 @@ import { Layout, Button, Modal, List } from "antd";
 import { useRecoilState } from "recoil";
 import { nCarDataState } from "./dataState";
 import { Url } from "../admin/url";
-export default function Header() {
 
+function Header() {
   const { Header } = Layout;
   const [btnPressed, setBtnPressed] = useState([false, false, false]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -241,3 +241,5 @@ export default function Header() {
     </Header>
   );
 }
+
+export default Header;

@@ -19,34 +19,44 @@ const Navbar = () => {
 
   const handleClick = async () => {
     try {
-      const response = await fetch(`${ip_address}/user/signout`);
+      const response = await fetch(`${ip_address}/user/signout`, {
+        method: 'GET', // GET 방식으로 변경
+        credentials: 'include' // 쿠키를 포함시키기 위한 설정
+      });
+
       if (response.ok) {
         const data = await response.json();
         const status = data.status;
+
         switch (status) {
           case 200:
-            console.log("성공");
-            Cookies.remove('eureka'); // 로그인 쿠키 삭제
-            window.location.href = "/"; // 200 메시지가 뜨면 '/'로 이동
+            console.log("로그아웃 성공");
+            Cookies.remove('eurekasessionkey'); // 로그인 쿠키 삭제
+            window.location.href = "/login"; // 로그인 페이지로 이동
             break;
+
           case 400:
-            console.log("정보 없음");
-            Swal.fire("오류", data.error.message, "error"); // 서버에서 반환하는 메시지를 사용
+            console.log("세션 정보 없음");
+            Swal.fire("오류", data.error.message, "error"); // 서버 에러 메시지
             break;
+
           case 500:
-            console.log("서버 오류");
-            Swal.fire("오류", data.error.message, "error"); // 서버에서 반환하는 메시지를 사용
+            console.log("서버 에러");
+            Swal.fire("오류", data.error.message, "error"); // 서버 에러 메시지
             break;
+
           default:
             console.log("알 수 없는 상태 코드:", status);
             Swal.fire("오류", "알 수 없는 오류가 발생했습니다.", "error");
+            break;
         }
       }
     } catch (error) {
-      console.log("Error fetching data:", error.message);
+      console.log("데이터 가져오는 중 오류:", error.message);
       Swal.fire("오류", "데이터를 가져오는 중 오류가 발생했습니다.", "error");
     }
   };
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -101,11 +111,6 @@ const itemsProps ={
             공지사항
           </Link>
         </Menu.Item>
-        <Menu.Item key="">
-          <Link to="/vote" style={{ textDecoration: "none" }}>
-            투표
-          </Link>
-        </Menu.Item>
         <Menu.Item key="complaint">
           <Link to="/noticeboardwrite" style={{ textDecoration: "none" }}>
             민원
@@ -113,8 +118,14 @@ const itemsProps ={
         </Menu.Item>
       </Menu.SubMenu>
       <Menu.SubMenu key="convenience" title="편의기능">
-        <Menu.Item key="news">최신뉴스</Menu.Item>
-        <Menu.Item key="disasterMsg">재난 문자</Menu.Item>
+        <Menu.Item key="news"><Link to="/news" style={{ textDecoration: "none" }}>
+        최신뉴스
+        </Link></Menu.Item>
+        <Menu.Item key="disasterMsg">
+        <Link to="/calamity" style={{ textDecoration: "none" }}>
+        재난문자
+        </Link>
+        </Menu.Item>
         <Menu.Item key="publicTransport">
           <Link to="/trash" style={{ textDecoration: "none" }}>
             주변 쓰레기통 정보

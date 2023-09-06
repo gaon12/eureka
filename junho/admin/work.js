@@ -73,7 +73,7 @@ export default function Work() {
       <Card style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
         <Title level={5}>업무일지</Title>
         <AllTable columns={workColumns} data={workData} />
-        <div style={{display:'flex', justifyContent:'flex-end',marginTop:'15px'}}><Button type="primary" onClick={()=>pathNavi('/workWrite')}>업무일지작성</Button></div>
+        <div style={{display:'flex', justifyContent:'flex-end',marginTop:'15px'}}><Button type="primary" onClick={()=>pathNavi('/WorkWrite')}>업무일지작성</Button></div>
       </Card>
     </Content>
     </>

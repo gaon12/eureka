@@ -11,8 +11,9 @@ import RegisterPage from "../user/sign";
 import Main from "../user/Main";
 import Noticeboard from "../user/noticeboard";
 import Noticeboardwrite from "../user/noticeboard";
-import Vote from "../user/vote";
 import Trash from "../user/trash";
+import Calamity from "../user/calamity";
+import News from "../user/news";
 import Admin from "../admin/Admin";
 import SearchCar from "../admin/SearchCar";
 import Article from "../admin/article";
@@ -20,7 +21,7 @@ import ParkInfo from "../admin/parkInfo";
 import UserInfo from "../admin/userInfo";
 import Notice from "../admin/notice";
 import Work from "../admin/work";
-import WorkWrite from "../admin/workWrite";
+import WorkWrite from "../admin/WorkWrite";
 
 export function App() {
   const [userRole, setUserRole] = useState("");
@@ -43,6 +44,7 @@ export function App() {
   }, [userRole]);
 
   return (
+    
     <div>
       <Routes>
         {userRole === "" && (
@@ -63,7 +65,8 @@ export function App() {
             <Route path="/noticeboard" element={<Noticeboard />} />
             <Route path="/noticeboardwrite" element={<Noticeboardwrite />} />
             <Route path="/trash" element={<Trash />} />
-            <Route path="/vote" element={<Vote />} />
+            <Route path="/calamity" element={<Calamity />} />
+            <Route path="/news" element={<News />} />
           </>
         )}
         {userRole === "admin" && (
@@ -76,7 +79,7 @@ export function App() {
             <Route path="/parkInfo" element={<ParkInfo />} />
             <Route path="/Notice" element={<Notice />} />
             <Route path="/work" element={<Work />} />
-            <Route path="/workWrite" element={<WorkWrite />} />
+            <Route path="/WorkWrite" element={<WorkWrite />} />
           </>
         )}
       </Routes>

@@ -6,12 +6,11 @@ const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 const { isSignout } = require('../middleware/isSignout');
 
-/** /GET, 관리자 여부 판단 메서드 */
-router.get('/isAdmin', isSignin, async (req, res, next) => {
+/** /POST, 관리자 여부 판단 메서드 */
+router.post('/isAdmin', async (req, res) => {
     try {
-        const nickname = req.session.nickname.split('-');
-        const dong = nickname[0];
-        const ho = nickname[1];
+        const dong = req.body.dong;
+        const ho = req.body.ho;
         const isAdmin = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
 
         return res.json({

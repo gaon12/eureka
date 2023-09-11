@@ -302,7 +302,16 @@
 ### 요청
 |HTTP|
 |--|
-|GET http://{address}:{port}/user/isAdmin/|
+|POST http://{address}:{port}/user/isAdmin/|
+#### 요청 헤더
+|헤더명|설명|
+|--|--|
+|Content-Type|바이너리 전송 형식<br>```Content-Type: application/json```|
+#### 요청 바디
+|필드명|필수 여부|타입|설명|
+|--|--|--|--|
+|dong|Yes|String|아파트 동|
+|ho|Yes|String|아파트 호|
 
 ### 응답
 #### 응답 바디

@@ -6,18 +6,26 @@ const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 const { isSignout } = require('../middleware/isSignout');
 
-/** /GET, 관리자 여부 판단 메서드 */
-router.get('/isAdmin', isSignin, async (req, res, next) => {
+/** /POST, 관리자 여부 판단 메서드 */
+router.post('/isAdmin', async (req, res) => {
     try {
-        const nickname = req.session.nickname.split('-');
-        const dong = nickname[0];
-        const ho = nickname[1];
+        const dong = req.body.dong;
+        const ho = req.body.ho;
         const isAdmin = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
-
-        return res.json({
-            "status": 200,
-            "message": isAdmin[0][0].isAdmin
-        })
+        if (isAdmin[0].length > 0) {
+            return res.json({
+                "status": 200,
+                "message": isAdmin[0][0].isAdmin
+            })
+        } else {
+            return res.json({
+                "status": 400,
+                "error": {
+                    "errorCode": "E403",
+                    "message": "등록되지 않은 사용자"
+                }
+            })
+        }
     } catch (error) {
         console.error(error);
         return res.json({

@@ -79,7 +79,7 @@ const Navbar = () => {
     {
       key:'0',
       label:'profile',
-      onClick: ()=>{}
+      onClick:()=>{}
   },
   {
     key:'1',
@@ -112,7 +112,7 @@ const itemsProps ={
           </Link>
         </Menu.Item>
         <Menu.Item key="complaint">
-          <Link to="/noticeboardwrite" style={{ textDecoration: "none" }}>
+          <Link to="/complaintwrite" style={{ textDecoration: "none" }}>
             민원
           </Link>
         </Menu.Item>
@@ -131,7 +131,11 @@ const itemsProps ={
             주변 쓰레기통 정보
           </Link>
         </Menu.Item>
-        <Menu.Item key="hospitalPharmacy">주변 병의원/약국정보</Menu.Item>
+        <Menu.Item key="hospital">
+          <Link to="/medicine" style={{ textDecoration: "none" }}>
+            약국
+          </Link>
+        </Menu.Item>
       </Menu.SubMenu>
     </Menu>
   );

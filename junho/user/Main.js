@@ -1,49 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { parseString } from "xml2js";
-import { Table, Typography, Divider, Card, Layout, Button } from "antd";
+import { Table, Typography, Divider, Card, Layout } from "antd";
 import NavBar from "./navbar";
+import { useNewsData } from "./useNewsData"; // 뉴스 데이터를 가져오는 훅
+import { useNoticesData } from "./useNoticesData"; // 공지사항 데이터를 가져오는 훅
 
 const { Title } = Typography;
 const { Content } = Layout;
 
 function Main() {
-  const [newsData, setNewsData] = useState([]);
-  const [noticesData, setNoticesData] = useState([]); // 공지사항 데이터를 저장할 상태 추가
-
-  useEffect(() => {
-    const fetchRSS = async () => {
-      try {
-        const response = await axios.get(
-          "https://apis.uiharu.dev/fixcors/api.php?url=https://www.korea.kr/rss/policy.xml"
-        );
-        parseString(response.data, (err, result) => {
-          const newsArray = result.rss.channel[0].item
-            .slice(0, 5)
-            .map((newsItem) => ({
-              title: newsItem.title[0],
-              link: newsItem.link[0],
-              pubDate: newsItem.pubDate[0],
-            }));
-          setNewsData(newsArray);
-        });
-      } catch (error) {
-        console.error("Error fetching RSS feed", error);
-      }
-    };
-
-    const fetchNotices = async () => {
-      try {
-        const response = await axios.get("/notice"); // 공지사항 API 엔드포인트로 요청
-        setNoticesData(response.data.results); // 결과를 상태에 저장
-      } catch (error) {
-        console.error("Error fetching notices", error);
-      }
-    };
-
-    fetchRSS();
-    fetchNotices(); // 공지사항 가져오기 함수 호출
-  }, []);
+  const newsData = useNewsData(); // 모든 뉴스 데이터 가져오기
+  const noticesData = useNoticesData(); // 모든 공지사항 데이터 가져오기
 
   const newsColumns = [
     {
@@ -74,7 +41,7 @@ function Main() {
   const noticesColumns = [
     {
       title: "제목",
-      dataIndex: "title",
+      dataIndex: "title", // API 응답에 따라 적절한 키를 지정해야 합니다.
       key: "title",
       render: (text, record) => (
         <a
@@ -89,7 +56,7 @@ function Main() {
     },
     {
       title: "작성일",
-      dataIndex: "noti_w_date",
+      dataIndex: "noti_w_date", // API 응답에 따라 적절한 키를 지정해야 합니다.
       key: "noti_w_date",
       render: (text, record) => (
         <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
@@ -122,7 +89,7 @@ function Main() {
               </div>
               <Divider />
               <Table
-                dataSource={newsData}
+                dataSource={newsData.slice(0, 5)} // 처음 5개의 뉴스 항목만 표시
                 columns={newsColumns}
                 pagination={false}
                 rowClassName="newsRow"
@@ -142,11 +109,11 @@ function Main() {
               </div>
               <Divider />
               <Table
-                dataSource={noticesData} // 공지사항 데이터 사용
-                columns={noticesColumns} // 공지사항 칼럼 사용
+                dataSource={noticesData.slice(0, 5)} // 처음 5개의 공지사항 항목만 표시
+                columns={noticesColumns}
                 pagination={false}
                 rowClassName="newsRow"
-                rowKey="notice_id"
+                rowKey="notice_id" // API 응답에 따라 적절한 키를 지정해야 합니다.
               />
             </Card>
           </div>

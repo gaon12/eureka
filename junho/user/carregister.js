@@ -81,16 +81,33 @@ export default function Carregister() {
       const data = await response.json();
       
       if (data.status === 201) {
-        Swal.fire("Success!", data.message, "success");
-      } else if (data.status === 400 && data.message === "이미 등록 된 차량") {
-        Swal.fire("Error!", data.message, "error");
+        Swal.fire("Success!", "차량 등록 성공", "success");
       } else {
-        Swal.fire("Error!", "등록 실패: " + (data.message || ""), "error");
+        switch (data.status) {
+          case 400:
+            switch (data.error?.errorCode) {
+              case "E411":
+                Swal.fire("Error!", "이미 등록된 차량입니다.", "warning");
+                break;
+              case "E412":
+                Swal.fire("Error!", "승인 대기 중인 차량입니다.", "warning");
+                break;
+              case "E404":
+                Swal.fire("Error!", "세션 정보가 없습니다.", "warning");
+                break;
+              default:
+                Swal.fire("Error!", data.error?.message || "알 수 없는 오류가 발생했습니다.", "error");
+            }
+            break;
+          default:
+            Swal.fire("Error!", "알 수 없는 오류가 발생했습니다.", "error");
+        }
       }
     } catch (error) {
       Swal.fire("Oops...", "서버와의 통신에 문제가 발생했습니다.", "error");
     }
   };
+  
   
   return (
     <>

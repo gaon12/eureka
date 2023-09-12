@@ -41,5 +41,8 @@
     text-align: center !important;
   }
   
-  
+  .news-table .ant-pagination {
+    text-align: center;
+    margin: 20px 0;
+  }
   

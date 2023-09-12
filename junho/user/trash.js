@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import { Table } from "antd";
 import NavBar from "./navbar";
 
 function Trash() {
   const mapRef = useRef(null);
+  const [map, setMap] = useState(null);
   const [clickedMarkers, setClickedMarkers] = useState([]);
-  const [map, setMap] = useState(null); 
 
   const columns = [
     {
@@ -16,17 +16,28 @@ function Trash() {
     },
   ];
 
+  const markerClickHandler = useCallback(
+    (item) => () => {
+      setClickedMarkers((prevMarkers) => [
+        item,
+        ...prevMarkers.slice(0, prevMarkers.length > 2 ? 2 : prevMarkers.length - 1),
+      ]);
+    },
+    []
+  );
+
   useEffect(() => {
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = "https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=l936h8b1w5";
+    script.src =
+      "https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=l936h8b1w5";
     script.onload = () => {
       const mapOptions = {
-        center: new window.naver.maps.LatLng(36.33911728370101, 127.4478382836177), // 중심 좌표를 정해진 위치로 설정
+        center: new window.naver.maps.LatLng(36.33911728370101, 127.4478382836177),
         zoom: 10,
       };
-      const newMap = new window.naver.maps.Map(mapRef.current, mapOptions);
-      setMap(newMap); 
+      const mapInstance = new window.naver.maps.Map(mapRef.current, mapOptions);
+      setMap(mapInstance);
     };
 
     document.head.appendChild(script);
@@ -58,23 +69,7 @@ function Trash() {
                 map: map,
               });
 
-              window.naver.maps.Event.addListener(marker, "click", function () {
-                if (clickedMarkers.length >= 3) {
-                  setClickedMarkers((prevMarkers) => [
-                    {
-                      road_address: item.road_address,
-                    },
-                    ...prevMarkers.slice(0, 2),
-                  ]);
-                } else {
-                  setClickedMarkers((prevMarkers) => [
-                    {
-                      road_address: item.road_address,
-                    },
-                    ...prevMarkers,
-                  ]);
-                }
-              });
+              window.naver.maps.Event.addListener(marker, "click", markerClickHandler(item));
             }
           });
         }
@@ -82,11 +77,11 @@ function Trash() {
       .catch((error) => {
         console.error("API 요청 중에 문제가 발생했습니다:", error);
       });
-  }, [map]);
+  }, [map, markerClickHandler]);
 
   return (
     <>
-       <NavBar />
+    <NavBar />
       <div
         style={{
           padding: "20px",
@@ -95,13 +90,16 @@ function Trash() {
           alignItems: "center",
         }}
       >
-        <div ref={mapRef} style={{ width: "70%", height: "70vh", marginBottom: "20px" }}></div>
+        <div
+          ref={mapRef}
+          style={{ width: "70%", height: "70vh", marginBottom: "20px" }}
+        ></div>
         <Table
           columns={columns}
           dataSource={clickedMarkers}
-          rowKey={(record) => `${record.road_address}`}
-          pagination={false}
-          style={{ width: "90%" }}
+          rowKey={(record) => record.road_address}
+          pagination={false} // 페이징 비활성화
+          style={{ width: '90%' }} // 가로 길이 90%로 설정
         />
       </div>
     </>

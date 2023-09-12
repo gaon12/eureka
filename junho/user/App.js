@@ -10,10 +10,11 @@ import Login from "../user/login";
 import RegisterPage from "../user/sign";
 import Main from "../user/Main";
 import Noticeboard from "../user/noticeboard";
-import Noticeboardwrite from "../user/noticeboard";
+import Complaintwrite from "../user/complaintwrite";
 import Trash from "../user/trash";
 import Calamity from "../user/calamity";
 import News from "../user/news";
+import Medicine from "../user/medicine";
 import Admin from "../admin/Admin";
 import SearchCar from "../admin/SearchCar";
 import Article from "../admin/article";
@@ -27,24 +28,19 @@ export function App() {
   const [userRole, setUserRole] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+
   useEffect(() => {
-    const storedUserRole = localStorage.getItem("userRole");
-    if (storedUserRole) {
-      setUserRole(storedUserRole);
-    }
+
     if (location.pathname === "/login") {
       setUserRole("");
     }
     if (location.pathname === "/") {
       navigate("/login");
     }
-  }, []); // location.pathname이 변경될 때만 실행
-  useEffect(() => {
-    localStorage.setItem("userRole", userRole);
-  }, [userRole]);
+  }, []); 
+
 
   return (
-    
     <div>
       <Routes>
         {userRole === "" && (
@@ -63,10 +59,11 @@ export function App() {
             <Route path="*" element={<Navigate to="/main" />} />
             <Route path="/main" element={<Main />} />
             <Route path="/noticeboard" element={<Noticeboard />} />
-            <Route path="/noticeboardwrite" element={<Noticeboardwrite />} />
+            <Route path="/complaintwrite" element={<Complaintwrite />} />
             <Route path="/trash" element={<Trash />} />
             <Route path="/calamity" element={<Calamity />} />
             <Route path="/news" element={<News />} />
+            <Route path="/medicine" element={<Medicine />} />
           </>
         )}
         {userRole === "admin" && (

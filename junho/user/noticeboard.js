@@ -1,40 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Table, Card, Pagination } from "antd";
+import { useNoticesData } from "./useNoticesData"; // 커스텀 훅 가져오기
 import NavBar from "./navbar";
-
-// 예시 데이터
-const data = [
-  { key: 1, title: "첫번째 공지", author: "관리자", date: "2023-07-31" },
-  { key: 2, title: "두번째 공지", author: "관리자", date: "2023-07-31" },
-  // ... 기타 데이터를 추가하실 수 있습니다
-];
 
 const columns = [
   {
     title: "No",
-    dataIndex: "key",
-    key: "key",
+    dataIndex: "notice_id", // API 응답에 따라 적절한 키를 지정해야 합니다.
+    key: "notice_id",
   },
   {
     title: "제목",
-    dataIndex: "title",
+    dataIndex: "title", // API 응답에 따라 적절한 키를 지정해야 합니다.
     key: "title",
   },
   {
     title: "작성자",
-    dataIndex: "author",
+    dataIndex: "author", // API 응답에 따라 적절한 키를 지정해야 합니다.
     key: "author",
   },
   {
     title: "작성일",
-    dataIndex: "date",
-    key: "date",
+    dataIndex: "noti_w_date", // API 응답에 따라 적절한 키를 지정해야 합니다.
+    key: "noti_w_date",
+    render: (text, record) => (
+      <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
+    ),
   },
 ];
 
 const Noticeboard = () => {
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(data.length / 10); // 10개의 항목을 표시할 경우. data의 길이에 따라 총 페이지를 계산합니다.
+  const noticesData = useNoticesData(); // 공지사항 데이터 가져오기
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(noticesData.length / itemsPerPage);
+
+  const [currentData, setCurrentData] = useState([]);
+
+  useEffect(() => {
+    const startIdx = (page - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    setCurrentData(noticesData.slice(startIdx, endIdx));
+  }, [page, noticesData]);
+
   return (
     <>
       <NavBar />
@@ -55,40 +63,30 @@ const Noticeboard = () => {
         <Card
           bordered
           style={{
-            boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.08)", // 그림자 효과 추가
-            display: "flex", // Flexbox 설정
-            flexDirection: "column", // 세로 방향으로 항목 정렬
+            boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.08)",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Table
-            dataSource={data}
+            dataSource={currentData}
             columns={columns}
-            pagination={false} // 내장된 페이징 기능을 꺼둡니다.
-          // ... (기존의 Table 설정)
+            pagination={false}
           />
           <div
             style={{
               marginTop: "15px",
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "center",
             }}
           >
-            <div
-              style={{
-                marginTop: "15px",
-                width: "100%",  // 이 부분을 추가했습니다.
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Pagination
-                current={page}
-                total={totalPages * 10}
-                onChange={(page) => setPage(page)}
-                showSizeChanger={false}
-                style={{ marginTop: "20px", textAlign: "center" }}
-              />
-            </div>
+            <Pagination
+              current={page}
+              total={totalPages * itemsPerPage}
+              onChange={(page) => setPage(page)}
+              showSizeChanger={false}
+              style={{ marginTop: "20px", textAlign: "center" }}
+            />
           </div>
         </Card>
       </div>

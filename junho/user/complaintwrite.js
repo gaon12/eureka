@@ -13,7 +13,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import UploadAdapter from "./uploadAdapter";
+import UploadAdapter from "../user/UploadAdapter";
 import { Url } from "../user/url";
 import NavBar from "../user/navbar";
 // 환경 변수로 관리하는 것이 좋습니다.

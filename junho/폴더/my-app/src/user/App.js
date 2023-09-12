@@ -23,32 +23,21 @@ import UserInfo from "../admin/userInfo";
 import Notice from "../admin/notice";
 import Work from "../admin/work";
 import WorkWrite from "../admin/WorkWrite";
-import Cookies from "js-cookie";
 
 export function App() {
-  const [userRole, setUserRole] = useState(() => {
-    // 앱이 로드될 때 쿠키에서 userRole을 가져옵니다.
-    return Cookies.get("userRole") || "";
-  });
-  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // userRole이 변경되면 메인 페이지로 이동합니다.
-    if (userRole === "user") {
-      navigate("/main");
-    }
-    if (userRole === "admin") {
-      navigate("/admin");
-    }
-  }, [userRole, navigate]);
 
-  useEffect(() => {
-    // 로그인하지 않은 사용자를 로그인 페이지로 리다이렉트합니다.
-    if (!userRole && location.pathname !== "/login" && location.pathname !== "/sign") {
+    if (location.pathname === "/login") {
+      setUserRole("");
+    }
+    if (location.pathname === "/") {
       navigate("/login");
     }
-  }, [userRole, location, navigate]);
+  }, []); 
 
 
   return (

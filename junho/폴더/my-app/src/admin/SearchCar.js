@@ -1,13 +1,12 @@
-import React, { useState, useCallback } from "react";
+import React, { useState} from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
-import { Card, Upload, Input, Modal,List } from "antd";
-
+import { Card, Upload, Modal,List } from "antd";
+import Header from "./Header";
 
 export default function SearchCar() {
   const { Content } = Layout;
   const { Dragger } = Upload;
-  const { Search } = Input;
   const [modalContent, setModalContent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
@@ -71,7 +70,9 @@ export default function SearchCar() {
   };
 
   return (
-    <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
+    <>
+    <Header/>
+<Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
       <Card
         title="Image Upload"
         style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}
@@ -101,5 +102,7 @@ export default function SearchCar() {
       </Card>
       {modalContent}
     </Content>
+    </>
+    
   );
 }

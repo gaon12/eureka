@@ -34,16 +34,18 @@ export default function AllTable(props) {
     }
     return item;
   });
+  const visibleData = transformData;
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
   return (
     <Table
       columns={columns}
-      dataSource={data}
+      dataSource={visibleData}
       onChange={onChange}
-      pagination={false}
+      pagination={true}
       rowKey={(record) => record.id}
+      
     ></Table>
   );
 }

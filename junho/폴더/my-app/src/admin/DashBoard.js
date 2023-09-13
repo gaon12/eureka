@@ -1,16 +1,20 @@
-import React,{useEffect, useState} from "react";
+import React,{useEffect} from "react";
 import { Layout, Typography, Card, Button } from "antd";
-import { Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import CTable from "../admin/cTable";
 import { Url } from "../admin/url";
 import { useRecoilState } from "recoil";
-import { userDataState, carDataState, articleDataState,nCarDataState} from "../admin/dataState";
+import { userDataState, carDataState, articleDataState,nCarDataState,userColumnsState,carColumnsState,articleColumnsState,workDataState} from "../admin/dataState";
 export default function DashBoard() {
   
   const [userData, setUserData] = useRecoilState(userDataState);
   const [carData, setCarData] = useRecoilState(carDataState);
   const [articleData, setArticlData] = useRecoilState(articleDataState);
   const [nCarData, setNcarData] = useRecoilState(nCarDataState);
+  const [userColumns, setUserColumns] = useRecoilState(userColumnsState);
+  const [articleColumns, setArticleColumns] = useRecoilState(articleColumnsState);
+  const [carColumns, setCarColums] = useRecoilState(carColumnsState);
+  const [workData, setWorkData] = useRecoilState(workDataState);
   const { Title } = Typography;
   const { Content } = Layout;
   
@@ -18,75 +22,6 @@ export default function DashBoard() {
   const pathNavi = (path)=>{
     navi(path)
   };
-  
-  const userColumns = [
-    {
-      title: "회원아이디",
-      render: (text, carData) => `${carData.dong}동 ${carData.ho}호`,
-    },
-    {
-      title: "이름",
-      dataIndex: "username",
-    },
-    {
-      title: "휴대폰번호",
-      dataIndex: "phone1",
-      render:(text) =>{
-        const trnasformPhon1 = text.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-        return trnasformPhon1
-      }
-    },
-    {
-      title: "전입일",
-      dataIndex: "movein",
-      render: (text) => {
-        const date = new Date(text);
-        const formattedDate = date.toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
-        return formattedDate;
-    },
-  }
-  ];
-  
-  const articleColumns = [
-    {
-      title: "✨",
-      dataIndex: "noti_category",
-    },
-    {
-      title: "제목",
-      dataIndex: "title",
-    },
-    {
-      title: "내용",
-      dataIndex: "summary",
-    },
-    {
-      title: "작성일",
-      dataIndex: "noti_w_date",
-    },
-  ];
-  const carColumns = [
-    {
-      title: "차량번호",
-      dataIndex: "car_number",
-    },
-    {
-      title: "외부차량",
-      dataIndex: "guest_car",
-    },
-    {
-      title: "전기차",
-      dataIndex: "electric_car",
-    },
-    {
-      title: "장애차량",
-      dataIndex: "disabled_car",
-    },
-  ];
   
   useEffect(()=>{ 
     async function fetchData(){
@@ -101,6 +36,13 @@ export default function DashBoard() {
         console.log('rCarData:', rCarData);
         setCarData(rCarData.results.rcars);
         setNcarData(rCarData.results.nrcars);
+        const articleResponse = await fetch(`${Url}/complaint`)
+        const rarticleData = await articleResponse.json();
+        setArticlData(rarticleData.results);
+        console.log('artcleData', articleData);
+        const workResponse = await fetch(`${Url}/work`)
+        const rWorkData = await workResponse.json();
+        setWorkData(rWorkData.results);
         
       }
       catch(error){
@@ -114,7 +56,7 @@ export default function DashBoard() {
   return (
     <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
       <Card style={{boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}>
-        <Title level={5}>신규회원가입 5건 목록</Title>
+        <Title level={5}>신규회원 5건 목록</Title>
         <div
           style={{
             backgroundColor: "#eaeaea",
@@ -129,7 +71,7 @@ export default function DashBoard() {
         <div style={{display:'flex', justifyContent:'flex-end',marginTop:'15px'}}><Button type="primary" style={{width:'161.84px'}} onClick={() => pathNavi('/userTable')}>회원 전체보기</Button></div>
       </Card>
       <Card style={{marginTop:'24px',boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}>
-        <Title level={5}>최근게시물</Title>
+        <Title level={5}>최근 민원</Title>
         <CTable columns={articleColumns} data={articleData} />
         <div style={{display:'flex', justifyContent:'flex-end',marginTop:'15px'}}><Button type="primary" style={{width:'161.84px'}} onClick={()=>pathNavi('/article')}>최근게시물 더보기</Button></div>
       </Card>

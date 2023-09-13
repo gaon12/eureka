@@ -58,8 +58,9 @@ export default function Notice() {
       };
       console.log(payload);
       const response = await fetch(API_ENDPOINTS.publish, {
+        headers:{"Content-Type":"application/json"},
         method: "POST",
-        body: payload,
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

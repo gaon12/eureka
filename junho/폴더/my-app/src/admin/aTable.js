@@ -43,9 +43,10 @@ export default function AllTable(props) {
       columns={columns}
       dataSource={visibleData}
       onChange={onChange}
-      pagination={true}
+      pagination={{
+        position: 'default',
+      }}
       rowKey={(record) => record.id}
-      
     ></Table>
   );
 }

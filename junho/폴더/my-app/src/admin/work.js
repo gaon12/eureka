@@ -2,7 +2,7 @@ import { Layout, Typography, Card, Button } from "antd";
 import { useRecoilState } from "recoil";
 import { workDataState,workColumnsStata } from "./dataState";
 import AllTable from "../admin/aTable";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 
 export default function Work() {

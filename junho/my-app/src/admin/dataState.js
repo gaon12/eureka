@@ -19,6 +19,10 @@ export const userDataState = atom({
     movein:'23-08-25',
   }],
 });
+export const userRoleState= atom({
+  key:'userRoleState',
+  default:''
+})
 
 export const carDataState = atom({
   key: "carDataState",

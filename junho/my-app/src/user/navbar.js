@@ -3,18 +3,25 @@ import { ip_address } from "../user/ipaddress";
 import { Link } from "react-router-dom";
 import { Menu, Dropdown, Button, Drawer, Modal } from "antd";
 import { UserOutlined, MenuOutlined } from "@ant-design/icons";
-import Cookies from 'js-cookie';
+import { useNavigate } from "react-router-dom";
 
 import Swal from "sweetalert2";
 import Carregister from "../user/carregister.js";
+import { useRecoilState } from "recoil";
+import { userRoleState } from "../admin/dataState";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [userRole, setUserRole] = useRecoilState(userRoleState)
   const showModal = () => {
     setIsModalOpen(true);
+  };
+  const navigate = useNavigate();
+  const logout = () => {
+    setUserRole(""); // 상태를 비웁니다
+    navigate("/login"); // 로그인 페이지로 리디렉션합니다
   };
 
   const handleClick = async () => {
@@ -31,8 +38,7 @@ const Navbar = () => {
         switch (status) {
           case 200:
             console.log("로그아웃 성공");
-            Cookies.remove('eurekasessionkey'); // 로그인 쿠키 삭제
-            window.location.href = "/login"; // 로그인 페이지로 이동
+            logout();
             break;
 
           case 400:
@@ -131,7 +137,12 @@ const itemsProps ={
             주변 쓰레기통 정보
           </Link>
         </Menu.Item>
-        <Menu.Item key="hospital">
+        <Menu.Item key="TreatArea">
+          <Link to="/hospitals" style={{ textDecoration: "none" }}>
+            병의원
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="medical">
           <Link to="/medicine" style={{ textDecoration: "none" }}>
             약국
           </Link>

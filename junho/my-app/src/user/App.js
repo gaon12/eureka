@@ -15,6 +15,7 @@ import Trash from "../user/trash";
 import Calamity from "../user/calamity";
 import News from "../user/news";
 import Medicine from "../user/medicine";
+import Hospitals from "../user/hospitals";
 import Admin from "../admin/Admin";
 import SearchCar from "../admin/SearchCar";
 import Article from "../admin/article";
@@ -22,27 +23,52 @@ import ParkInfo from "../admin/parkInfo";
 import UserInfo from "../admin/userInfo";
 import Notice from "../admin/notice";
 import Work from "../admin/work";
-import WorkWrite from "../admin/workWrite";
+import {userRoleState} from "../admin/dataState"
+import { ip_address } from './ipaddress';
+import WorkWrite from "../admin/WorkWrite";
+import { useRecoilState } from "recoil";
 
 export function App() {
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useRecoilState(userRoleState);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-
-    if (location.pathname === "/login") {
-      setUserRole("");
-    }
     if (location.pathname === "/") {
-      navigate("/login");
+      if (userRole === "user") {
+        navigate("/main");
+      } else if (userRole === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/login");
+      }
     }
-  }, []); 
+  }, [location, navigate, userRole]);
 
+  useEffect(() => {
+    fetch(`${ip_address}/user/auth`, {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 200) {
+          if (data.message === 0) {
+            setUserRole("user"); // 일반 사용자
+          } else if (data.message === 1) {
+            setUserRole("admin"); // 관리자
+          }
+        } else {
+          setUserRole(""); // 로그인하지 않은 상태 또는 오류 상태
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  }, []);
+  
 
   return (
     <div>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
         {userRole === "" && (
           <>
             <Route path="*" element={<Navigate to="/login" />} />
@@ -64,6 +90,7 @@ export function App() {
             <Route path="/calamity" element={<Calamity />} />
             <Route path="/news" element={<News />} />
             <Route path="/medicine" element={<Medicine />} />
+            <Route path="/hospitals" element={<Hospitals />} />
           </>
         )}
         {userRole === "admin" && (

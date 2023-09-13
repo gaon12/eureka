@@ -65,23 +65,26 @@ export default function Login(props) {
       );
       return;
     }
-  
+
     if (value === "0000") {
       try {
         const response = await fetch(`${ip_address}/user/isAdmin/`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ dong, ho: value }), // 현재 동과 호 값을 전송
         });
         const data = await response.json();
-    
+
         console.log("동: ", dong);
         console.log("호: ", value);
-        console.log("관리자 체크 여부: ", data.message === 1 ? "관리자" : "관리자 아님");
+        console.log(
+          "관리자 체크 여부: ",
+          data.message === 1 ? "관리자" : "관리자 아님"
+        );
         console.log("서버 응답: ", JSON.stringify(data, null, 2)); // 서버 응답을 콘솔에 JSON 형식으로 출력
-    
+
         if (data.status === 200 && data.message === 1) {
           setAdminMode(true);
         } else {
@@ -94,9 +97,9 @@ export default function Login(props) {
       } catch (error) {
         console.error("관리자 확인 중 오류가 발생했습니다.", error);
       }
-    }   
+    }
   };
-  
+
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
@@ -170,6 +173,8 @@ export default function Login(props) {
     } catch (error) {
       Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
       console.error(error);
+    } finally {
+      setIsSubmitting(false); // 요청이 완료된 후에 isSubmitting 상태를 false로 변경
     }
   };
 
@@ -186,7 +191,6 @@ export default function Login(props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleSubmit]);
-
 
   const inputStyle = {
     width: "375px", // 기본 PC 크기
@@ -243,7 +247,11 @@ export default function Login(props) {
 
         <Row gutter={[10, 16]} justify="center" style={{ marginTop: "20px" }}>
           <Col>
-            <Button type="primary" onClick={handleSubmit}>
+            <Button
+              type="primary"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
               로그인
             </Button>
           </Col>

@@ -16,6 +16,7 @@ export default function Login(props) {
   const [password, setPassword] = useState("");
   const [adminMode, setAdminMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [disableLoginButton, setDisableLoginButton] = useState(false);
 
   const navigate = useNavigate();
 
@@ -25,23 +26,39 @@ export default function Login(props) {
     );
   };
 
-  const handleDongChange = (e) => {
+
+  const handleDongChange = async (e) => {
     const { value } = e.target;
-    if (/^[0-9]*$/.test(value)) {
-      setDong(value);
-    } else {
-      Swal.fire(
-        "Oops...",
-        "'동' 입력이 잘못되었습니다. 입력값은 숫자여야 합니다.",
-        "error"
-      );
-    }
-    if (/(--|;|'|"|=|OR|AND)/i.test(value)) {
-      Swal.fire(
-        "Security Alert...",
-        "SQL 인젝션 공격을 시도하는 입력이 감지되었습니다.",
-        "error"
-      );
+    setDong(value);
+
+    if (ho === "0000") {
+      try {
+        const response = await fetch(`${ip_address}/user/isAdmin/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ dong: value, ho }), // 현재 동과 호 값을 전송
+        });
+        const data = await response.json();
+
+        console.log("서버 응답: ", JSON.stringify(data, null, 2)); // 서버 응답을 콘솔에 JSON 형식으로 출력
+
+        if (data.status === 200 && data.message === 1) {
+          setAdminMode(true);
+          setDisableLoginButton(false);
+        } else {
+          setAdminMode(false);
+          setDisableLoginButton(true);
+          // Swal.fire(
+          //   "Access Denied...",
+          //   "관리자만 관리자 모드를 활성화할 수 있습니다.",
+          //   "error"
+          // );
+        }
+      } catch (error) {
+        console.error("관리자 확인 중 오류가 발생했습니다.", error);
+      }
     }
   };
 
@@ -65,8 +82,17 @@ export default function Login(props) {
       );
       return;
     }
+
+    if (/(--|;|'|"|=|OR|AND)/i.test(value)) {
+      Swal.fire(
+        "Security Alert...",
+        "SQL 인젝션 공격을 시도하는 입력이 감지되었습니다.",
+        "error"
+      );
+      return;
+    }
   
-    if (value === "0000") {
+     if (value === "0000") {
       try {
         const response = await fetch(`${ip_address}/user/isAdmin/`, {
           method: 'POST',
@@ -76,15 +102,15 @@ export default function Login(props) {
           body: JSON.stringify({ dong, ho: value }), // 현재 동과 호 값을 전송
         });
         const data = await response.json();
-    
-        console.log("동: ", dong);
-        console.log("호: ", value);
-        console.log("관리자 체크 여부: ", data.message === 1 ? "관리자" : "관리자 아님");
+
         console.log("서버 응답: ", JSON.stringify(data, null, 2)); // 서버 응답을 콘솔에 JSON 형식으로 출력
-    
+
         if (data.status === 200 && data.message === 1) {
           setAdminMode(true);
+          setDisableLoginButton(false);
         } else {
+          setAdminMode(false);
+          setDisableLoginButton(true);
           Swal.fire(
             "Access Denied...",
             "관리자만 관리자 모드를 활성화할 수 있습니다.",
@@ -94,7 +120,10 @@ export default function Login(props) {
       } catch (error) {
         console.error("관리자 확인 중 오류가 발생했습니다.", error);
       }
-    }   
+    } else {
+      setAdminMode(false);
+      setDisableLoginButton(false);
+    }
   };
   
   const handlePasswordChange = (e) => {
@@ -132,6 +161,7 @@ export default function Login(props) {
       if (data.status === 200) {
         setUserRole(adminMode ? "admin" : "user");
         goMain();
+        console.log(userRole);
       } else {
         switch (data.status) {
           case 400:
@@ -171,6 +201,8 @@ export default function Login(props) {
       Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
       console.error(error);
     }
+
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -186,7 +218,6 @@ export default function Login(props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleSubmit]);
-
 
   const inputStyle = {
     width: "375px", // 기본 PC 크기
@@ -243,7 +274,7 @@ export default function Login(props) {
 
         <Row gutter={[10, 16]} justify="center" style={{ marginTop: "20px" }}>
           <Col>
-            <Button type="primary" onClick={handleSubmit}>
+            <Button type="primary" onClick={handleSubmit} disabled={disableLoginButton}>
               로그인
             </Button>
           </Col>

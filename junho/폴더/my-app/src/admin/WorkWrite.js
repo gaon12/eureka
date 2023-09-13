@@ -81,7 +81,7 @@ function WorkWrite() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.status ===201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
         navi("/work");
       } else {
@@ -121,12 +121,6 @@ function WorkWrite() {
           <Form form={form} layout="vertical" style={{ padding: "20px" }}>
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item
-                  name="title"
-                  rules={[{ required: true, message: "제목을 입력해주세요!" }]}
-                >
-                  <Input placeholder="제목을 입력하세요" />
-                </Form.Item>
                 <Form.Item>
                   <RangePicker
                     showTime={{

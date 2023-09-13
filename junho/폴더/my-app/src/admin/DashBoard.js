@@ -42,7 +42,7 @@ export default function DashBoard() {
         console.log('artcleData', articleData);
         const workResponse = await fetch(`${Url}/work`)
         const rWorkData = await workResponse.json();
-        setWorkData(rWorkData.results);
+        setWorkData(rWorkData.results)
         
       }
       catch(error){

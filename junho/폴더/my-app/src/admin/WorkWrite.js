@@ -62,16 +62,17 @@ function WorkWrite() {
       const content = editorInstance.getData();
 
       const payload = {
-        // content: content,
-        content: stripHTMLTags(content),
         start: dateValue[0],
         end: dateValue[1],
+        content: stripHTMLTags(content),
+        content2: content,
       };
       console.log(payload);
 
       const response = await fetch(API_ENDPOINTS.publish, {
+        headers:{"Content-Type":"application/json"},
         method: "POST",
-        body: payload,
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -82,7 +83,7 @@ function WorkWrite() {
 
       if (data.success) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
-        navi("/admin");
+        navi("/work");
       } else {
         Swal.fire("Error", "게시물 등록에 실패했습니다!", "error");
       }

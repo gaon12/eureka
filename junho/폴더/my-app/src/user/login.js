@@ -85,7 +85,6 @@ export default function Login(props) {
         if (data.status === 200 && data.message === 1) {
           setAdminMode(true);
         } else {
-          setAdminMode(false);
           Swal.fire(
             "Access Denied...",
             "관리자만 관리자 모드를 활성화할 수 있습니다.",
@@ -95,9 +94,7 @@ export default function Login(props) {
       } catch (error) {
         console.error("관리자 확인 중 오류가 발생했습니다.", error);
       }
-    } else {
-      setAdminMode(false);
-    }    
+    }   
   };
   
   const handlePasswordChange = (e) => {
@@ -174,8 +171,6 @@ export default function Login(props) {
       Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
       console.error(error);
     }
-
-    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -192,13 +187,6 @@ export default function Login(props) {
     };
   }, [handleSubmit]);
 
-  useEffect(() => {
-    if (ho === "0000") {
-      setAdminMode(true);
-    } else {
-      setAdminMode(false);
-    }
-  }, [ho]);
 
   const inputStyle = {
     width: "375px", // 기본 PC 크기

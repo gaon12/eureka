@@ -22,7 +22,7 @@ import ParkInfo from "../admin/parkInfo";
 import UserInfo from "../admin/userInfo";
 import Notice from "../admin/notice";
 import Work from "../admin/work";
-import WorkWrite from "../admin/WorkWrite";
+import WorkWrite from "../admin/workWrite";
 
 export function App() {
   const [userRole, setUserRole] = useState("");

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { Card, Upload, Input, Modal,List } from "antd";
-
+import Header from "./Header";
 
 export default function SearchCar() {
   const { Content } = Layout;
@@ -71,7 +71,10 @@ export default function SearchCar() {
   };
 
   return (
+    <>
+      <Header/>
     <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
+      
       <Card
         title="Image Upload"
         style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}
@@ -101,5 +104,7 @@ export default function SearchCar() {
       </Card>
       {modalContent}
     </Content>
+    </>
+    
   );
 }

@@ -1,5 +1,0 @@
-# node.js 모듈 파일
-/node_modules
-
-# DB 커넥션, API 키
-.env

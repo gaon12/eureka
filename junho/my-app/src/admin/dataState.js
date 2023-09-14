@@ -256,3 +256,7 @@ export const workColumnsStata = atom({
   ]
 }
 )
+export const noticeDataState = atom({
+  key:'noticeDataState',
+  default:[]
+})

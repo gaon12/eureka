@@ -4,12 +4,14 @@ import {
   Navigate,
   useLocation,
   useNavigate,
+
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Login from "../user/login";
 import RegisterPage from "../user/sign";
 import Main from "../user/Main";
 import Noticeboard from "../user/noticeboard";
+import Noticepage from "../user/noticepage"
 import Complaintwrite from "../user/complaintwrite";
 import Trash from "../user/trash";
 import Calamity from "../user/calamity";
@@ -27,12 +29,14 @@ import {userRoleState} from "../admin/dataState"
 import { ip_address } from './ipaddress';
 import WorkWrite from "../admin/WorkWrite";
 import { useRecoilState } from "recoil";
+import { useNoticesData } from "./useNoticesData";
 
 export function App() {
   const [userRole, setUserRole] = useRecoilState(userRoleState);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const noticesData = useNoticesData();
+   
   useEffect(() => {
     if (location.pathname === "/") {
       if (userRole === "user") {
@@ -84,7 +88,8 @@ export function App() {
           <>
             <Route path="*" element={<Navigate to="/main" />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/noticeboard" element={<Noticeboard />} />
+            <Route path="/noticeboard" element={<Noticeboard  noticesData={noticesData}/>} />
+            <Route path='/noticeboard/:notice_id' element={<Noticepage noticesData={noticesData}/>} />
             <Route path="/complaintwrite" element={<Complaintwrite />} />
             <Route path="/trash" element={<Trash />} />
             <Route path="/calamity" element={<Calamity />} />

@@ -82,16 +82,6 @@ const Navbar = () => {
   }, []);
 
   const items = [
-    {
-      key:'0',
-      label:'profile',
-      onClick:()=>{}
-  },
-  {
-    key:'1',
-    label:'Setting',
-    onClick:()=>{}
-  },
   {
     key:'2',
     label:'Logout',

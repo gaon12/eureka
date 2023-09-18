@@ -30,7 +30,8 @@ import { ip_address } from './ipaddress';
 import WorkWrite from "../admin/WorkWrite";
 import { useRecoilState } from "recoil";
 import { useNoticesData } from "./useNoticesData";
-
+import WorkContent from "../admin/workContent";
+import ArticleContent from "../admin/articleContent";
 export function App() {
   const [userRole, setUserRole] = useRecoilState(userRoleState);
   const location = useLocation();
@@ -105,9 +106,12 @@ export function App() {
             <Route path="/searchCar" element={<SearchCar />} />
             <Route path="/userTable" element={<UserInfo />} />
             <Route path="/article" element={<Article />} />
+            <Route path="/article/:article_id" element={<ArticleContent />} />
             <Route path="/parkInfo" element={<ParkInfo />} />
             <Route path="/Notice" element={<Notice />} />
             <Route path="/work" element={<Work />} />
+            <Route path="/work/:work_id" element={<WorkContent />} />
+
             <Route path="/WorkWrite" element={<WorkWrite />} />
           </>
         )}

@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-
+import { Link } from "react-router-dom";
 export const dataState = atom({
   key: "dataState",
   default: new Array(5).fill().map((_, i) => ({
@@ -116,12 +116,13 @@ export const userColumnsState =atom({
     {
       title: "이름",
       dataIndex: "username",
+      key:'username'
 
     },
     {
       title: "휴대폰번호",
       dataIndex: "phone1",
-
+      key:'phone1',
       render:(text) =>{
         const trnasformPhon1 = text.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
         return trnasformPhon1
@@ -131,6 +132,7 @@ export const userColumnsState =atom({
     {
       title: "전입일",
       dataIndex: "movein",
+      key:'movein',
    
       render: (text) => {
         const date = new Date(text);
@@ -150,22 +152,28 @@ export const articleColumnsState = atom({
     {
       title: "✨",
       dataIndex: "complaint_id",
+      key:"complaint_id"
     },
     {
       title: "제목",
       dataIndex: "title",
-      render:(text)=>
-        <a>{text}</a>
+      key:'title',
+      render:(text,record,index)=>(
+        <Link to={`/article/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>
+      )
+      
       
     },
     {
       title: "내용",
       dataIndex: "content",
-      render:(text)=> <a>{text}</a>
+      key:'content',
+      render:(text,record,index)=> (<Link to={`/article/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
     },
     {
       title: "작성일",
       dataIndex: "created_datetime",
+      key:'created_datetime',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString('ko-KR', {
@@ -176,6 +184,7 @@ export const articleColumnsState = atom({
         return formattedDate;
     },
   }
+  
   ]
 })
 export const carColumnsState = atom({
@@ -184,18 +193,22 @@ export const carColumnsState = atom({
     {
       title: "차량번호",
       dataIndex: "car_number",
+      key:"car_number"
     },
     {
       title: "외부차량",
       dataIndex: "guest_car",
+      key:"guest_car"
     },
     {
       title: "전기차",
       dataIndex: "electric_car",
+      key:'electric_car'
     },
     {
       title: "장애차량",
       dataIndex: "disabled_car",
+      key:'disabled_car'
     },
   ]
 })
@@ -207,16 +220,21 @@ export const workColumnsStata = atom({
     {
       title: "작성자",
       dataIndex: "w_w_id",
+      key: "w_w_id",
+      render:(text,record,index)=>(<Link to={`/work/${index}`}>{text}</Link>)
     },
     {
       title: "업무 일지 내용",
       dataIndex: "w_content",
-      render:(text)=><a>{text}</a>
+      key: "w_content",
+      render:(text,record,index)=>(<Link to={`/work/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
+      
       
     },
     {
       title: "업무 시작 일시",
       dataIndex: "w_start",
+      key: "w_start",
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {
@@ -230,6 +248,7 @@ export const workColumnsStata = atom({
     {
       title: "업무 종료 일시",
       dataIndex: "w_end",
+      key:'w_end',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {
@@ -243,6 +262,7 @@ export const workColumnsStata = atom({
     {
       title: "작성일",
       dataIndex: "w_w_datetime",
+      key:'w_w_datetime',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   HomeOutlined,
   BellOutlined,
@@ -111,7 +111,7 @@ function Header() {
   
   return (
     <Header style={{ display: "flex", position: "sticky", zIndex: 1, top: 0 }}>
-      <div
+      <Link to='/admin'><div
         style={{
           width: "220px",
           height: "50px",
@@ -120,7 +120,7 @@ function Header() {
         }}
       >
         ADMINISTRATOR
-      </div>
+      </div></Link>
       <ul style={{ display: "flex", marginLeft: "auto" }}>
         <li style={{ color: "#fff",  }}>
           <Button

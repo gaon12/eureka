@@ -1,7 +1,10 @@
-import { Table } from "antd";
+import { Table,Pagination } from "antd";
+import React, { useState } from "react";
 export default function AllTable(props) {
-    
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
   const { columns, data } = props;
+  const totalPages = Math.ceil(data.length / itemsPerPage);
   const getCategoryName = (categoryNumber) => {
     switch (categoryNumber) {
       case 1:
@@ -38,15 +41,33 @@ export default function AllTable(props) {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
+  
   return (
+    <>
     <Table
       columns={columns}
       dataSource={visibleData}
       onChange={onChange}
-      pagination={{
-        position: 'default',
-      }}
+      pagination={false}
       rowKey={(record) => record.id}
     ></Table>
+     <div
+            style={{
+              marginTop: "15px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Pagination
+              current={page}
+              total={totalPages * itemsPerPage}
+              onChange={(page) => setPage(page)}
+              showSizeChanger={false}
+              style={{ marginTop: "20px", textAlign: "center" }}
+            />
+          </div>
+    </>
+    
+    
   );
 }

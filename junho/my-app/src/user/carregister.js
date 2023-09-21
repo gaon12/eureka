@@ -68,7 +68,6 @@ export default function Carregister() {
     };
   
     // Payload를 콘솔에 JSON 형식으로 출력
-    console.log(JSON.stringify(payload, null, 2));
   
     try {
       const response = await fetch(`${ip_address}/car/regist`, {

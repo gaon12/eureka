@@ -46,7 +46,6 @@ export default function Notice() {
         content2: content,
       };
       
-      console.log(JSON.stringify(payload));
   
       const response = await fetch(API_ENDPOINTS.publish, {
         method: "POST",
@@ -88,7 +87,6 @@ export default function Notice() {
     }
 
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
-      console.log(API_ENDPOINTS.imageUpload);
       return new UploadAdapter({ loader, url: API_ENDPOINTS.imageUpload });
     };
   };

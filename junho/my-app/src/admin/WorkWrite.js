@@ -41,10 +41,10 @@ function WorkWrite() {
 
   const onChange = (value, dateString) => {
     setDateValue(dateString);
-    console.log(dateValue);
+ 
   };
   const onOk = (value) => {
-    console.log("onOk: ", value);
+
   };
   const stripHTMLTags = (str) => {
     if (typeof str !== "string") {
@@ -67,7 +67,6 @@ function WorkWrite() {
         content: stripHTMLTags(content),
         content2: content,
       };
-      console.log(payload);
 
       const response = await fetch(API_ENDPOINTS.publish, {
         headers:{"Content-Type":"application/json"},
@@ -101,7 +100,6 @@ function WorkWrite() {
 
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       // 실제 URL을 사용하도록 수정
-      console.log(API_ENDPOINTS.imageUpload);
       return new UploadAdapter({ loader, url: API_ENDPOINTS.imageUpload });
     };
   };

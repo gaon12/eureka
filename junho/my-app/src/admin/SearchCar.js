@@ -3,6 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { Layout, Spin } from "antd";
 import { Card, Upload, Modal } from "antd";
 import Header from "./Header";
+import Swal from 'sweetalert2';
 
 export default function SearchCar() {
   const { Content } = Layout;
@@ -49,9 +50,19 @@ export default function SearchCar() {
         setIsModalVisible(true);
       } else {
         console.error("Response not okay");
+        Swal.fire({
+          icon: 'error',
+          title: '업로드 실패',
+          text: '파일 업로드에 실패했습니다. 다시 시도해 주세요.',
+        });
       }
     } catch (error) {
       console.error("Error uploading file:", error);
+      Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: '파일 업로드 중 오류가 발생했습니다. 다시 시도해 주세요.',
+      });
     } finally {
       setLoading(false);
     }

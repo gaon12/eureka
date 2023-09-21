@@ -17,7 +17,6 @@ export default function RegisterPage() {
     phone2: "",
     movein: "",
   });
-  console.log("Rendering RegisterPage with formData:", formData);
   const navigate = useNavigate();
   const goHome = () => {
     navigate("/");
@@ -43,7 +42,6 @@ export default function RegisterPage() {
   const handleChange = (e) => {
     const { value, name } = e.target;
     setFormData({ ...formData, [name]: value });
-    console.log(formData);
   };
   const handlePhoneChange = (e) => {
     const { value, name } = e.target;

@@ -56,7 +56,7 @@ export default function Notice() {
         content: content,
         content2: stripHTMLTags(content),
       };
-      console.log(payload);
+     
       const response = await fetch(API_ENDPOINTS.publish, {
         headers:{"Content-Type":"application/json"},
         method: "POST",
@@ -68,7 +68,7 @@ export default function Notice() {
       }
 
       const data = await response.json();
-      console.log(data)
+     
       if (data.status===200 || data.status===201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
         navi("/admin");
@@ -89,7 +89,7 @@ export default function Notice() {
 
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       // 실제 URL을 사용하도록 수정
-      console.log(API_ENDPOINTS.imageUpload);
+
       return new UploadAdapter({ loader, url: API_ENDPOINTS.imageUpload });
     };
   };

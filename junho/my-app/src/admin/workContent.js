@@ -19,7 +19,6 @@ export default function WorkContent() {
   const data = workData.find((work) => work.w_l_id === dataId);
   // 데이터가 없는 경우에 대한 처리를 추가합니다.
   if (!data) {
-    console.log('Data not found', dataId, workData);
     return <div>Data not found</div>;
   }
 

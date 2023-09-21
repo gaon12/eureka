@@ -37,28 +37,25 @@ const Navbar = () => {
 
         switch (status) {
           case 200:
-            console.log("로그아웃 성공");
             logout();
             break;
 
           case 400:
-            console.log("세션 정보 없음");
             Swal.fire("오류", data.error.message, "error"); // 서버 에러 메시지
             break;
 
           case 500:
-            console.log("서버 에러");
+        
             Swal.fire("오류", data.error.message, "error"); // 서버 에러 메시지
             break;
 
           default:
-            console.log("알 수 없는 상태 코드:", status);
+           
             Swal.fire("오류", "알 수 없는 오류가 발생했습니다.", "error");
             break;
         }
       }
     } catch (error) {
-      console.log("데이터 가져오는 중 오류:", error.message);
       Swal.fire("오류", "데이터를 가져오는 중 오류가 발생했습니다.", "error");
     }
   };

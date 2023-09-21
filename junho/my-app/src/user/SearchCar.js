@@ -12,7 +12,6 @@ export default function SearchCar() {
   
   const onSearch = (value) => {
     setIsModalVisible(!isModalVisible);
-    console.log({ isModalVisible: false });
   }
   const handleFileUpload = async (options) => {
     const { file } = options;

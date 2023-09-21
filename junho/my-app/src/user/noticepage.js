@@ -58,8 +58,6 @@ function NoticePage(props) {
     }
   }, [notice_id, noticesData]);
   
-  
-  console.log(noticeData)
   return (
     <>
       <NavBar />

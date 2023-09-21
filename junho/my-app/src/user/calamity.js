@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Checkbox, Button, Collapse, Pagination, Input } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import Swal from 'sweetalert2';
 import NavBar from "../user/navbar";
-import "./styles.css";
+import "../user/userstyles.css";
 
 const { Panel } = Collapse;
 
@@ -71,15 +72,15 @@ const DataTable = () => {
 
   return (
     <>
-    <NavBar />
-    <div style={{ width: "100%" }}>
-      <Input.Search
-        placeholder="input search text"
-        onSearch={(value) => setSearchText(value)}
-        style={{ width: "100%", marginBottom: "20px" }}
-      />
-      <Collapse style={{ marginBottom: "20px" }}>
-        <Panel header="Detailed Search" key="1">
+      <NavBar />
+      <div style={{ width: "100%" }}>
+        <Input.Search
+          placeholder="input search text"
+          onSearch={(value) => setSearchText(value)}
+          style={{ width: "100%", marginBottom: "20px" }}
+        />
+        <Collapse style={{ marginBottom: "20px" }}>
+          <Panel header="Detailed Search" key="1">
           <Checkbox onChange={handleLocationChange} value="서울특별시">
             서울특별시
           </Checkbox>
@@ -120,35 +121,42 @@ const DataTable = () => {
             제주특별자치도
           </Checkbox>
         </Panel>
-      </Collapse>
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey="md101_sn"
-        pagination={false}
-        expandable={{
-          expandedRowRender: (record) => (
-            <div>
-              <p>발송시간: {record.create_date}</p>
-              <p>대상지역: {record.location_name}</p>
-              <p>재난문자 내용: {record.msg}</p>
-              <CopyToClipboard
-                text={`발송시간: ${record.create_date}\n대상지역: ${record.location_name}\n재난문자 내용: ${record.msg}`}
-              >
-                <Button type="primary">복사</Button>
-              </CopyToClipboard>
-            </div>
-          )
-        }}
-      />
-      <Pagination
-        current={page}
-        total={totalPages * 10}
-        onChange={(page) => setPage(page)}
-        showSizeChanger={false}
-        style={{ marginTop: "20px", textAlign: "center" }}
-      />
-    </div>
+        </Collapse>
+        <Table
+          columns={columns}
+          dataSource={data}
+          rowKey="md101_sn"
+          pagination={false}
+          expandable={{
+            expandedRowRender: (record) => (
+              <div>
+                <p>발송시간: {record.create_date}</p>
+                <p>대상지역: {record.location_name}</p>
+                <p>재난문자 내용: {record.msg}</p>
+                <CopyToClipboard
+                  text={`발송시간: ${record.create_date}\n대상지역: ${record.location_name}\n재난문자 내용: ${record.msg}`}
+                  onCopy={() => {
+                    Swal.fire(
+                      '성공!',
+                      '내용이 복사되었습니다.',
+                      'success'
+                    );
+                  }}
+                >
+                  <Button type="primary">복사</Button>
+                </CopyToClipboard>
+              </div>
+            )
+          }}
+        />
+        <Pagination
+          current={page}
+          total={totalPages * 10}
+          onChange={(page) => setPage(page)}
+          showSizeChanger={false}
+          style={{ marginTop: "20px", textAlign: "center" }}
+        />
+      </div>
     </>
   );
 };

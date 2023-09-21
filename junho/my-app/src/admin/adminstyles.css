@@ -1,0 +1,10 @@
+.content-container img {
+  max-width: 100%;  /* 이미지가 컨테이너의 너비를 넘지 않게 함 */
+  max-height: 100%; /* 이미지가 컨테이너의 높이를 넘지 않게 함 */
+}
+
+
+.content-workcontainer img {
+  max-width: 100%;  /* 이미지가 컨테이너의 너비를 넘지 않게 함 */
+  max-height: 100%; /* 이미지가 컨테이너의 높이를 넘지 않게 함 */
+}

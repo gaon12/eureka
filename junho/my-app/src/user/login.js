@@ -5,7 +5,7 @@ import { ip_address } from "./ipaddress";
 import { Input, Typography, Button, Row, Col, Space, Checkbox } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import Swal from "sweetalert2";
-import "./styles.css";
+import "../user/userstyles.css";
 
 const { Title } = Typography;
 
@@ -16,6 +16,7 @@ export default function Login(props) {
   const [password, setPassword] = useState("");
   const [adminMode, setAdminMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginDisabled, setLoginDisabled] = useState(true);
 
   const navigate = useNavigate();
 
@@ -27,72 +28,64 @@ export default function Login(props) {
 
   const handleDongChange = (e) => {
     const { value } = e.target;
-    if (/^[0-9]*$/.test(value)) {
-      setDong(value);
-    } else {
-      Swal.fire(
-        "Oops...",
-        "'동' 입력이 잘못되었습니다. 입력값은 숫자여야 합니다.",
-        "error"
-      );
-    }
+    setDong(value);
+  
+
+    // 경고 메시지를 동이 입력될 때마다 나타나지 않게 합니다.
+    // (예를 들어, SQL 인젝션 체크를 제거하였습니다.)
+
+    // 호가 0000인 경우에만 관리자 확인 로직 호출
+    // 추가적으로, 동이 완전히 비워진 경우에는 관리자 모드를 비활성화 합니다.
+    
+  if (ho === "0000" && value) {
+    checkAdmin(value, ho);
+  } else if (!value || ho !== "0000") {
+    setAdminMode(false);
+    setLoginDisabled(false);
+  }
+};
+
+const handleHoChange = async (e) => {
+  const { value } = e.target;
+  setHo(value);
+
+    // SQL 인젝션 체크 부분
     if (/(--|;|'|"|=|OR|AND)/i.test(value)) {
       Swal.fire(
         "Security Alert...",
         "SQL 인젝션 공격을 시도하는 입력이 감지되었습니다.",
         "error"
       );
+      return;
+    }
+
+    // 0000을 입력하면 관리자 확인 로직을 호출
+    // 추가적으로, "동" 값이 있을 때만 관리자 확인 로직을 호출합니다.
+    if (value === "0000" && dong) {
+      checkAdmin(dong, value);
+    } else if (!value || value !== "0000") {
+      setAdminMode(false);
+      setLoginDisabled(false);
     }
   };
-
-  const handleHoChange = async (e) => {
-    const { value } = e.target;
-    if (/^[0-9]*$/.test(value)) {
-      setHo(value);
-    } else {
-      Swal.fire(
-        "Oops...",
-        "'호'수 입력이 잘못되었습니다. 입력값은 숫자여야 합니다.",
-        "error"
-      );
-      return;
-    }
-    if (/(--|;|'|"|=|OR|AND)/i.test(value)) {
-      Swal.fire(
-        "Security Alert...",
-        "SQL 인젝션 공격을 시도하는 입력이 감지되었습니다.",
-        "error"
-      );
-      return;
-    }
-
-    if (value === "0000") {
+  const checkAdmin = async (dong, ho) => {
+    if (dong && ho) {
       try {
         const response = await fetch(`${ip_address}/user/isAdmin/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ dong, ho: value }), // 현재 동과 호 값을 전송
+          body: JSON.stringify({ dong, ho }),
         });
         const data = await response.json();
-
-        console.log("동: ", dong);
-        console.log("호: ", value);
-        console.log(
-          "관리자 체크 여부: ",
-          data.message === 1 ? "관리자" : "관리자 아님"
-        );
-        console.log("서버 응답: ", JSON.stringify(data, null, 2)); // 서버 응답을 콘솔에 JSON 형식으로 출력
-
+  
         if (data.status === 200 && data.message === 1) {
           setAdminMode(true);
+          setLoginDisabled(false); // 관리자 확인 성공 시 로그인 버튼 활성화
         } else {
-          Swal.fire(
-            "Access Denied...",
-            "관리자만 관리자 모드를 활성화할 수 있습니다.",
-            "error"
-          );
+          setAdminMode(false);
+          setLoginDisabled(true); // 관리자 확인 실패 시 로그인 버튼 비활성화
         }
       } catch (error) {
         console.error("관리자 확인 중 오류가 발생했습니다.", error);
@@ -250,7 +243,7 @@ export default function Login(props) {
             <Button
               type="primary"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || loginDisabled} // 로그인 비활성화 상태 추가
             >
               로그인
             </Button>

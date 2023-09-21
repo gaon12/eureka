@@ -1,23 +1,29 @@
-import Header from "../admin/Header";
+import Header from "./Header";
 import { Layout, Typography, Card, Divider } from "antd";
 import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { articleDataState } from "./dataState";
+import "../admin/adminstyles.css";
 
 export default function ArticleContent() {
   const { Title } = Typography;
   const { Content } = Layout;
 
-  // work_id를 문자열로 추출
   let article_id = useParams();
 
   const [articleData, setArticleData] = useRecoilState(articleDataState);
 
-  // work_id를 문자열에서 숫자로 변환
-
   const dataId = parseInt(article_id.article_id);
 
-  const data = articleData[dataId];
+  // find 메서드를 사용하여 ID를 기반으로 데이터를 찾습니다.
+const data = articleData.find((article) => article.complaint_id === dataId);
+
+// 데이터가 없는 경우에 대한 처리를 추가합니다.
+if (!data) {
+  return <div>Data not found</div>;
+}
+
+
   const createdDate = new Date(data.created_datetime);
   const writeDate = createdDate.toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -47,7 +53,7 @@ export default function ArticleContent() {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center", // 추가: 내용을 세로 중앙 정렬
+                alignItems: "center", 
                 marginBottom: "16px",
                 color: "#003366",
               }}
@@ -57,19 +63,21 @@ export default function ArticleContent() {
             </div>
           </Title>
           <div
+            className="content-container"
             style={{
               marginBottom: "5px",
               borderRadius: "8px",
               padding: "16px",
-              height: "350px",
+              height: "100%",
               border: "1px solid #ccc",
               whiteSpace: "pre-wrap",
-              backgroundColor: "#fff",
+              backgroundColor: "#fff"
             }}
-            dangerouslySetInnerHTML={{ __html: data.content }}
+            dangerouslySetInnerHTML={{ __html: data.content2 }}
           />
         </Card>
       </Content>
     </>
   );
 }
+

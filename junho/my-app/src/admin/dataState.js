@@ -48,62 +48,14 @@ export const articleDataState = atom({
 			    "c_w_id": 1,
 			    "title": "민원 제목",
 			    "content": "민원 내용...",
+          "content2":"",
 			    "created_datetime": "2023-08-31T05:41:26.000Z"
     }
   ]
 })
 export const workDataState = atom({
   key: 'workDataState',
-  default:[{
-    w_l_id: 1,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  {
-    w_l_id: 2,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  {
-    w_l_id: 3,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  {
-    w_l_id: 4,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  {
-    w_l_id: 5,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  {
-    w_l_id: 6,
-    w_w_id: 12,
-    w_content: "업무일지 내용",
-    w_start: "2023-08-18T15:00:00.000Z",
-    w_end: "2023-08-18T15:00:00.000Z",
-    w_w_datetime: "2023-08-19T11:04:54.000Z"
-  },
-  ]
-})
+  default:[]})
 
 export const userColumnsState =atom({
   key: 'userColumnsState',
@@ -111,18 +63,21 @@ export const userColumnsState =atom({
     {
       title: "회원아이디",
       render: (text, data) => `${data.dong}동 ${data.ho}호`,
+      align: 'center',
 
     },
     {
       title: "이름",
       dataIndex: "username",
-      key:'username'
+      key:'username',
+      align: 'center'
 
     },
     {
       title: "휴대폰번호",
       dataIndex: "phone1",
       key:'phone1',
+      align: 'center',
       render:(text) =>{
         const trnasformPhon1 = text.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
         return trnasformPhon1
@@ -133,6 +88,7 @@ export const userColumnsState =atom({
       title: "전입일",
       dataIndex: "movein",
       key:'movein',
+      align: 'center',
    
       render: (text) => {
         const date = new Date(text);
@@ -152,28 +108,30 @@ export const articleColumnsState = atom({
     {
       title: "✨",
       dataIndex: "complaint_id",
-      key:"complaint_id"
+      key:"complaint_id",
+      align: 'center'
     },
     {
       title: "제목",
       dataIndex: "title",
       key:'title',
-      render:(text,record,index)=>(
-        <Link to={`/article/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>
+      align: 'center',
+      render: (text, record) => (
+        <Link to={`/article/${record.complaint_id}`}>{text.replace(/&nbsp;/g, ' ')}</Link>
       )
-      
-      
     },
     {
       title: "내용",
       dataIndex: "content",
       key:'content',
-      render:(text,record,index)=> (<Link to={`/article/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
-    },
+      align: 'center',
+      render: (text, record) => (<Link to={`/article/${record.complaint_id}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
+    },    
     {
       title: "작성일",
       dataIndex: "created_datetime",
       key:'created_datetime',
+      align: 'center',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString('ko-KR', {
@@ -193,22 +151,26 @@ export const carColumnsState = atom({
     {
       title: "차량번호",
       dataIndex: "car_number",
-      key:"car_number"
+      key:"car_number",
+      align: 'center'
     },
     {
       title: "외부차량",
       dataIndex: "guest_car",
-      key:"guest_car"
+      key:"guest_car",
+      align: 'center'
     },
     {
       title: "전기차",
       dataIndex: "electric_car",
-      key:'electric_car'
+      key:'electric_car',
+      align: 'center'
     },
     {
       title: "장애차량",
       dataIndex: "disabled_car",
-      key:'disabled_car'
+      key:'disabled_car',
+      align: 'center'
     },
   ]
 })
@@ -218,23 +180,24 @@ export const workColumnsStata = atom({
   key:'workColumnsStata',
   default: [
     {
-      title: "작성자",
-      dataIndex: "w_w_id",
-      key: "w_w_id",
-      render:(text,record,index)=>(<Link to={`/work/${index}`}>{text}</Link>)
+      title: "번호",
+      dataIndex: "w_l_id",
+      key: "w_l_id",
+      align: 'center',
+      render:(text, record) => (<Link to={`/work/${record.w_l_id}`}>{text}</Link>)
     },
     {
       title: "업무 일지 내용",
       dataIndex: "w_content",
       key: "w_content",
-      render:(text,record,index)=>(<Link to={`/work/${index}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
-      
-      
+      align: 'center',
+      render:(text, record) => (<Link to={`/work/${record.w_l_id}`}>{text.replace(/&nbsp;/g, ' ')}</Link>)
     },
     {
       title: "업무 시작 일시",
       dataIndex: "w_start",
       key: "w_start",
+      align: 'center',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {
@@ -249,6 +212,7 @@ export const workColumnsStata = atom({
       title: "업무 종료 일시",
       dataIndex: "w_end",
       key:'w_end',
+      align: 'center',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {
@@ -263,6 +227,7 @@ export const workColumnsStata = atom({
       title: "작성일",
       dataIndex: "w_w_datetime",
       key:'w_w_datetime',
+      align: 'center',
       render: (text) => {
         const date = new Date(text);
         const formattedDate = date.toLocaleDateString("ko-KR", {

@@ -1,27 +1,28 @@
-import Header from "../admin/Header";
+import Header from "./Header";
 import { Layout, Typography, Card, Divider } from "antd";
 import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { workDataState } from "./dataState";
-import { useState, useEffect } from "react";
+import "../admin/adminstyles.css";
 
 export default function WorkContent() {
   const { Title } = Typography;
   const { Content } = Layout;
 
-  // work_id를 문자열로 추출
-  let work_id = useParams();
+  let work_id = useParams(); // useParams에서 w_l_id를 직접 추출합니다.
 
   const [workData, setWorkData] = useRecoilState(workDataState);
-  
-  // work_id를 문자열에서 숫자로 변환
 
+  const dataId = parseInt(work_id.work_id);
 
-    const dataId = parseInt(work_id.work_id);
-  
-   const data = workData[dataId];
+  // find 메서드를 사용하여 ID를 기반으로 데이터를 찾습니다.
+  const data = workData.find((work) => work.w_l_id === dataId);
+  // 데이터가 없는 경우에 대한 처리를 추가합니다.
+  if (!data) {
+    console.log('Data not found', dataId, workData);
+    return <div>Data not found</div>;
+  }
 
-  
   return (
     <>
       <Header />
@@ -32,25 +33,24 @@ export default function WorkContent() {
           }}
         >
           <Title>
-            업무 시작 일시 : {data.w_start} 업무 종료 일시 :
-            {data.w_end}
+            업무 시작 일시 : {data.w_start} 업무 종료 일시 :{data.w_end}
           </Title>
           <Divider />
           <Title level={3} style={{ marginBottom: "16px", color: "#003366" }}>
             내용
           </Title>
           <div
+            className="content-workcontainer"
             style={{
               marginBottom: "5px",
               borderRadius: "8px",
-              padding:'16px',
-              height: '350px',
+              padding: "16px",
+              height: "100%",
               border: "1px solid #ccc",
               whiteSpace: "pre-wrap",
               backgroundColor: "#fff",
-              
             }}
-            dangerouslySetInnerHTML={{ __html: data.w_content }}
+            dangerouslySetInnerHTML={{ __html: data.w_content2 }}
           />
         </Card>
       </Content>

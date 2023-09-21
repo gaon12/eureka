@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Row, Col, DatePicker } from "antd";
 import { ip_address } from './ipaddress';
 import Swal from "sweetalert2";
-import "./styles.css";
+import "../user/userstyles.css";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();

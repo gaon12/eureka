@@ -68,8 +68,8 @@ export default function Notice() {
       }
 
       const data = await response.json();
-
-      if (data.success) {
+      console.log(data)
+      if (data.status===200 || data.status===201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
         navi("/admin");
       } else {

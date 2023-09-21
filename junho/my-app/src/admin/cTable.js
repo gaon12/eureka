@@ -1,6 +1,8 @@
 import { Table } from "antd";
+
 export default function CTable(props) {
   const { columns, data } = props;
+  
   const getCategoryName = (categoryNumber) => {
     switch (categoryNumber) {
       case 1:
@@ -13,6 +15,7 @@ export default function CTable(props) {
         return "기타";
     }
   };
+
   const transformData = data.map((item) => {
     if (item.hasOwnProperty("noti_category")) {
       return {
@@ -30,14 +33,25 @@ export default function CTable(props) {
         electric_car: item.electric_car ? "True" : "False",
         disabled_car: item.disabled_car ? "True" : "False",
       };
+    } else if(
+      item.hasOwnProperty("complaint_id")
+    ){
+      return{
+        ...item,
+        content: item.content.replace('&nbsp;' ," ")
+      }
     }
+
     return item;
   });
+
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
   };
-  const visibleData = transformData.slice(Math.max(transformData.length-5, 0)).reverse();
-  console.log(visibleData);
+
+  // 여기서 최신 5개의 데이터만 가져옵니다
+  const visibleData = transformData.slice(0,5);
+
+
   return (
     <Table
       columns={columns}

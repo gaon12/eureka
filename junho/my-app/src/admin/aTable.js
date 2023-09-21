@@ -1,7 +1,8 @@
 import { Table,Pagination } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 export default function AllTable(props) {
   const [page, setPage] = useState(1);
+  const [currentData, setCurrentData] =useState(null);
   const itemsPerPage = 10;
   const { columns, data } = props;
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -37,17 +38,25 @@ export default function AllTable(props) {
     }
     return item;
   });
-  const visibleData = transformData;
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
+  useEffect(() => {
+    const startIdx = (page - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+
+    const updatedData = transformData.map((data) => ({
+      ...data,
+    }));
+
+    setCurrentData(updatedData.slice(startIdx, endIdx));
+  }, [page]);
+  
+  
   
   return (
     <>
     <Table
       columns={columns}
-      dataSource={visibleData}
-      onChange={onChange}
+      dataSource={currentData}
+      
       pagination={false}
       rowKey={(record) => record.id}
     ></Table>

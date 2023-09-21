@@ -1,36 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Table, Card, Pagination } from "antd";
-import { Link } from "react-router-dom"; // 이 부분을 추가하세요
+import { Link } from "react-router-dom"; 
 import NavBar from "./navbar";
-
-const columns = [
-  {
-    title: "No",
-    dataIndex: "notice_id",
-    key: "notice_id",
-  },
-  {
-    title: "제목",
-    dataIndex: "title",
-    key: "title",
-    render: (text, record,index) => (
-      <Link to={`/noticeboard/${index}`}>{text}</Link>
-    ), // 여기서 각 제목을 Link 컴포넌트로 래핑하였습니다.
-  },
-  {
-    title: "카테고리",
-    dataIndex: "noti_category",
-    key: "noti_category",
-  },
-  {
-    title: "작성일",
-    dataIndex: "noti_w_date",
-    key: "noti_w_date",
-    render: (text, record) => (
-      <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
-    ),
-  },
-];
 
 const Noticeboard = (props) => {
   const {noticesData} = props
@@ -38,16 +9,63 @@ const Noticeboard = (props) => {
   const itemsPerPage = 10;
   const totalPages = Math.ceil(noticesData.length / itemsPerPage);
   
-  
   const [currentData, setCurrentData] = useState([]);
+
+  const getCategoryName = (categoryNumber) => {
+    switch (parseInt(categoryNumber, 10)) {
+      case 1:
+        return "공지사항";
+      case 2:
+        return "이벤트";
+      case 3:
+        return "업데이트";
+      default:
+        return "기타";
+    }
+  };
   
   useEffect(() => {
     const startIdx = (page - 1) * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
-    console.log(noticesData)
-    setCurrentData(noticesData.slice(startIdx, endIdx));
+
+    const updatedNoticesData = noticesData.map((data) => ({
+      ...data,
+      noti_category: getCategoryName(data.noti_category),
+    }));
+
+    setCurrentData(updatedNoticesData.slice(startIdx, endIdx));
   }, [page, noticesData]);
 
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "notice_id",
+      key: "notice_id",
+    },
+    {
+      title: "제목",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <Link to={`/noticeboard/${record.notice_id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "카테고리",
+      dataIndex: "noti_category",
+      key: "noti_category",
+      render: (text) => text,
+    },
+    {
+      title: "작성일",
+      dataIndex: "noti_w_date",
+      key: "noti_w_date",
+      render: (text, record) => (
+        <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
+      ),
+    },
+  ];
+  
   return (
     <>
       <NavBar />

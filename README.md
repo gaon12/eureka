@@ -12,8 +12,9 @@
 
 ### 백엔드 (Node.js)
 - Node.js 18.17.0
+- Express 4.18.2
 - MySQL 8.0.34
-- MySQL Workbench 8.0.34
+- MySQL Workbench
 - MobaXterm
 - RaiDrive
 
@@ -29,6 +30,7 @@
 - Ubuntu 22.04.1
 - Node.js 18.17.1
 - pm2 5.3.0
+- nginx 1.18.0
 
 ### Azure Database for MySQL
 - MySQL 8.0.34

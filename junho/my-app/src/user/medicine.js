@@ -1,160 +1,138 @@
 import React, { useState, useEffect } from "react";
-import { Table, Checkbox, Input, Collapse, Pagination } from "antd";
-import axios from "axios";
-import { parseString } from "xml2js";
-import NavBar from "./navbar";
+import { Table, Radio, Collapse, Pagination, Input, Spin } from "antd";
+import NavBar from "../user/navbar";
 
 const { Panel } = Collapse;
 
 const DataTable = () => {
-  const [searchText, setSearchText] = useState("");
-  const [location, setLocation] = useState([]);
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchLocation, setSearchLocation] = useState([]); 
+  const [selectedLocation, setSelectedLocation] = useState(null); // 추가
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const columns = [
+    { title: "이름", dataIndex: "dutyName", align: "center", key: "dutyName" },
+    { title: "주소", dataIndex: "dutyAddr", align: "center", key: "dutyAddr" },
+    { title: "전화번호", dataIndex: "dutyTel1", align: "center", key: "dutyTel1" },
     {
-      title: "시/도",
-      dataIndex: "stateName",
-      key: "stateName",
-      width: "20%"
-    },
-    {
-      title: "시/군/구",
-      dataIndex: "cityName",
-      key: "cityName",
-      width: "20%"
-    },
-    {
-      title: "약국 이름",
-      dataIndex: "pharmacyName",
-      key: "pharmacyName",
-      width: "20%"
-    },
-    {
-      title: "도로명 주소",
-      dataIndex: "roadNameAddress",
-      key: "roadNameAddress",
-      width: "30%"
-    },
-    {
-      title: "전화번호",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-      width: "20%"
+      title: "카카오 맵",
+      key: "kakaoMap",
+      align: "center",
+      render: (text, record) => {
+        const { dutyName, wgs84Lat, wgs84Lon } = record;
+        const kakaoMapUrl = `https://map.kakao.com/link/map/${dutyName},${wgs84Lat},${wgs84Lon}`;
+        return (
+          <a
+            href={kakaoMapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "blue",
+              fontWeight: "bold",
+            }}
+          >
+            맵 보기
+          </a>
+        );
+      }
     }
   ];
 
   useEffect(() => {
-    const fetchRSS = async () => {
-      try {
-        const response = await axios.get(
-          "https://apis.uiharu.dev/fixcors/api.php?url=http://43.202.151.155:3000/medical"
-        );
+    setIsLoading(true);
+    const API_KEY =
+      "KgTzxtwXkBg%2Ff4ZrgvZA4mOI719k%2BgOF8lgKTMo63EYuKdIhhRAzX7b4uzQgXlNw9J1l0eQx0jkW4B2%2BW4Qsxw%3D%3D";
 
-        parseString(response.data, (err, result) => {
-          if (err) {
-            console.error("Error parsing XML:", err);
-            return;
+    let searchQuery = "";
+    if (searchLocation.length > 0) {
+      searchQuery = `&Q1=${searchLocation.join("|")}`;
+    }
+
+    fetch(
+      `https://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire?serviceKey=${API_KEY}&Q0=대전광역시${searchQuery}&numOfRows=10&pageNo=${page}`
+    )
+      .then((response) => response.text())
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
+      .then((xml) => {
+        const items = Array.from(xml.getElementsByTagName("item"));
+        const parsedItems = items.map((item) => {
+          let dutyTel1 = item.getElementsByTagName("dutyTel1")[0].textContent;
+          if (dutyTel1.includes("000-0000")) {
+            dutyTel1 = "전화번호 없음";
           }
 
-          // RSS 피드의 키 이름을 확인하여 아래 키 이름을 업데이트하세요.
-          const dataArray = result.rows.row.map((item) => ({
-            stateName: item.StateName[0],
-            cityName: item.CityName[0],
-            pharmacyName: item.PharmacyName[0],
-            roadNameAddress: item.RoadNameAddress[0],
-            phoneNumber: item.PhoneNumber[0]
-          }));
-          setData(dataArray);
+          return {
+            dutyAddr: item.getElementsByTagName("dutyAddr")[0].textContent,
+            dutyName: item.getElementsByTagName("dutyName")[0].textContent,
+            dutyTel1: dutyTel1,
+            wgs84Lat: item.getElementsByTagName("wgs84Lat")[0].textContent,
+            wgs84Lon: item.getElementsByTagName("wgs84Lon")[0].textContent
+          };
         });
-      } catch (error) {
-        console.error("Error fetching RSS feed", error);
-      }
-    };
+        setData(parsedItems);
 
-    fetchRSS();
-  }, []);
+        const totalCount = xml.getElementsByTagName("totalCount")[0]
+          ?.textContent;
+        if (totalCount) {
+          setTotalPages(Math.ceil(Number(totalCount) / 10));
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, [page, searchLocation]);
 
-  useEffect(() => {
-    let newData = [...data];
-
-    if (searchText) {
-      newData = newData.filter((item) =>
-        item.pharmacyName.includes(searchText)
-      );
-    }
-
-    if (location.length) {
-      newData = newData.filter((item) => location.includes(item.cityName));
-    }
-
-    setFilteredData(newData);
-  }, [searchText, location, data]);
-
-  const handleLocationChange = (e, cityName) => {
-    const newLocation = [...location];
-    if (e.target.checked) {
-      newLocation.push(cityName);
+  const handleRadioClick = (event) => {
+    const value = event.target.value;
+    if (selectedLocation === value) {
+      setSelectedLocation(null);
+      setSearchLocation([]);
     } else {
-      const index = newLocation.indexOf(cityName);
-      if (index > -1) {
-        newLocation.splice(index, 1);
-      }
+      setSelectedLocation(value);
+      setSearchLocation([value]);
     }
-    setLocation(newLocation);
   };
-
-  const totalItems = filteredData.length; // 이 부분을 여기로 옮겼습니다.
 
   return (
     <>
-    <NavBar />
-      <div style={{ width: "100%" }}>
+      <NavBar />
+      <div>
         <Input.Search
-          placeholder="약국 이름 검색"
-          onSearch={(value) => setSearchText(value)}
-          style={{ width: "100%", marginBottom: "20px" }}
+          placeholder="주소 검색"
+          style={{ marginTop: "20px" }}
+          onSearch={(value) => setSearchLocation([value])}
         />
-        <Collapse style={{ marginBottom: "20px" }}>
-          <Panel header="세부 검색" key="1">
-            <Checkbox onChange={(e) => handleLocationChange(e, "유성구")}>
-              유성구
-            </Checkbox>
-            <Checkbox onChange={(e) => handleLocationChange(e, "대덕구")}>
-              대덕구
-            </Checkbox>
-            <Checkbox onChange={(e) => handleLocationChange(e, "동구")}>
-              동구
-            </Checkbox>
-            <Checkbox onChange={(e) => handleLocationChange(e, "서구")}>
-              서구
-            </Checkbox>
-            <Checkbox onChange={(e) => handleLocationChange(e, "중구")}>
-              중구
-            </Checkbox>
+        <Collapse style={{ marginBottom: "20px", marginTop: "20px" }}>
+          <Panel header="Detailed Search" key="1">
+            <Radio.Group value={selectedLocation}>
+              <Radio value="대덕구" onClick={handleRadioClick}>대덕구</Radio>
+              <Radio value="동구" onClick={handleRadioClick}>동구</Radio>
+              <Radio value="서구" onClick={handleRadioClick}>서구</Radio>
+              <Radio value="중구" onClick={handleRadioClick}>중구</Radio>
+              <Radio value="유성구" onClick={handleRadioClick}>유성구</Radio>
+            </Radio.Group>
           </Panel>
         </Collapse>
-        <Table
-          dataSource={filteredData.slice(
-            (currentPage - 1) * pageSize,
-            currentPage * pageSize
-          )}
-          columns={columns}
-          pagination={false}
-        />
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Pagination
-            current={currentPage}
-            onChange={setCurrentPage}
-            total={totalItems}
-            pageSize={pageSize}
-            showSizeChanger={false}
-          />
-        </div>
+        {isLoading ? (
+          <div style={{ textAlign: "center", marginTop: "20vh" }}>
+            <Spin tip="Loading..." size="large" />
+          </div>
+        ) : (
+          <>
+            <Table columns={columns} dataSource={data} pagination={false} />
+            <Pagination
+              current={page}
+              total={totalPages * 10}
+              onChange={(page) => setPage(page)}
+              showSizeChanger={false}
+              style={{ marginTop: "20px", textAlign: "center" }}
+            />
+          </>
+        )}
       </div>
     </>
   );

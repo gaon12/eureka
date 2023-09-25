@@ -1,1 +1,1 @@
-export const ip_address = "http://43.202.151.155:3000";
+export const ip_address = "http://eureka.vwaiolet.com";

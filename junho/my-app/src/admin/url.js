@@ -1,1 +1,1 @@
-export const Url = 'http://43.202.151.155:3000';
+export const Url = 'http://eureka.vwaiolet.com';

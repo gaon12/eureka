@@ -20,7 +20,6 @@ export function useNewsData() {
             setNewsData(newsArray);
           });
         } catch (error) {
-          console.error("Error fetching RSS feed", error);
         }
       };
   

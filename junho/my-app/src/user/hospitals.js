@@ -1,173 +1,137 @@
 import React, { useState, useEffect } from "react";
-import { Table, Checkbox, Input, Collapse, Pagination } from "antd";
-import axios from "axios";
-import { parseString } from "xml2js";
+import { Table, Radio, Collapse, Pagination, Input, Spin } from "antd";
 import NavBar from "../user/navbar";
+
 
 const { Panel } = Collapse;
 
 const DataTable = () => {
-  const [searchText, setSearchText] = useState("");
-  const [location, setLocation] = useState([]);
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const [searchLocation, setSearchLocation] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null); // 라디오 버튼 선택 상태
 
   const columns = [
+    { title: "이름", dataIndex: "dutyName", align: "center", key: "dutyName" },
+    { title: "구분 ", dataIndex: "dutyDivNam", align: "center", key: "dutyDivNam" },
+    { title: "주소", dataIndex: "dutyAddr", align: "center", key: "dutyAddr" },
+    { title: "전화번호", dataIndex: "dutyTel1", align: "center", key: "dutyTel1" },
     {
-      title: "병원 이름",
-      dataIndex: "hospital",
-      key: "hospital",
-      width: "20%"
-    },
-    {
-      title: "시/도",
-      dataIndex: "city",
-      key: "city",
-      width: "10%"
-    },
-    {
-      title: "시/군/구",
-      dataIndex: "area",
-      key: "area",
-      width: "10%"
-    },
-    {
-      title: "우편번호",
-      dataIndex: "zipnumber",
-      key: "zipnumber",
-      width: "10%"
-    },
-    {
-      title: "도로명 주소",
-      dataIndex: "address",
-      key: "address",
-      width: "20%"
-    },
-    {
-      title: "전화번호",
-      dataIndex: "phone",
-      key: "phone",
-      width: "10%"
-    },
-    {
-      title: "좌표 X",
-      dataIndex: "coordinateX",
-      key: "coordinateX",
-      width: "10%"
-    },
-    {
-      title: "좌표 Y",
-      dataIndex: "coordinateY",
-      key: "coordinateY",
-      width: "10%"
+      title: "카카오 맵",
+      key: "kakaoMap",
+      align: "center",
+      render: (text, record) => {
+        const { dutyName, wgs84Lat, wgs84Lon } = record;
+        const kakaoMapUrl = `https://map.kakao.com/link/map/${dutyName},${wgs84Lat},${wgs84Lon}`;
+        return (
+          <div style={{ textAlign: "center" }}>
+            <a
+              href={kakaoMapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "blue",
+                fontWeight: "bold",
+              }}
+            >
+              맵 보기
+            </a>
+          </div>
+        );
+      }
     }
   ];
 
   useEffect(() => {
-    const fetchRSS = async () => {
-      try {
-        const response = await axios.get(
-          "https://apis.uiharu.dev/fixcors/api.php?url=http://43.202.151.155:3000/hospital"
-        );
+    setLoading(true);
+    const API_KEY =
+      "KgTzxtwXkBg%2Ff4ZrgvZA4mOI719k%2BgOF8lgKTMo63EYuKdIhhRAzX7b4uzQgXlNw9J1l0eQx0jkW4B2%2BW4Qsxw%3D%3D";
+    let searchQuery = "";
+    if (searchLocation.length > 0) {
+      searchQuery = `&Q1=${searchLocation.join(",")}`;
+    }
 
-        parseString(response.data, (err, result) => {
-          if (err) {
-            console.error("Error parsing XML:", err);
-            return;
-          }
-
-          const dataArray = result.rows.row.map((item) => ({
-            hospital: item.Hospital[0],
-            city: item.City[0],
-            area: item.Area[0],
-            zipnumber: item.Zipnumber[0],
-            address: item.Address[0],
-            phone: item.Phone[0],
-            coordinateX: item.CoordinateX[0],
-            coordinateY: item.CoordinateY[0]
-          }));
-          setData(dataArray);
+    fetch(
+      `https://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=${API_KEY}&Q0=대전광역시${searchQuery}&numOfRows=10&pageNo=${page}`
+    )
+      .then((response) => response.text())
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
+      .then((xml) => {
+        const items = Array.from(xml.getElementsByTagName("item"));
+        const parsedItems = items.map((item) => {
+          return {
+            dutyAddr: item.getElementsByTagName("dutyAddr")[0].textContent,
+            dutyDiv: item.getElementsByTagName("dutyDiv")[0].textContent,
+            dutyDivNam: item.getElementsByTagName("dutyDivNam")[0].textContent,
+            dutyName: item.getElementsByTagName("dutyName")[0].textContent,
+            dutyTel1: item.getElementsByTagName("dutyTel1")[0].textContent,
+            wgs84Lat: item.getElementsByTagName("wgs84Lat")[0].textContent,
+            wgs84Lon: item.getElementsByTagName("wgs84Lon")[0].textContent
+          };
         });
-      } catch (error) {
-        console.error("Error fetching RSS feed", error);
-      }
-    };
+        setData(parsedItems);
 
-    fetchRSS();
-  }, []);
+        const totalCount = xml.getElementsByTagName("totalCount")[0]
+          ?.textContent;
+        if (totalCount) {
+          setTotalPages(Math.ceil(Number(totalCount) / 10));
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [page, searchLocation]);
 
-  useEffect(() => {
-    let newData = [...data];
-
-    if (searchText) {
-      newData = newData.filter((item) => item.hospital.includes(searchText));
-    }
-
-    if (location.length) {
-      newData = newData.filter((item) => location.includes(item.area));
-    }
-
-    setFilteredData(newData);
-  }, [searchText, location, data]);
-
-  const handleLocationChange = (e, area) => {
-    const newLocation = [...location];
-    if (e.target.checked) {
-      newLocation.push(area);
+  const handleRadioClick = (value) => {
+    if (selectedLocation === value) {
+      setSelectedLocation(null);
+      setSearchLocation([]);
     } else {
-      const index = newLocation.indexOf(area);
-      if (index > -1) {
-        newLocation.splice(index, 1);
-      }
+      setSelectedLocation(value);
+      setSearchLocation([value]);
     }
-    setLocation(newLocation);
   };
-
-  const detailedSearchAreas = ["대덕구", "동구", "서구", "중구", "유성구"];
-
-  const totalItems = filteredData.length;
 
   return (
     <>
-    <NavBar />
-      <div style={{ width: "100%" }}>
+      <NavBar />
+      <div>
         <Input.Search
-          placeholder="병원 이름 검색"
-          onSearch={(value) => setSearchText(value)}
-          style={{ width: "100%", marginBottom: "20px" }}
+          placeholder="주소 검색"
+          style={{ marginTop: '20px' }}
+          onSearch={(value) => setSearchLocation([value])}
         />
-        <Collapse style={{ marginBottom: "20px" }}>
-          <Panel header="세부 검색" key="1">
-            {detailedSearchAreas.map((area) => (
-              <Checkbox
-                key={area}
-                onChange={(e) => handleLocationChange(e, area)}
-              >
-                {area}
-              </Checkbox>
-            ))}
+        <Collapse style={{ marginBottom: '20px', marginTop: '20px' }}>
+          <Panel header="Detailed Search" key="1">
+            <Radio.Group value={selectedLocation}>
+              <Radio value="대덕구" onClick={() => handleRadioClick('대덕구')}>대덕구</Radio>
+              <Radio value="동구" onClick={() => handleRadioClick('동구')}>동구</Radio>
+              <Radio value="서구" onClick={() => handleRadioClick('서구')}>서구</Radio>
+              <Radio value="중구" onClick={() => handleRadioClick('중구')}>중구</Radio>
+              <Radio value="유성구" onClick={() => handleRadioClick('유성구')}>유성구</Radio>
+            </Radio.Group>
           </Panel>
         </Collapse>
-        <Table
-          dataSource={filteredData.slice(
-            (currentPage - 1) * pageSize,
-            currentPage * pageSize
-          )}
-          columns={columns}
-          pagination={false}
-        />
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Pagination
-            current={currentPage}
-            onChange={setCurrentPage}
-            total={totalItems}
-            pageSize={pageSize}
-            showSizeChanger={false}
-          />
-        </div>
+        {loading ? (
+          <div style={{ textAlign: "center", marginTop: "20vh" }}>
+            <Spin tip="Loading..." size="large" />
+          </div>
+        ) : (
+          <>
+            <Table columns={columns} dataSource={data} pagination={false} />
+            <Pagination
+              current={page}
+              total={totalPages * 10}
+              onChange={(page) => setPage(page)}
+              showSizeChanger={false}
+              style={{ marginTop: "20px", textAlign: "center" }}
+            />
+          </>
+        )}
       </div>
     </>
   );

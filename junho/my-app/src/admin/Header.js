@@ -232,8 +232,8 @@ function Header() {
               <div
                 style={{
                   position: "absolute",
-                  top: "3px",
-                  left: "2px",
+                  top: "2px",
+                  left: "27px",
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Table, Checkbox, Button, Collapse, Pagination, Input } from "antd";
+import { Table, Radio, Button, Collapse, Pagination, Input } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import NavBar from "../user/navbar";
 import "../user/userstyles.css";
 
@@ -13,21 +13,22 @@ const DataTable = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedLocation, setSelectedLocation] = useState(null); // 라디오 버튼 선택 상태
 
   const columns = [
     {
       title: "날짜",
       dataIndex: "create_date",
       key: "create_date",
-      width: "33%"
+      width: "33%",
     },
     {
       title: "장소",
       dataIndex: "location_name",
       key: "location_name",
-      width: "33%"
+      width: "33%",
     },
-    { title: "메시지", dataIndex: "msg", key: "msg", width: "33%" }
+    { title: "메시지", dataIndex: "msg", key: "msg", width: "33%" },
   ];
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const DataTable = () => {
           const uniqueLocations = [...new Set(locations)];
           return {
             ...item,
-            location_name: uniqueLocations.join(",")
+            location_name: uniqueLocations.join(","),
           };
         });
 
@@ -57,17 +58,14 @@ const DataTable = () => {
       .catch((err) => console.error(err));
   }, [page, searchText, location]);
 
-  const handleLocationChange = (event) => {
-    const newLocation = [...location];
-    if (event.target.checked) {
-      newLocation.push(event.target.value);
+  const handleRadioClick = (value) => {
+    if (selectedLocation === value) {
+      setSelectedLocation(null);
+      setLocation([]);
     } else {
-      const index = newLocation.indexOf(event.target.value);
-      if (index > -1) {
-        newLocation.splice(index, 1);
-      }
+      setSelectedLocation(value);
+      setLocation([value]);
     }
-    setLocation(newLocation);
   };
 
   return (
@@ -81,46 +79,84 @@ const DataTable = () => {
         />
         <Collapse style={{ marginBottom: "20px" }}>
           <Panel header="Detailed Search" key="1">
-          <Checkbox onChange={handleLocationChange} value="서울특별시">
-            서울특별시
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="경기도">
-            경기도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="인천광역시">
-            인천광역시
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="강원특별자치도">
-            강원특별자치도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="대전광역시">
-            대전광역시
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="세종특별자치시">
-            세종특별자치시
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="충청북도">
-            충청북도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="충청남도">
-            충청남도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="경상북도">
-            경상북도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="경상남도">
-            경상남도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="전라북도">
-            전라북도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="전라남도">
-            전라남도
-          </Checkbox>
-          <Checkbox onChange={handleLocationChange} value="제주특별자치도">
-            제주특별자치도
-          </Checkbox>
-        </Panel>
+            <Radio.Group value={selectedLocation}>
+              <Radio
+                value="서울특별시"
+                onClick={() => handleRadioClick("서울특별시")}
+              >
+                서울특별시
+              </Radio>
+              <Radio value="경기도" onClick={() => handleRadioClick("경기도")}>
+                경기도
+              </Radio>
+              <Radio
+                value="인천광역시"
+                onClick={() => handleRadioClick("인천광역시")}
+              >
+                인천광역시
+              </Radio>
+              <Radio
+                value="강원특별자치도"
+                onClick={() => handleRadioClick("강원특별자치도")}
+              >
+                강원특별자치도
+              </Radio>
+              <Radio
+                value="대전광역시"
+                onClick={() => handleRadioClick("대전광역시")}
+              >
+                대전광역시
+              </Radio>
+              <Radio
+                value="세종특별자치시"
+                onClick={() => handleRadioClick("세종특별자치시")}
+              >
+                세종특별자치시
+              </Radio>
+              <Radio
+                value="충청북도"
+                onClick={() => handleRadioClick("충청북도")}
+              >
+                충청북도
+              </Radio>
+              <Radio
+                value="충청남도"
+                onClick={() => handleRadioClick("충청남도")}
+              >
+                충청남도
+              </Radio>
+              <Radio
+                value="경상북도"
+                onClick={() => handleRadioClick("경상북도")}
+              >
+                경상북도
+              </Radio>
+              <Radio
+                value="경상남도"
+                onClick={() => handleRadioClick("경상남도")}
+              >
+                경상남도
+              </Radio>
+              <Radio
+                value="전라북도"
+                onClick={() => handleRadioClick("전라북도")}
+              >
+                전라북도
+              </Radio>
+              <Radio
+                value="전라남도"
+                onClick={() => handleRadioClick("전라남도")}
+              >
+                전라남도
+              </Radio>
+              <Radio
+                value="제주특별자치도"
+                onClick={() => handleRadioClick("제주특별자치도")}
+              >
+                제주특별자치도
+              </Radio>
+            </Radio.Group>
+          </Panel>
         </Collapse>
         <Table
           columns={columns}
@@ -136,17 +172,13 @@ const DataTable = () => {
                 <CopyToClipboard
                   text={`발송시간: ${record.create_date}\n대상지역: ${record.location_name}\n재난문자 내용: ${record.msg}`}
                   onCopy={() => {
-                    Swal.fire(
-                      '성공!',
-                      '내용이 복사되었습니다.',
-                      'success'
-                    );
+                    Swal.fire("성공!", "내용이 복사되었습니다.", "success");
                   }}
                 >
                   <Button type="primary">복사</Button>
                 </CopyToClipboard>
               </div>
-            )
+            ),
           }}
         />
         <Pagination

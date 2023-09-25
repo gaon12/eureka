@@ -20,6 +20,7 @@ import { Url } from "../admin/url";
 import Header from "./Header";
 // 환경 변수로 관리하는 것이 좋습니다.
 
+
 const API_ENDPOINTS = {
   publish: `${Url}/work/write/`,
   imageUpload: "https://api.eureka.uiharu.dev/img.php",
@@ -82,7 +83,7 @@ function WorkWrite() {
 
       if (data.status ===201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
-        navi("/work");
+        navi("/admin");
       } else {
         Swal.fire("Error", "게시물 등록에 실패했습니다!", "error");
       }

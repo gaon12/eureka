@@ -4,6 +4,7 @@ import { workDataState,workColumnsStata } from "./dataState";
 import AllTable from "../admin/aTable";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import { useEffect } from "react";
 
 export default function Work() {
   
@@ -17,6 +18,9 @@ export default function Work() {
   
   const [workData, setWorkData] = useRecoilState(workDataState);
   const [workColumns, setWorkColumns] = useRecoilState(workColumnsStata);
+  useEffect(()=>{
+    
+  },[workData])
   return (
     <>
     <Header/>

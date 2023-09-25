@@ -113,7 +113,8 @@ const itemsProps ={
       <Menu.SubMenu key="convenience" title="편의기능">
         <Menu.Item key="news"><Link to="/news" style={{ textDecoration: "none" }}>
         최신뉴스
-        </Link></Menu.Item>
+        </Link>
+        </Menu.Item>
         <Menu.Item key="disasterMsg">
         <Link to="/calamity" style={{ textDecoration: "none" }}>
         재난문자

@@ -41,7 +41,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: false
+        secure: true
     }
 }));
 app.use(lusca.csrf());

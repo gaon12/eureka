@@ -6,6 +6,7 @@ const bodyParser = require('body-parser'); // JSON 파싱
 const cors = require('cors'); // CORS 설정
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const lusca = require('lusca');
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use(session({
         secure: false
     }
 }));
+app.use(lusca.csrf());
 
 /** routing */
 app.use('/user', userRouter);

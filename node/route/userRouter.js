@@ -5,9 +5,15 @@ const bcrypt = require('bcrypt');
 const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 const { isSignout } = require('../middleware/isSignout');
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per windowMs
+});
 
 /** /POST, 관리자 여부 판단 메서드 */
-router.post('/isAdmin', async (req, res) => {
+router.post('/isAdmin', limiter, async (req, res) => {
     try {
         const dong = req.body.dong;
         const ho = req.body.ho;
@@ -39,7 +45,7 @@ router.post('/isAdmin', async (req, res) => {
 })
 
 /** /GET, 유저 정보 조회 메서드 */
-router.get('/info', isAdmin, async (req, res, next) => {
+router.get('/info', isAdmin, limiter, async (req, res, next) => {
     try {
         const [users] = await db.query('SELECT dong, ho, username, movein, phone1, phone2 FROM user WHERE isAdmin != 1');
 
@@ -103,7 +109,7 @@ router.get('/signout', isSignin, async (req, res, next) => {
 /** /POST, 로그인 메서드
  *  JSON 형식으로 http 상태코드, 메시지 반환
  */
-router.post('/signin', isSignout, async (req, res, next) => {
+router.post('/signin', isSignout, limiter, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const pw = req.body.pw;
@@ -187,7 +193,7 @@ router.post('/signin', isSignout, async (req, res, next) => {
  *  phone2 항목이 빈칸이면 NULL로 채움
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.post('/signup', isSignout, async (req, res, next) => {
+router.post('/signup', isSignout, limiter, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const username = req.body.username;

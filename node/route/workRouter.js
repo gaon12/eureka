@@ -1,11 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const rateLimit = require('express-rate-limit');
 
 const { isAdmin } = require('../middleware/isAdmin');
 
+// Configure rate limiter: maximum of 100 requests per 15 minutes
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+});
+
 /** /GET, 업무일지 조회 메서드 */
-router.get("/", isAdmin, async (req, res) => {
+router.get("/", isAdmin, limiter, async (req, res) => {
     try {
         const worklog = await db.query('SELECT * FROM worklog ORDER BY w_l_id DESC');
         return res.json({
@@ -28,7 +35,7 @@ router.get("/", isAdmin, async (req, res) => {
  *  내용, 시작일(DATE), 종료일(DATE) 입력
  *  시작일과 종료일 예시 "20230815"
  */
-router.post("/write", isAdmin, async (req, res) => {
+router.post("/write", isAdmin, limiter, async (req, res) => {
     try {
         const content = req.body.content;
         const start = req.body.start;

@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const RateLimit = require('express-rate-limit');
 
 const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 
+// set up rate limiter: maximum of 100 requests per 15 minutes
+const limiter = RateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per windowMs
+});
+
 /** 차량 등록 거부 메서드 */
-router.delete('/deny', isAdmin, async (req, res) => {
+router.delete('/deny', isAdmin, limiter, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
@@ -29,7 +36,7 @@ router.delete('/deny', isAdmin, async (req, res) => {
 });
 
 /** 차량 등록 승인 메서드 */
-router.put('/approve', isAdmin, async (req, res) => {
+router.put('/approve', isAdmin, limiter, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {

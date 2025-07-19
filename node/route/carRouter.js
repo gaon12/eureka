@@ -36,7 +36,7 @@ router.delete('/deny', isAdmin, limiter, async (req, res) => {
 });
 
 /** 차량 등록 승인 메서드 */
-router.put('/approve', isAdmin, limiter, async (req, res) => {
+router.put('/approve', limiter, isAdmin, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {

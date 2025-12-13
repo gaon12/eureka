@@ -7,6 +7,7 @@ const cors = require('cors'); // CORS 설정
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const lusca = require('lusca');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
@@ -26,8 +27,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded( {extended: false} ));
 app.use(morgan('dev'));
 
-/** connect config file */
-const sessionOption = require('./lib/sessionOption');
 var MySQLStore = require('express-mysql-session')(session);
 var sessionStore = new MySQLStore(sessionOption); // MySQL에 세션 저장
 
@@ -56,7 +55,7 @@ app.use('/complaint', complaintRouter);
 /** /GET, 서비스 접속 메서드
  *  라우팅은 리액트에서 관리하므로 다른 페이지로 이동하는 별도의 API는 제공하지 않음
  */
-app.get('*', (req, res) => {
+app.get('*', fileAccessLimiter, (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));
 });
 

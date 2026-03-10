@@ -153,7 +153,7 @@ router.post('/regist', isSignin, async (req, res) => {
  *  차량 번호로 요청
  *  JSON 형식으로 http 상태 코드, 차량 등록 정보 반환
  */
-router.post('/info', isAdmin, async (req, res) => {
+router.post('/info', isAdmin, limiter, async (req, res) => {
     try {
         const carNumber = req.body.car_number;
 

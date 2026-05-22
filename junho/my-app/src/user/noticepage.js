@@ -1,29 +1,24 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useMemo } from "react";
 import { Typography, Card } from "antd";
 import NavBar from "./navbar";
 import { useParams } from "react-router-dom";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 const { Title, Text } = Typography;
 
 function NoticePage(props) {
   const { noticesData } = props;
-  const [noticeData, setNoticeData] = useState(null);
-
-  let notice_id = useParams();
+  const { notice_id } = useParams();
 
   const cleanHTML = (html) => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+    const doc = parser.parseFromString(sanitizeHtml(html), "text/html");
 
     doc.body.querySelectorAll("p").forEach((p) => {
       if (/^(\s|<br>|&nbsp;)*$/.test(p.innerHTML)) {
         p.remove();
       }
     });
-
-    doc.body.querySelectorAll("img").forEach((img) => {
-    });
-    
 
     return doc.body.innerHTML;
   };
@@ -41,23 +36,22 @@ function NoticePage(props) {
     }
   };
 
-  useEffect(() => {
-    const dataId = parseInt(notice_id.notice_id, 10);
-    let currentNoticeData = noticesData.find((notice) => notice.notice_id === dataId);
-    
-    if (currentNoticeData) {
-      let updatedNoticeData = {
-        ...currentNoticeData, 
-        content: cleanHTML(currentNoticeData.content),
-        summary: cleanHTML(currentNoticeData.summary === null ? "요약 내용 없음" : currentNoticeData.summary),
-        noti_category: getCategoryName(currentNoticeData.noti_category),
-      };
-      setNoticeData(updatedNoticeData);
-    } else {
-      setNoticeData(null);
+  const noticeData = useMemo(() => {
+    const dataId = parseInt(notice_id, 10);
+    const currentNoticeData = noticesData.find((notice) => notice.notice_id === dataId);
+
+    if (!currentNoticeData) {
+      return null;
     }
+
+    return {
+      ...currentNoticeData,
+      content: cleanHTML(currentNoticeData.content),
+      summary: cleanHTML(currentNoticeData.summary ?? "요약 내용 없음"),
+      noti_category: getCategoryName(currentNoticeData.noti_category),
+    };
   }, [notice_id, noticesData]);
-  
+
   return (
     <>
       <NavBar />
@@ -72,7 +66,7 @@ function NoticePage(props) {
           <Card
             style={{
               borderRadius: "15px",
-              overflow: "",
+              overflow: "hidden",
               boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
             }}
           >
@@ -88,9 +82,7 @@ function NoticePage(props) {
               }}
             >
               <Text strong>분류: {noticeData.noti_category}</Text>
-              <Text type="secondary">
-                작성일: {new Date(noticeData.noti_w_date).toLocaleDateString()}
-              </Text>
+              <Text type="secondary">작성일: {new Date(noticeData.noti_w_date).toLocaleDateString()}</Text>
             </div>
 
             <Title level={3} style={{ marginBottom: "16px", color: "#003366" }}>
@@ -106,7 +98,7 @@ function NoticePage(props) {
                 whiteSpace: "pre-wrap",
                 backgroundColor: "#fff",
               }}
-              dangerouslySetInnerHTML={{ __html: noticeData.content}}
+              dangerouslySetInnerHTML={{ __html: noticeData.content }}
             />
 
             <Title level={3} style={{ marginBottom: "6px", color: "#003366" }}>
@@ -126,10 +118,8 @@ function NoticePage(props) {
           </Card>
         )}
         {!noticeData && (
-          <div
-            style={{ padding: "20px", textAlign: "center", fontSize: "18px" }}
-          >
-            데이터가 없음
+          <div style={{ padding: "20px", textAlign: "center", fontSize: "18px" }}>
+            데이터가 없습니다.
           </div>
         )}
       </div>

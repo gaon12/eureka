@@ -1,9 +1,10 @@
 import Header from "./Header";
 import { Layout, Typography, Card, Divider } from "antd";
 import { useParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { workDataState } from "./dataState";
 import "../admin/adminstyles.css";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 export default function WorkContent() {
   const { Title } = Typography;
@@ -11,9 +12,9 @@ export default function WorkContent() {
 
   let work_id = useParams(); // useParams에서 w_l_id를 직접 추출합니다.
 
-  const [workData, setWorkData] = useRecoilState(workDataState);
+  const workData = useRecoilValue(workDataState);
 
-  const dataId = parseInt(work_id.work_id);
+  const dataId = parseInt(work_id.work_id, 10);
 
   // find 메서드를 사용하여 ID를 기반으로 데이터를 찾습니다.
   const data = workData.find((work) => work.w_l_id === dataId);
@@ -49,7 +50,7 @@ export default function WorkContent() {
               whiteSpace: "pre-wrap",
               backgroundColor: "#fff",
             }}
-            dangerouslySetInnerHTML={{ __html: data.w_content2 }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.w_content2) }}
           />
         </Card>
       </Content>

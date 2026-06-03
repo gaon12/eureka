@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Eureka Security Scan Report</title>
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.5; margin: 40px; max-width: 960px; }
+      h1, h2 { color: #1f3b57; }
+      code { background: #f4f6f8; padding: 2px 4px; border-radius: 4px; }
+      li { margin-bottom: 6px; }
+    </style>
+  </head>
+  <body>
+    <h1>Eureka Security Scan Report</h1>
+    <p><strong>Date:</strong> 2026-06-03</p>
+    <h2>Summary</h2>
+    <p>GitHub Dependabot and code scanning pages were opened directly. Local source and lockfile review found and fixed session, CORS, authorization, rate limiting, XSS rendering, upload, dependency, Vite migration, and API runtime issues.</p>
+    <h2>GitHub Alerts Observed</h2>
+    <ul>
+      <li>Code scanning: 23 open alerts, including 22 missing-rate-limiting alerts and 1 incomplete multi-character sanitization alert.</li>
+      <li>Dependabot: 12 open alerts covering webpack-dev-server, CKEditor packages, and qs.</li>
+    </ul>
+    <h2>Key Fixes</h2>
+    <ul>
+      <li>Made admin checks session-based and added <code>/user/auth</code>.</li>
+      <li>Changed logout from state-changing <code>GET</code> to <code>POST</code>.</li>
+      <li>Restricted CORS and hardened session cookie defaults.</li>
+      <li>Applied shared rate limiters across all Express API routers.</li>
+      <li>Added credentials to protected frontend requests.</li>
+      <li>Sanitized rich HTML before rendering.</li>
+      <li>Replaced regex HTML stripping with DOMParser-based text extraction in admin and user editor flows.</li>
+      <li>Restricted Flask CORS, fixed extension validation, added upload size limits, and handled missing files.</li>
+      <li>Fixed <code>/car/info</code> query/result handling bugs.</li>
+      <li>Added an internal token path for Flask-to-Node vehicle lookups.</li>
+      <li>Removed hard-coded test/example URLs from active source paths.</li>
+      <li>Migrated the React app from deprecated Create React App scripts to Vite.</li>
+    </ul>
+    <h2>Dependency Candidates</h2>
+    <ul>
+      <li>Node backend audit now reports <code>0</code> vulnerabilities.</li>
+      <li>React app now uses Vite 8, React 19, React Router 7, Ant Design 6, and current test tooling.</li>
+      <li><code>@ckeditor/ckeditor5-build-classic</code> updated to <code>44.3.0</code>; <code>@ckeditor/ckeditor5-react</code> updated to <code>11.1.2</code>.</li>
+      <li>Frontend <code>qs</code> now resolves to <code>6.15.2</code>.</li>
+      <li>Frontend <code>webpack-dev-server</code> now resolves to <code>5.2.4</code>.</li>
+      <li>Frontend CKEditor advisory packages now resolve to <code>48.2.0</code> where applicable.</li>
+      <li>Frontend audit now reports <code>0</code> vulnerabilities.</li>
+    </ul>
+    <h2>Validation</h2>
+    <ul>
+      <li>Passed Node syntax checks for modified server/router/middleware files.</li>
+      <li>Passed Python compile for <code>server/main.py</code> and <code>server/real-time_car_plate.py</code>.</li>
+      <li>Passed backend npm audit with <code>0</code> vulnerabilities.</li>
+      <li>Passed frontend npm audit with <code>0</code> vulnerabilities.</li>
+      <li>Blocked React build because frontend dependency installation did not complete in bounded time; the local install became incomplete and a temporary clean-copy <code>npm ci --ignore-scripts</code> also exceeded the available time.</li>
+    </ul>
+  </body>
+</html>

@@ -3,50 +3,47 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "41.4.2",
-    "@ckeditor/ckeditor5-react": "6.1.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "antd": "^5.8.6",
-    "axios": "^1.13.5",
-    "buffer": "^6.0.3",
-    "js-cookie": "^3.0.5",
-    "react": "^18.2.0",
-    "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.30.3",
-    "react-scripts": "5.0.1",
+    "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+    "@ckeditor/ckeditor5-react": "^11.1.2",
+    "antd": "^6.4.3",
+    "axios": "^1.17.0",
+    "js-cookie": "^3.0.8",
+    "react": "^19.2.7",
+    "react-copy-to-clipboard": "^5.1.1",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.16.0",
     "recoil": "^0.7.7",
-    "stream": "^0.0.2",
-    "sweetalert2": "^11.22.4",
-    "timers": "^0.1.1",
-    "timers-browserify": "^2.0.12",
-    "web-vitals": "^2.1.4",
+    "sweetalert2": "^11.26.25",
     "xml2js": "^0.6.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "scripts": {
+    "start": "vite --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest --environment jsdom"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "defaults and supports es6-module",
+      "maintained node versions"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 2 Chrome versions",
+      "last 2 Firefox versions",
+      "last 2 Safari versions"
     ]
   },
   "overrides": {
@@ -54,6 +51,11 @@
     "postcss": "^8.5.10",
     "serialize-javascript": "^7.0.5",
     "uuid": "^11.1.1",
-    "lodash-es": "^4.17.24"
+    "lodash-es": "^4.17.24",
+    "qs": "^6.15.2",
+    "webpack-dev-server": "^5.2.4",
+    "@ckeditor/ckeditor5-clipboard": "^48.2.0",
+    "@ckeditor/ckeditor5-html-support": "^48.2.0",
+    "ckeditor5": "^48.2.0"
   }
 }

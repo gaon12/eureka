@@ -52,7 +52,8 @@ function WorkWrite() {
       console.error("Expected a string but received:", str);
       return "";
     }
-    return str.replace(/<\/?[^>]+(>|$)/g, "");
+    const doc = new DOMParser().parseFromString(str, "text/html");
+    return doc.body.textContent || "";
   };
 
   const handleSubmit = async () => {
@@ -72,6 +73,7 @@ function WorkWrite() {
       const response = await fetch(API_ENDPOINTS.publish, {
         headers:{"Content-Type":"application/json"},
         method: "POST",
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 

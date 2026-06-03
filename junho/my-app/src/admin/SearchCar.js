@@ -4,6 +4,7 @@ import { Layout, Spin } from "antd";
 import { Card, Upload, Modal } from "antd";
 import Header from "./Header";
 import Swal from 'sweetalert2';
+import { PREDICT_API_URL } from "../config/api";
 
 export default function SearchCar() {
   const { Content } = Layout;
@@ -39,7 +40,7 @@ export default function SearchCar() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("https://www.gaon.xyz:9037/predict", {
+      const response = await fetch(PREDICT_API_URL, {
         method: "POST",
         body: formData,
       });
@@ -71,8 +72,20 @@ export default function SearchCar() {
   const uploadProps = {
     name: "file",
     multiple: false,
+    accept: "image/png,image/jpeg",
     customRequest: handleFileUpload,
     fileList,
+    beforeUpload: (file) => {
+      const isImage = ["image/png", "image/jpeg"].includes(file.type);
+      if (!isImage) {
+        Swal.fire({
+          icon: 'warning',
+          title: '지원하지 않는 파일',
+          text: 'PNG 또는 JPG 이미지만 업로드할 수 있습니다.',
+        });
+      }
+      return isImage || Upload.LIST_IGNORE;
+    },
   };
 
   return (
@@ -80,7 +93,7 @@ export default function SearchCar() {
       <Header />
       <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
         <Card
-          title="Image Upload"
+          title="차량 번호판 이미지 검색"
           style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
         >
           <Dragger {...uploadProps}>
@@ -97,11 +110,10 @@ export default function SearchCar() {
                 <InboxOutlined />
               </p>
               <p className="ant-upload-text">
-                Click or drag file to this area to upload
+                번호판 이미지를 클릭하거나 끌어다 놓으세요
               </p>
               <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibited from
-                uploading company data or other banned files.
+                PNG 또는 JPG 파일 1개만 업로드할 수 있습니다.
               </p>
             </div>
           </Dragger>
@@ -114,7 +126,7 @@ export default function SearchCar() {
         {carData && (
           <Modal
             title="차량 정보"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={handleOk}
             onCancel={() => setIsModalVisible(false)}
             cancelButtonProps={{ style: { display: "none" } }}

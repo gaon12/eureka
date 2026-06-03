@@ -53,6 +53,7 @@ export function App() {
   useEffect(() => {
     fetch(`${ip_address}/user/auth`, {
       method: 'GET',
+      credentials: 'include',
     })
       .then(response => response.json())
       .then(data => {

@@ -1,1 +1,1 @@
-export const Url = 'http://eureka.vwaiolet.com';
+export { API_BASE_URL as Url } from "../config/api";

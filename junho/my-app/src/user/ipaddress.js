@@ -1,1 +1,1 @@
-export const ip_address = "http://eureka.vwaiolet.com";
+export { API_BASE_URL as ip_address } from "../config/api";

@@ -27,7 +27,7 @@ const Navbar = () => {
   const handleClick = async () => {
     try {
       const response = await fetch(`${ip_address}/user/signout`, {
-        method: 'GET', // GET 방식으로 변경
+        method: 'POST',
         credentials: 'include' // 쿠키를 포함시키기 위한 설정
       });
 

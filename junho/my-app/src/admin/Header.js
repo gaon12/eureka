@@ -39,7 +39,7 @@ function Header() {
   const handleClick = async () => {
     try {
       const response = await fetch(`${Url}/user/signout`, {
-        method: "GET", // GET 방식으로 변경
+        method: "POST",
         credentials: "include", // 쿠키를 포함시키기 위한 설정
       });
 
@@ -82,6 +82,7 @@ function Header() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ car_number: approveCar.car_number }),
       });
 
@@ -102,6 +103,7 @@ function Header() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ car_number: denyCar.car_number }),
       });
       if (response.ok) {

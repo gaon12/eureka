@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { workDataState } from "./dataState";
 import "../admin/adminstyles.css";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 export default function WorkContent() {
   const { Title } = Typography;
@@ -49,7 +50,7 @@ export default function WorkContent() {
               whiteSpace: "pre-wrap",
               backgroundColor: "#fff",
             }}
-            dangerouslySetInnerHTML={{ __html: data.w_content2 }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.w_content2) }}
           />
         </Card>
       </Content>

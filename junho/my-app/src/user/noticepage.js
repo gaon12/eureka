@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Card } from "antd";
 import NavBar from "./navbar";
 import { useParams } from "react-router-dom";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 const { Title, Text } = Typography;
 
@@ -25,7 +26,7 @@ function NoticePage(props) {
     });
     
 
-    return doc.body.innerHTML;
+    return sanitizeHtml(doc.body.innerHTML);
   };
 
   const getCategoryName = (categoryNumber) => {
@@ -106,7 +107,7 @@ function NoticePage(props) {
                 whiteSpace: "pre-wrap",
                 backgroundColor: "#fff",
               }}
-              dangerouslySetInnerHTML={{ __html: noticeData.content}}
+              dangerouslySetInnerHTML={{ __html: noticeData.content }}
             />
 
             <Title level={3} style={{ marginBottom: "6px", color: "#003366" }}>

@@ -26,17 +26,17 @@ export default function DashBoard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userResponse = await fetch(`${Url}/user/info`)
+        const userResponse = await fetch(`${Url}/user/info`, { credentials: "include" })
         const rUserData = await userResponse.json();
         setUserData(rUserData.results);
-        const carResponse = await fetch(`${Url}/car/registered`)
+        const carResponse = await fetch(`${Url}/car/registered`, { credentials: "include" })
         const rCarData = await carResponse.json();
         setCarData(rCarData.results.rcars);
         setNcarData(rCarData.results.nrcars);
-        const articleResponse = await fetch(`${Url}/complaint`)
+        const articleResponse = await fetch(`${Url}/complaint`, { credentials: "include" })
         const rarticleData = await articleResponse.json();
         setArticlData(rarticleData.results);
-        const workResponse = await fetch(`${Url}/work`)
+        const workResponse = await fetch(`${Url}/work`, { credentials: "include" })
         const rWorkData = await workResponse.json();
         setWorkData(rWorkData.results)
 

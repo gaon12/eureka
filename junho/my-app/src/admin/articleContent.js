@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { articleDataState } from "./dataState";
 import "../admin/adminstyles.css";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 export default function ArticleContent() {
   const { Title } = Typography;
@@ -73,7 +74,7 @@ if (!data) {
               whiteSpace: "pre-wrap",
               backgroundColor: "#fff"
             }}
-            dangerouslySetInnerHTML={{ __html: data.content2 }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.content2) }}
           />
         </Card>
       </Content>

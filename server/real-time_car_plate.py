@@ -6,7 +6,11 @@ from threading import Thread
 import numpy as np
 import time
 import json
+import os
 from tkinter import messagebox
+
+API_BASE_URL = os.getenv("NODE_API_BASE_URL", "http://localhost:3000").rstrip("/")
+PREDICT_API_URL = os.getenv("PREDICT_API_URL", "http://localhost:9035/predict")
 
 def login(session):
     payload = {
@@ -14,7 +18,7 @@ def login(session):
         'ho': '456',
         'pw': 'password'
     }
-    response = session.post("http://test.com:3000/user/signin/", data=payload)
+    response = session.post(f"{API_BASE_URL}/user/signin/", json=payload, timeout=5)
     if response.status_code == 200:
         return True
     else:
@@ -35,7 +39,11 @@ def capture_video(session):
             _, buffer = cv2.imencode('.jpg', frame)
             img_bytes = buffer.tobytes()
 
-            response = session.post("http://test.com:3000/car/info", files={"image": img_bytes})
+            response = session.post(
+                PREDICT_API_URL,
+                files={"file": ("frame.jpg", img_bytes, "image/jpeg")},
+                timeout=10
+            )
             
             response_data = response.json()
             status = response_data.get('status', 'Unknown')

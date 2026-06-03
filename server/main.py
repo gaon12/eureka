@@ -8,7 +8,13 @@ import json
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 app = Flask(__name__)
-CORS(app)
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+    if origin.strip()
+]
+app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_UPLOAD_MB', '5')) * 1024 * 1024
+CORS(app, resources={r"/predict": {"origins": allowed_origins}})
 
 # app.config[
 #     'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://guest1:0YYL!i[-}F)UTkt8G@apt-manager.mysql.database.azure.com/car'
@@ -33,10 +39,14 @@ def send_request(data_to_send, retries=3, config_path='config.json'):
         config = json.load(config_file)
 
     nodejs_server_url = config.get('nodejs_car_info', '')
+    internal_api_token = os.getenv('INTERNAL_API_TOKEN', '')
+    headers = {}
+    if internal_api_token:
+        headers['Authorization'] = f'Bearer {internal_api_token}'
 
     for _ in range(retries):
         try:
-            response = requests.post(nodejs_server_url, json=data_to_send)
+            response = requests.post(nodejs_server_url, json=data_to_send, headers=headers, timeout=5)
             response_data = response.json()
 
             if response.status_code == 200:
@@ -52,14 +62,24 @@ def is_allowed_file(filename, allowed_extensions=None):
     if allowed_extensions is None:
         allowed_extensions = {'jpg', 'jpeg', 'png'}
     _, file_extension = os.path.splitext(filename)
-    file_extension = file_extension.lower()
+    file_extension = file_extension.lower().lstrip('.')
     return file_extension in allowed_extensions
 
 
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        file = request.files['file']
+        file = request.files.get('file')
+        if file is None or file.filename == '':
+            response_data = {
+                "status": 400,
+                "error": {
+                    "errorCode": "F400",
+                    "message": "파일이 없습니다"
+                }
+            }
+            return Response(json.dumps(response_data, ensure_ascii=False), status=400, mimetype='application/json')
+
         # 파일 확장자 확인
         if is_allowed_file(file.filename):
             recognizer = LicensePlateRecognizer()
@@ -84,7 +104,7 @@ def predict():
                             "message": "번호판 인식 실패"
                         }
                     }
-                    return Response(json.dumps(response_data), status=400, mimetype='application/json')
+                    return Response(json.dumps(response_data, ensure_ascii=False), status=400, mimetype='application/json')
 
                 # 숫자만 있는 경우 마지막 숫자 4개를 뺀 나머지 숫자 중에 마지막 숫자가 '7'인 경우 '가'로 치환
                 if result.isdigit() and len(result) >= 5 and result[-5] == '7':
@@ -100,7 +120,7 @@ def predict():
                     
                     if response_data is not None:
                         # JSON 데이터를 그대로 클라이언트로 전송
-                        response = Response(json.dumps(response_data), status=200, mimetype='application/json')
+                        response = Response(json.dumps(response_data, ensure_ascii=False), status=200, mimetype='application/json')
                         return response
                     else:
                         # 에러코드
@@ -111,7 +131,7 @@ def predict():
                                 "message": "Node.js서버와의 연결 실패"
                             }
                         }
-                        return Response(json.dumps(response_data), status=500, mimetype='application/json')
+                        return Response(json.dumps(response_data, ensure_ascii=False), status=500, mimetype='application/json')
                 else:
                     # 에러코드
                     response_data = {
@@ -121,7 +141,7 @@ def predict():
                             "message": "있을 수 없는 용도기호"
                         }
                     }
-                    return Response(json.dumps(response_data), status=400, mimetype='application/json')
+                    return Response(json.dumps(response_data, ensure_ascii=False), status=400, mimetype='application/json')
 
         else:
             # 에러코드
@@ -132,7 +152,7 @@ def predict():
                     "message": "올바르지 않는 확장자"
                 }
             }
-            response = Response(json.dumps(response_data), status=400, mimetype='application/json')
+            response = Response(json.dumps(response_data, ensure_ascii=False), status=400, mimetype='application/json')
             return response
 
 

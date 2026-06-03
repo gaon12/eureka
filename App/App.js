@@ -4,7 +4,9 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const PREDICT_API_URL = process.env.EXPO_PUBLIC_PREDICT_API_URL || `${API_BASE_URL}/predict`;
 
 const ResultModal = ({ isVisible, data, onClose }) => (
   <Modal isVisible={isVisible}>
@@ -56,7 +58,7 @@ const LoginModal = ({ isVisible, onLogin, onClose, isLoading }) => (
         placeholder="비밀번호"
         secureTextEntry
         style={styles.loginInput}
-        onChangeText={text => onLogin(text, 'pw1')}
+        onChangeText={text => onLogin(text, 'pw')}
       />
       {isLoading ? <ActivityIndicator /> : null}
       <Button title="로그인" onPress={() => onLogin(null, 'submit')} />
@@ -82,17 +84,12 @@ export default function App() {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
-	  const session = await AsyncStorage.getItem('session');
-      if (session) {
-        setIsLoggedIn(true);  // 세션 있으면 로그인 상태를 true로 설정
-      }
     })();
   }, []);
   
   const handleLogout = async () => {
     try {
-      await axios.get('http://example.com/user/signout');
-      await AsyncStorage.removeItem('session');
+      await axios.post(`${API_BASE_URL}/user/signout`, null, { withCredentials: true });
       setIsLoggedIn(false);
     } catch (error) {
       Alert.alert('로그아웃 오류', error.response?.data?.error?.message || '알 수 없는 에러');
@@ -104,11 +101,10 @@ export default function App() {
       setLoginData(prevData => ({ ...prevData, [key]: value }));
     } else {
       // 로그인 API 호출
-      axios.post('http://example.com/user/signin', loginData)
+      axios.post(`${API_BASE_URL}/user/signin`, loginData, { withCredentials: true })
         .then(response => {
-          AsyncStorage.setItem('session', JSON.stringify(response.data));
           setLoginVisible(false);
-          // 로그인 성공 처리
+          setIsLoggedIn(response.data?.status === 200);
         })
         .catch(error => {
           // 로그인 실패 처리
@@ -129,8 +125,7 @@ export default function App() {
   const performManualSearch = async () => {
 	  
 	// 로그인 확인
-    const session = await AsyncStorage.getItem('session');
-    if (!session) {
+    if (!isLoggedIn) {
       Alert.alert('로그인 필요', '로그인 후에 검색할 수 있습니다.');
       return;
     }
@@ -142,8 +137,9 @@ export default function App() {
     }, 10000);
 
     try {
-      const response = await axios.post('http://example.com/car/info', { car_number: carNumber }, {
+      const response = await axios.post(`${API_BASE_URL}/car/info`, { car_number: carNumber }, {
         cancelToken: source.token,
+        withCredentials: true,
       });
       setModalData(response.data);
       setModalVisible(true);
@@ -164,14 +160,14 @@ export default function App() {
 
   const sendImage = async (imageUri) => {
     const formData = new FormData();
-    formData.append('image', {
+    formData.append('file', {
       uri: imageUri,
       name: 'image.jpg',
       type: 'image/jpg',
     });
 
     try {
-      const response = await axios.post('https://test.com/predict', formData, {
+      const response = await axios.post(PREDICT_API_URL, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       showModal(response.data);
@@ -184,8 +180,9 @@ export default function App() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
-    if (!result.cancelled) {
-      sendImage(result.uri);
+    const asset = result.assets?.[0];
+    if (!result.canceled && asset?.uri) {
+      sendImage(asset.uri);
     }
   };
 

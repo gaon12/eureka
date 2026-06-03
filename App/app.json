@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Search Car Plate",
+    "slug": "search-car-plate",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "experiments": {
+      "reactCompiler": true
+    }
+  }
+}

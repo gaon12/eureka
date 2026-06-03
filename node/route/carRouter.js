@@ -1,19 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
-const RateLimit = require('express-rate-limit');
 
 const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 
-// set up rate limiter: maximum of 100 requests per 15 minutes
-const limiter = RateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // max 100 requests per windowMs
-});
+const canReadCarInfo = async (req, res, next) => {
+    const internalToken = process.env.INTERNAL_API_TOKEN;
+    const authHeader = req.get('authorization') || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+
+    if (internalToken && bearerToken === internalToken) {
+        return next();
+    }
+
+    return isAdmin(req, res, next);
+};
 
 /** 차량 등록 거부 메서드 */
-router.delete('/deny', isAdmin, limiter, async (req, res) => {
+router.delete('/deny', isAdmin, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
@@ -36,7 +41,7 @@ router.delete('/deny', isAdmin, limiter, async (req, res) => {
 });
 
 /** 차량 등록 승인 메서드 */
-router.put('/approve', limiter, isAdmin, async (req, res) => {
+router.put('/approve', isAdmin, async (req, res) => {
     const car_number = req.body.car_number;
 
     try {
@@ -101,7 +106,7 @@ router.post('/regist', isSignin, async (req, res) => {
         const disabled = req.body.disabled_car;
 
         /** 이미 등록 되어 있는 차량인지 확인 */
-        const existCar = await db.query('SELECT * FROM car WHERE car_number = ?', carNumber);
+        const existCar = await db.query('SELECT * FROM car WHERE car_number = ?', [carNumber]);
         if (existCar[0].length > 0 && existCar[0][0].registered == 1) {
             return res.json({
                 "status": 400,
@@ -153,28 +158,29 @@ router.post('/regist', isSignin, async (req, res) => {
  *  차량 번호로 요청
  *  JSON 형식으로 http 상태 코드, 차량 등록 정보 반환
  */
-router.post('/info', isAdmin, async (req, res) => {
+router.post('/info', canReadCarInfo, async (req, res) => {
     try {
         const carNumber = req.body.car_number;
 
         const existCar = await db.query('SELECT * FROM car WHERE car_number = ?', [carNumber]);
 
-        if (existCar.length > 0) {
-            const carInfo = await db.query('SELECT u.username, u.dong, u.ho, u.phone1, u.phone2, c.car_number, c.guest_car, c.electric_car, c.disabled_car FROM user u JOIN car c ON u.id = c.car_r_id WHERE c.car_number = ?', [carNumber]);
+        if (existCar[0].length > 0) {
+            const [carInfo] = await db.query('SELECT u.username, u.dong, u.ho, u.phone1, u.phone2, c.car_number, c.guest_car, c.electric_car, c.disabled_car FROM user u JOIN car c ON u.id = c.car_r_id WHERE c.car_number = ?', [carNumber]);
 
             if (carInfo.length > 0) {
+                const result = carInfo[0];
                 return res.json({
                     "status": 200,
                     "message": "차량 정보 조회 성공",
-                    "dong": result[0].dong,
-                    "ho": result[0].ho,
-                    "username": result[0].username,
-                    "phone1": result[0].phone1,
-                    "phone2": result[0].phone2,
-                    "carNumber": result[0].car_number,
-                    "guestCar": result[0].guest_car,
-                    "electricCar": result[0].electric_car,
-                    "disabledCar": result[0].disabled_car
+                    "dong": result.dong,
+                    "ho": result.ho,
+                    "username": result.username,
+                    "phone1": result.phone1,
+                    "phone2": result.phone2,
+                    "carNumber": result.car_number,
+                    "guestCar": result.guest_car,
+                    "electricCar": result.electric_car,
+                    "disabledCar": result.disabled_car
                 });
             } else {
                 return res.json({

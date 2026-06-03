@@ -209,7 +209,7 @@
 ### 요청
 |HTTP|
 |--|
-|GET http://{address}:{port}/user/signout/|
+|POST http://{address}:{port}/user/signout/|
 
 ### 응답
 #### 응답 바디

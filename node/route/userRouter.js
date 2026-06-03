@@ -5,30 +5,63 @@ const bcrypt = require('bcrypt');
 const { isAdmin } = require('../middleware/isAdmin');
 const { isSignin } = require('../middleware/isSignin');
 const { isSignout } = require('../middleware/isSignout');
+const { authLimiter } = require('../middleware/rateLimiters');
 
-/** /POST, 관리자 여부 판단 메서드 */
-router.post('/isAdmin', async (req, res) => {
+/** /GET, 현재 세션 인증/권한 확인 메서드 */
+router.get('/auth', isSignin, async (req, res) => {
     try {
-        const dong = req.body.dong;
-        const ho = req.body.ho;
-        const isAdmin = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
-        if (isAdmin[0].length > 0) {
-            return res.json({
-                "status": 200,
-                "message": isAdmin[0][0].isAdmin
-            })
-        } else {
-            return res.json({
-                "status": 400,
+        const [dong, ho] = req.session.nickname.split('-');
+        const [users] = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
+
+        if (users.length <= 0) {
+            return res.status(403).json({
+                "status": 403,
                 "error": {
                     "errorCode": "E403",
                     "message": "등록되지 않은 사용자"
                 }
-            })
+            });
         }
+
+        return res.json({
+            "status": 200,
+            "message": users[0].isAdmin
+        });
     } catch (error) {
         console.error(error);
-        return res.json({
+        return res.status(500).json({
+            "status": 500,
+            "error": {
+                "errorCode": "E500",
+                "message": "서버 에러"
+            }
+        })
+    }
+})
+
+/** /POST, 관리자 여부 판단 메서드 */
+router.post('/isAdmin', isSignin, async (req, res) => {
+    try {
+        const [dong, ho] = req.session.nickname.split('-');
+        const [users] = await db.query('SELECT isAdmin FROM user WHERE dong = ? AND ho = ?', [dong, ho]);
+
+        if (users.length > 0) {
+            return res.json({
+                "status": 200,
+                "message": users[0].isAdmin
+            })
+        }
+
+        return res.status(403).json({
+            "status": 403,
+            "error": {
+                "errorCode": "E403",
+                "message": "등록되지 않은 사용자"
+            }
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
             "status": 500,
             "error": {
                 "errorCode": "E500",
@@ -59,11 +92,11 @@ router.get('/info', isAdmin, async (req, res, next) => {
     }
 });
 
-/** /GET, 로그아웃 메서드
+/** /POST, 로그아웃 메서드
  *  세션 파괴
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.get('/signout', isSignin, async (req, res, next) => {
+router.post('/signout', isSignin, async (req, res, next) => {
     try {
         if (req.session.is_logined) {
             await new Promise((resolve, reject) => {
@@ -103,7 +136,7 @@ router.get('/signout', isSignin, async (req, res, next) => {
 /** /POST, 로그인 메서드
  *  JSON 형식으로 http 상태코드, 메시지 반환
  */
-router.post('/signin', isSignout, async (req, res, next) => {
+router.post('/signin', authLimiter, isSignout, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const pw = req.body.pw;
@@ -141,7 +174,8 @@ router.post('/signin', isSignout, async (req, res, next) => {
 
                     return res.json({
                         "status": 200,
-                        "message": req.session.nickname + " 로그인 성공"
+                        "message": req.session.nickname + " 로그인 성공",
+                        "role": existUser[0].isAdmin === 1 ? "admin" : "user"
                     });
                 } else {
                     return res.json({
@@ -187,7 +221,7 @@ router.post('/signin', isSignout, async (req, res, next) => {
  *  phone2 항목이 빈칸이면 NULL로 채움
  *  JSON 형식으로 http 상태 코드, 메시지 반환
  */
-router.post('/signup', isSignout, async (req, res, next) => {
+router.post('/signup', authLimiter, isSignout, async (req, res, next) => {
     const dong = req.body.dong;
     const ho = req.body.ho;
     const username = req.body.username;

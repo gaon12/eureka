@@ -18,11 +18,32 @@ const carRouter = require('./route/carRouter');
 const noticeRouter = require('./route/noticeRouter');
 const workRouter = require('./route/workRouter');
 const complaintRouter = require('./route/complaintRouter');
+const { apiLimiter } = require('./middleware/rateLimiters');
 
-app.set('port', process.env.NODE_PORT); // 포트 지정
-app.use(cors('*'));
+const defaultOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000'
+];
+const allowedOrigins = (process.env.CORS_ORIGINS || defaultOrigins.join(','))
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.set('port', process.env.NODE_PORT || 3000); // 포트 지정
+app.set('trust proxy', 1);
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true
+}));
 app.use(express.static(path.join(__dirname, '/build'))); // 정적 파일 경로
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1mb' }));
 app.use(express.urlencoded( {extended: false} ));
 app.use(morgan('dev'));
 
@@ -41,12 +62,17 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60
     }
 }));
-app.use(lusca.csrf());
+if (process.env.ENABLE_CSRF === 'true') {
+    app.use(lusca.csrf());
+}
 
 /** routing */
+app.use(apiLimiter);
 app.use('/user', userRouter);
 app.use('/car', carRouter);
 app.use('/notice', noticeRouter);
@@ -60,6 +86,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));
 });
 
-app.listen(process.env.NODE_PORT, () => {
-    console.log(`Node.js server listening at port ${process.env.NODE_PORT}`);
+app.listen(app.get('port'), () => {
+    console.log(`Node.js server listening at port ${app.get('port')}`);
 });

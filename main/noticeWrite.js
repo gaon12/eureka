@@ -5,6 +5,14 @@ import { Select, Input, Button } from 'antd';
 import axios from 'axios';
 import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || window.location.origin;
+const IMAGE_UPLOAD_URL = process.env.REACT_APP_IMAGE_UPLOAD_URL || `${API_BASE_URL}/img.php`;
+
+const toPlainText = (html) => {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 function AppInner() {
   const [category, setCategory] = useState(null);
   const [title, setTitle] = useState("");
@@ -19,11 +27,11 @@ function AppInner() {
       category,
       title,
       content,
-      content2: content.replace(/<[^>]*>?/gm, ''),
+      content2: toPlainText(content),
     };
 
     try {
-      const response = await axios.post('https://example.com/publish', payload);
+      const response = await axios.post(`${API_BASE_URL}/notice/write`, payload);
       
       if (response.data.status === 201) {
         alert('게시글이 성공적으로 업로드되었습니다.');
@@ -43,13 +51,13 @@ function AppInner() {
 
   const editorConfig = {
     simpleUpload: {
-      uploadUrl: 'https://test.com/img.php',
+      uploadUrl: IMAGE_UPLOAD_URL,
       onUpload: async (event, editor) => {
         const data = new FormData();
         data.append('file', event.loader.file);
 
         try {
-          const response = await axios.post('https://test.com/img.php', data);
+          const response = await axios.post(IMAGE_UPLOAD_URL, data);
           const imageUrl = response.data.url;
           event.loader.uploadTotal = 100;
           event.loader.uploaded = 100;

@@ -9,12 +9,13 @@ import axios from 'axios';
 
 const { Header, Content } = Layout;
 const { Title, Paragraph } = Typography;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || window.location.origin;
 
 function WorkList() {
   const [works, setWorks] = useState([]);
 
   useEffect(() => {
-    axios.get('https://test.com/work')
+    axios.get(`${API_BASE_URL}/work`)
       .then(response => {
         setWorks(response.data.results);
       })
@@ -51,7 +52,7 @@ function WorkDetail({ match }) {
   const [work, setWork] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://test.com/workboard/${match.params.w_l_id}`)
+    axios.get(`${API_BASE_URL}/workboard/${match.params.w_l_id}`)
       .then(response => {
         setWork(response.data);
       })

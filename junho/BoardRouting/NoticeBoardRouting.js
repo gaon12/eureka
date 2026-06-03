@@ -9,13 +9,14 @@ import axios from "axios";
 
 const { Header, Content } = Layout;
 const { Title, Paragraph } = Typography;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || window.location.origin;
 
 function NoticeList() {
   const [notices, setNotices] = useState([]);
 
   useEffect(() => {
     axios
-      .get("https://test.com/notice")
+      .get(`${API_BASE_URL}/notice`)
       .then((response) => {
         setNotices(response.data.results);
       })
@@ -56,7 +57,7 @@ function NoticeDetail({ match }) {
 
   useEffect(() => {
     axios
-      .get(`https://test.com/noticeboard/${match.params.notice_id}`)
+      .get(`${API_BASE_URL}/noticeboard/${match.params.notice_id}`)
       .then((response) => {
         setNotice(response.data);
       })

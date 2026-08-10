@@ -1,7 +1,14 @@
 import { Table } from "antd";
 import { useMemo } from "react";
 import type { Key } from "react";
-import type { AppColumns, CarInfo, ComplaintArticle, NoticeItem, TableRecord } from "../types/domain";
+import type {
+  AppColumns,
+  CarInfo,
+  ComplaintArticle,
+  NoticeItem,
+  RenderableValue,
+  TableRecord,
+} from "../types/domain";
 
 interface CompactTableProps<T extends TableRecord> {
   columns: AppColumns<T>;
@@ -21,10 +28,12 @@ const getCategoryName = (categoryNumber: number | string): string => {
   }
 };
 
-const hasNoticeCategory = (item: TableRecord): item is NoticeItem => "noti_category" in item;
+const hasNoticeCategory = (item: TableRecord): item is NoticeItem =>
+  "noti_category" in item;
 const hasCarFlags = (item: TableRecord): item is CarInfo =>
   "guest_car" in item && "electric_car" in item && "disabled_car" in item;
-const hasComplaintContent = (item: TableRecord): item is ComplaintArticle => "complaint_id" in item;
+const hasComplaintContent = (item: TableRecord): item is ComplaintArticle =>
+  "complaint_id" in item;
 
 const transformRow = <T extends TableRecord>(item: T): T => {
   if (hasNoticeCategory(item)) {
@@ -47,10 +56,22 @@ const transformRow = <T extends TableRecord>(item: T): T => {
   return item;
 };
 
-const getRowKey = (record: TableRecord, index?: number): Key =>
-  record.id ?? record.notice_id ?? record.complaint_id ?? record.w_l_id ?? record.car_number ?? index ?? 0;
+const toKey = (value: RenderableValue): Key | undefined =>
+  typeof value === "string" || typeof value === "number" ? value : undefined;
 
-export default function CTable<T extends TableRecord>({ columns, data }: CompactTableProps<T>) {
+const getRowKey = (record: TableRecord, index?: number): Key =>
+  toKey(record.id) ??
+  toKey(record.notice_id) ??
+  toKey(record.complaint_id) ??
+  toKey(record.w_l_id) ??
+  toKey(record.car_number) ??
+  index ??
+  0;
+
+export default function CTable<T extends TableRecord>({
+  columns,
+  data,
+}: CompactTableProps<T>) {
   const visibleData = useMemo(() => data.map(transformRow).slice(0, 5), [data]);
 
   return (

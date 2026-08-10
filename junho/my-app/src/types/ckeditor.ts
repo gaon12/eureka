@@ -1,3 +1,11 @@
+import type { ContextWatchdog, Editor, EditorWatchdog } from "ckeditor5";
+import type { EditorRelaxedConstructor } from "@ckeditor/ckeditor5-integrations-common";
+
+export type CompatibleEditorConstructor = EditorRelaxedConstructor<Editor> & {
+  EditorWatchdog: typeof EditorWatchdog;
+  ContextWatchdog: typeof ContextWatchdog;
+};
+
 export interface CkFileLoader {
   file: Promise<File>;
 }

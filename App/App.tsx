@@ -13,8 +13,10 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import Modal from "react-native-modal";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:3000";
-const PREDICT_API_URL = process.env.EXPO_PUBLIC_PREDICT_API_URL || `${API_BASE_URL}/predict`;
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:3000";
+const PREDICT_API_URL =
+  process.env.EXPO_PUBLIC_PREDICT_API_URL || `${API_BASE_URL}/predict`;
 const REQUEST_TIMEOUT_MS = 10_000;
 
 type LoginField = "dong" | "ho" | "pw";
@@ -66,7 +68,11 @@ interface LoginModalProps {
 
 const getAxiosErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError<ApiEnvelope>(error)) {
-    return error.response?.data?.error?.message ?? error.response?.data?.message ?? "알 수 없는 에러";
+    return (
+      error.response?.data?.error?.message ??
+      error.response?.data?.message ??
+      "알 수 없는 에러"
+    );
   }
 
   if (error instanceof Error) {
@@ -82,7 +88,9 @@ const ResultModal = ({ isVisible, data, onClose }: ResultModalProps) => (
       {data?.status === 200 ? (
         <Text>{data.message}</Text>
       ) : (
-        <Text>{data?.error?.message || data?.message || "알 수 없는 에러"}</Text>
+        <Text>
+          {data?.error?.message || data?.message || "알 수 없는 에러"}
+        </Text>
       )}
       <Button title="닫기" onPress={onClose} />
     </View>
@@ -155,7 +163,11 @@ export default function App() {
   const [isManualSearchVisible, setManualSearchVisible] = useState(false);
   const [carNumber, setCarNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [loginData, setLoginData] = useState<LoginData>({ dong: "", ho: "", pw: "" });
+  const [loginData, setLoginData] = useState<LoginData>({
+    dong: "",
+    ho: "",
+    pw: "",
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const cameraRef = useRef<CameraView | null>(null);
 
@@ -184,10 +196,14 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post<ApiEnvelope>(`${API_BASE_URL}/user/signin`, loginData, {
-        withCredentials: true,
-        timeout: REQUEST_TIMEOUT_MS,
-      });
+      const response = await axios.post<ApiEnvelope>(
+        `${API_BASE_URL}/user/signin`,
+        loginData,
+        {
+          withCredentials: true,
+          timeout: REQUEST_TIMEOUT_MS,
+        },
+      );
       setIsLoggedIn(response.data.status === 200);
     } catch (error) {
       Alert.alert("로그인 오류", getAxiosErrorMessage(error));
@@ -235,10 +251,14 @@ export default function App() {
     } as unknown as Blob);
 
     try {
-      const response = await axios.post<PlateLookupResult>(PREDICT_API_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: REQUEST_TIMEOUT_MS,
-      });
+      const response = await axios.post<PlateLookupResult>(
+        PREDICT_API_URL,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: REQUEST_TIMEOUT_MS,
+        },
+      );
       showModal(response.data);
     } catch (error) {
       showModal({ status: 500, message: getAxiosErrorMessage(error) });
@@ -293,7 +313,10 @@ export default function App() {
       <View style={styles.buttonContainer}>
         <Button title="사진 업로드" onPress={pickImage} />
         <Button title="사진 찍기" onPress={takePhoto} />
-        <Button title="수동 검색" onPress={() => setManualSearchVisible(true)} />
+        <Button
+          title="수동 검색"
+          onPress={() => setManualSearchVisible(true)}
+        />
         <Button title="로그아웃" onPress={handleLogout} />
       </View>
       <ResultModal

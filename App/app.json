@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "experiments": {
       "reactCompiler": true
-    }
+    },
+    "plugins": ["expo-status-bar"]
   }
 }

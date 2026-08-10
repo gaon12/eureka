@@ -8,7 +8,11 @@ import UploadAdapter from "./uploadAdapter";
 import { Url } from "../user/url";
 import NavBar from "../user/navbar";
 import type { ApiEnvelope } from "../types/api";
-import type { CkEditorInstance, CkFileLoader } from "../types/ckeditor";
+import type {
+  CompatibleEditorConstructor,
+  CkEditorInstance,
+  CkFileLoader,
+} from "../types/ckeditor";
 
 const API_ENDPOINTS = {
   publish: `${Url}/complaint/write/`,
@@ -17,10 +21,12 @@ const API_ENDPOINTS = {
 
 export default function Notice() {
   const [form] = Form.useForm<{ title: string; content: string }>();
-  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(null);
+  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(
+    null,
+  );
   const { Content } = Layout;
   const { Title } = Typography;
-  
+
   const go = useNavigate();
 
   const navi = (path: string) => {
@@ -40,7 +46,7 @@ export default function Notice() {
         Swal.fire("Error", "에디터가 아직 준비되지 않았습니다.", "error");
         return;
       }
-  
+
       const { title } = form.getFieldsValue();
       const content = editorInstance.getData();
       const payload = {
@@ -48,24 +54,23 @@ export default function Notice() {
         content: stripHTMLTags(content),
         content2: content,
       };
-      
-  
+
       const response = await fetch(API_ENDPOINTS.publish, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error("Server responded with an error");
       }
-  
+
       const data = (await response.json()) as ApiEnvelope<never>;
-  
-      switch(data.status) {
+
+      switch (data.status) {
         case 201:
           Swal.fire("Success", "제출 성공", "success");
           form.resetFields(); // form 내용 초기화
@@ -75,14 +80,17 @@ export default function Notice() {
           Swal.fire("Error", "필수 항목 미입력", "error");
           break;
         default:
-          Swal.fire("Error", String(data.message ?? "알 수 없는 오류가 발생했습니다."), "error");
+          Swal.fire(
+            "Error",
+            String(data.message ?? "알 수 없는 오류가 발생했습니다."),
+            "error",
+          );
       }
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "오류가 발생했습니다. 다시 시도해주세요.", "error");
     }
   };
-  
 
   const handleImageUpload = (editor: CkEditorInstance) => {
     const fileRepository = editor.plugins.get("FileRepository");
@@ -99,7 +107,7 @@ export default function Notice() {
 
   return (
     <>
-    <NavBar />
+      <NavBar />
       <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
         <Card
           style={{
@@ -123,7 +131,9 @@ export default function Notice() {
                   rules={[{ required: true, message: "내용을 입력해주세요!" }]}
                 >
                   <CKEditor
-                    editor={ClassicEditor}
+                    editor={
+                      ClassicEditor as unknown as CompatibleEditorConstructor
+                    }
                     onReady={(editor) => {
                       const typedEditor = editor as CkEditorInstance;
                       handleImageUpload(typedEditor);

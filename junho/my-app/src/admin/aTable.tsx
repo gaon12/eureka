@@ -1,7 +1,13 @@
 import { Pagination, Table } from "antd";
 import { useMemo, useState } from "react";
 import type { Key } from "react";
-import type { AppColumns, CarInfo, NoticeItem, TableRecord } from "../types/domain";
+import type {
+  AppColumns,
+  CarInfo,
+  NoticeItem,
+  RenderableValue,
+  TableRecord,
+} from "../types/domain";
 
 interface AllTableProps<T extends TableRecord> {
   columns: AppColumns<T>;
@@ -46,10 +52,22 @@ const transformRow = <T extends TableRecord>(item: T): T => {
   return item;
 };
 
-const getRowKey = (record: TableRecord, index?: number): Key =>
-  record.id ?? record.notice_id ?? record.complaint_id ?? record.w_l_id ?? record.car_number ?? index ?? 0;
+const toKey = (value: RenderableValue): Key | undefined =>
+  typeof value === "string" || typeof value === "number" ? value : undefined;
 
-export default function AllTable<T extends TableRecord>({ columns, data }: AllTableProps<T>) {
+const getRowKey = (record: TableRecord, index?: number): Key =>
+  toKey(record.id) ??
+  toKey(record.notice_id) ??
+  toKey(record.complaint_id) ??
+  toKey(record.w_l_id) ??
+  toKey(record.car_number) ??
+  index ??
+  0;
+
+export default function AllTable<T extends TableRecord>({
+  columns,
+  data,
+}: AllTableProps<T>) {
   const [page, setPage] = useState(1);
 
   const transformedData = useMemo(() => data.map(transformRow), [data]);

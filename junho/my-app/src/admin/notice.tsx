@@ -18,7 +18,11 @@ import UploadAdapter from "./uploadAdapter";
 import { Url } from "../admin/url";
 import Header from "./Header";
 import type { ApiEnvelope } from "../types/api";
-import type { CkEditorInstance, CkFileLoader } from "../types/ckeditor";
+import type {
+  CompatibleEditorConstructor,
+  CkEditorInstance,
+  CkFileLoader,
+} from "../types/ckeditor";
 // 환경 변수로 관리하는 것이 좋습니다.
 
 const API_ENDPOINTS = {
@@ -27,8 +31,14 @@ const API_ENDPOINTS = {
 };
 
 export default function Notice() {
-  const [form] = Form.useForm<{ category: string; title: string; content: string }>();
-  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(null);
+  const [form] = Form.useForm<{
+    category: string;
+    title: string;
+    content: string;
+  }>();
+  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(
+    null,
+  );
   const { Content } = Layout;
   const { Title } = Typography;
 
@@ -56,9 +66,9 @@ export default function Notice() {
         content: content,
         content2: stripHTMLTags(content),
       };
-     
+
       const response = await fetch(API_ENDPOINTS.publish, {
-        headers:{"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         method: "POST",
         credentials: "include",
         body: JSON.stringify(payload),
@@ -69,8 +79,8 @@ export default function Notice() {
       }
 
       const data = (await response.json()) as ApiEnvelope<never>;
-     
-      if (data.status===200 || data.status===201) {
+
+      if (data.status === 200 || data.status === 201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
         navi("/admin");
       } else {
@@ -130,7 +140,9 @@ export default function Notice() {
                   rules={[{ required: true, message: "내용을 입력해주세요!" }]}
                 >
                   <CKEditor
-                    editor={ClassicEditor}
+                    editor={
+                      ClassicEditor as unknown as CompatibleEditorConstructor
+                    }
                     onReady={(editor) => {
                       const typedEditor = editor as CkEditorInstance;
                       handleImageUpload(typedEditor);

@@ -24,7 +24,14 @@ const ALLOWED_TAGS = new Set([
   "ul",
 ]);
 
-const ALLOWED_ATTRS = new Set(["alt", "class", "href", "src", "target", "title"]);
+const ALLOWED_ATTRS = new Set([
+  "alt",
+  "class",
+  "href",
+  "src",
+  "target",
+  "title",
+]);
 
 const isSafeUrl = (value: string): boolean => {
   if (!value) {
@@ -51,6 +58,11 @@ export const sanitizeHtml = (html: string | null | undefined): string => {
     const tagName = node.tagName.toLowerCase();
 
     if (!ALLOWED_TAGS.has(tagName)) {
+      if (tagName === "script") {
+        node.remove();
+        return;
+      }
+
       node.replaceWith(...node.childNodes);
       return;
     }

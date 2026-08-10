@@ -14,15 +14,18 @@ import {
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import UploadAdapter from "./uploadAdapter";
 import { Url } from "../admin/url";
 import Header from "./Header";
 import type { Dayjs } from "dayjs";
 import type { ApiEnvelope } from "../types/api";
-import type { CkEditorInstance, CkFileLoader } from "../types/ckeditor";
+import type {
+  CompatibleEditorConstructor,
+  CkEditorInstance,
+  CkFileLoader,
+} from "../types/ckeditor";
 // 환경 변수로 관리하는 것이 좋습니다.
-
 
 const API_ENDPOINTS = {
   publish: `${Url}/work/write/`,
@@ -31,21 +34,25 @@ const API_ENDPOINTS = {
 
 function WorkWrite() {
   const [form] = Form.useForm<{ content: string }>();
-  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(null);
+  const [editorInstance, setEditorInstance] = useState<CkEditorInstance | null>(
+    null,
+  );
   const { Content } = Layout;
   const { Title } = Typography;
   const { RangePicker } = DatePicker;
 
   const go = useNavigate();
-  const navi= (path: string)=>{
-    go(path)
-  }
+  const navi = (path: string) => {
+    go(path);
+  };
 
   const [dateValue, setDateValue] = useState<[string, string]>(["", ""]);
 
-  const onChange = (_value: [Dayjs | null, Dayjs | null] | null, dateString: [string, string]) => {
+  const onChange = (
+    _value: [Dayjs | null, Dayjs | null] | null,
+    dateString: [string, string],
+  ) => {
     setDateValue(dateString);
- 
   };
   const stripHTMLTags = (str: string): string => {
     const doc = new DOMParser().parseFromString(str, "text/html");
@@ -72,7 +79,7 @@ function WorkWrite() {
       };
 
       const response = await fetch(API_ENDPOINTS.publish, {
-        headers:{"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         method: "POST",
         credentials: "include",
         body: JSON.stringify(payload),
@@ -84,7 +91,7 @@ function WorkWrite() {
 
       const data = (await response.json()) as ApiEnvelope<never>;
 
-      if (data.status ===201) {
+      if (data.status === 201) {
         Swal.fire("Success", "게시물이 등록되었습니다!", "success");
         navi("/admin");
       } else {
@@ -138,7 +145,9 @@ function WorkWrite() {
                   rules={[{ required: true, message: "내용을 입력해주세요!" }]}
                 >
                   <CKEditor
-                    editor={ClassicEditor}
+                    editor={
+                      ClassicEditor as unknown as CompatibleEditorConstructor
+                    }
                     onReady={(editor) => {
                       const typedEditor = editor as CkEditorInstance;
                       handleImageUpload(typedEditor);

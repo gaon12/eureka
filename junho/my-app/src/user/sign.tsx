@@ -48,7 +48,10 @@ export default function RegisterPage() {
   };
 
   const handleNumericChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.name as keyof Pick<RegisterFormData, "dong" | "ho">;
+    const name = event.target.name as keyof Pick<
+      RegisterFormData,
+      "dong" | "ho"
+    >;
     const { value } = event.target;
 
     if (/^[0-9]*$/.test(value)) {
@@ -73,7 +76,10 @@ export default function RegisterPage() {
   };
 
   const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.name as keyof Pick<RegisterFormData, "phone1" | "phone2">;
+    const name = event.target.name as keyof Pick<
+      RegisterFormData,
+      "phone1" | "phone2"
+    >;
     const reVal = event.target.value
       .replace(/[^0-9]/g, "")
       .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
@@ -126,9 +132,14 @@ export default function RegisterPage() {
   };
 
   const validatepw1 = (_rule: RuleObject, value?: string): Promise<void> => {
-    if (value && (value.length < 8 || !/[a-z]/.test(value) || !/[0-9]/.test(value))) {
+    if (
+      value &&
+      (value.length < 8 || !/[a-z]/.test(value) || !/[0-9]/.test(value))
+    ) {
       return Promise.reject(
-        new Error("비밀번호는 영어 소문자와 숫자를 포함한 8자리 이상이어야 합니다."),
+        new Error(
+          "비밀번호는 영어 소문자와 숫자를 포함한 8자리 이상이어야 합니다.",
+        ),
       );
     }
     return Promise.resolve();
@@ -169,7 +180,12 @@ export default function RegisterPage() {
           </Form.Item>
 
           <Form.Item name="username">
-            <Input placeholder="이름" name="username" onChange={handleChange} autoComplete="off" />
+            <Input
+              placeholder="이름"
+              name="username"
+              onChange={handleChange}
+              autoComplete="off"
+            />
           </Form.Item>
 
           <Form.Item name="phone1">
@@ -210,8 +226,8 @@ export default function RegisterPage() {
               format="YYYY-MM-DD"
               style={{ width: "100%" }}
               inputReadOnly
-              onChange={(_date: Dayjs | null, dateString: string | string[]) => {
-                updateFormValue("movein", Array.isArray(dateString) ? dateString[0] ?? "" : dateString);
+              onChange={(_date: Dayjs | null, dateString: string | null) => {
+                updateFormValue("movein", dateString ?? "");
               }}
             />
           </Form.Item>
@@ -223,7 +239,11 @@ export default function RegisterPage() {
               { validator: validatepw1 },
             ]}
           >
-            <Input.Password placeholder="비밀번호" name="pw1" onChange={handleChange} />
+            <Input.Password
+              placeholder="비밀번호"
+              name="pw1"
+              onChange={handleChange}
+            />
           </Form.Item>
 
           <Form.Item
@@ -233,11 +253,19 @@ export default function RegisterPage() {
               { validator: validatepw2 },
             ]}
           >
-            <Input.Password placeholder="비밀번호 확인" name="pw2" onChange={handleChange} />
+            <Input.Password
+              placeholder="비밀번호 확인"
+              name="pw2"
+              onChange={handleChange}
+            />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="register-submit-btn">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="register-submit-btn"
+            >
               가입
             </Button>
           </Form.Item>

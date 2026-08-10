@@ -66,18 +66,23 @@ function Trash() {
       });
 
       const infoWindow = new window.naver.maps.InfoWindow({
-        content: '<div style="width:150px;text-align:center;padding:10px;"><b>현재 위치</b></div>',
+        content:
+          '<div style="width:150px;text-align:center;padding:10px;"><b>현재 위치</b></div>',
       });
 
-      window.naver.maps.Event.addListener(currentLocationMarker, "click", () => {
-        if (infoWindow.getMap()) {
-          infoWindow.close();
-        } else {
-          infoWindow.open(mapInstance, currentLocationMarker);
-        }
+      window.naver.maps.Event.addListener(
+        currentLocationMarker,
+        "click",
+        () => {
+          if (infoWindow.getMap()) {
+            infoWindow.close();
+          } else {
+            infoWindow.open(mapInstance, currentLocationMarker);
+          }
 
-        setClickedMarkers([{ road_address: "현재 위치" }]);
-      });
+          setClickedMarkers([{ road_address: "현재 위치" }]);
+        },
+      );
 
       new window.naver.maps.Circle({
         map: mapInstance,
@@ -115,11 +120,18 @@ function Trash() {
         response.data.forEach((item) => {
           if (item.latitude && item.longitude) {
             const marker = new window.naver.maps.Marker({
-              position: new window.naver.maps.LatLng(item.latitude, item.longitude),
+              position: new window.naver.maps.LatLng(
+                item.latitude,
+                item.longitude,
+              ),
               map,
             });
 
-            window.naver.maps.Event.addListener(marker, "click", markerClickHandler(item));
+            window.naver.maps.Event.addListener(
+              marker,
+              "click",
+              markerClickHandler(item),
+            );
           }
         });
       })
@@ -139,7 +151,10 @@ function Trash() {
           alignItems: "center",
         }}
       >
-        <div ref={mapRef} style={{ width: "70%", height: "70vh", marginBottom: "20px" }} />
+        <div
+          ref={mapRef}
+          style={{ width: "70%", height: "70vh", marginBottom: "20px" }}
+        />
         <Table<TrashBin>
           columns={columns}
           dataSource={clickedMarkers}

@@ -10,7 +10,7 @@ import Login from "../user/login";
 import RegisterPage from "../user/sign";
 import Main from "../user/Main";
 import Noticeboard from "../user/noticeboard";
-import Noticepage from "../user/noticepage"
+import Noticepage from "../user/noticepage";
 import Complaintwrite from "../user/complaintwrite";
 import Trash from "../user/trash";
 import Calamity from "../user/calamity";
@@ -25,7 +25,7 @@ import UserInfo from "../admin/userInfo";
 import Notice from "../admin/notice";
 import Work from "../admin/work";
 import { userRoleState } from "../admin/dataState";
-import { ip_address } from './ipaddress';
+import { ip_address } from "./ipaddress";
 import WorkWrite from "../admin/WorkWrite";
 import { useRecoilState } from "recoil";
 import { useNoticesData } from "./useNoticesData";
@@ -56,7 +56,7 @@ export function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const noticesData = useNoticesData();
-   
+
   useEffect(() => {
     if (location.pathname === "/") {
       if (userRole === "user") {
@@ -71,16 +71,15 @@ export function App() {
 
   useEffect(() => {
     fetchJson<AuthResponse>(`${ip_address}/user/auth`, {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
     })
       .then((data) => setUserRole(roleFromAuth(data)))
       .catch((error: Error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
         setUserRole("");
       });
   }, [setUserRole]);
-  
 
   return (
     <div>
@@ -101,8 +100,14 @@ export function App() {
           <>
             <Route path="*" element={<Navigate to="/main" />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/noticeboard" element={<Noticeboard  noticesData={noticesData}/>} />
-            <Route path='/noticeboard/:notice_id' element={<Noticepage noticesData={noticesData}/>} />
+            <Route
+              path="/noticeboard"
+              element={<Noticeboard noticesData={noticesData} />}
+            />
+            <Route
+              path="/noticeboard/:notice_id"
+              element={<Noticepage noticesData={noticesData} />}
+            />
             <Route path="/complaintwrite" element={<Complaintwrite />} />
             <Route path="/trash" element={<Trash />} />
             <Route path="/calamity" element={<Calamity />} />

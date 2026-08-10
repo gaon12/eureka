@@ -39,14 +39,18 @@ export default function DashBoard() {
     async function fetchDashboardData() {
       try {
         const [users, cars, complaints, works] = await Promise.all([
-          fetchJson<ApiEnvelope<UserInfo[]>>(`${Url}/user/info`, { credentials: "include" }),
+          fetchJson<ApiEnvelope<UserInfo[]>>(`${Url}/user/info`, {
+            credentials: "include",
+          }),
           fetchJson<ApiEnvelope<CarDashboardResults>>(`${Url}/car/registered`, {
             credentials: "include",
           }),
           fetchJson<ApiEnvelope<ComplaintArticle[]>>(`${Url}/complaint`, {
             credentials: "include",
           }),
-          fetchJson<ApiEnvelope<WorkLog[]>>(`${Url}/work`, { credentials: "include" }),
+          fetchJson<ApiEnvelope<WorkLog[]>>(`${Url}/work`, {
+            credentials: "include",
+          }),
         ]);
 
         if (cancelled) {
@@ -96,22 +100,46 @@ export default function DashBoard() {
           {`총 회원수 ${userData.length}명`}
         </div>
         <CTable columns={userColumns} data={userData} />
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "15px" }}>
-          <Button type="primary" style={{ width: "161.84px" }} onClick={() => navigate("/userTable")}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "15px",
+          }}
+        >
+          <Button
+            type="primary"
+            style={{ width: "161.84px" }}
+            onClick={() => navigate("/userTable")}
+          >
             회원 전체보기
           </Button>
         </div>
       </Card>
-      <Card style={{ marginTop: "24px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
+      <Card
+        style={{ marginTop: "24px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+      >
         <Title level={5}>최근 민원</Title>
         <CTable columns={articleColumns} data={articleData} />
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "15px" }}>
-          <Button type="primary" style={{ width: "161.84px" }} onClick={() => navigate("/article")}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "15px",
+          }}
+        >
+          <Button
+            type="primary"
+            style={{ width: "161.84px" }}
+            onClick={() => navigate("/article")}
+          >
             최근게시물 더보기
           </Button>
         </div>
       </Card>
-      <Card style={{ marginTop: "24px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
+      <Card
+        style={{ marginTop: "24px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+      >
         <Title level={5}>최근 주차등록 내역</Title>
         <div
           style={{
@@ -124,7 +152,13 @@ export default function DashBoard() {
           {`총 주차등록 ${carData.length}건`}
         </div>
         <CTable columns={carColumns} data={carData} />
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "15px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "15px",
+          }}
+        >
           <Button type="primary" onClick={() => navigate("/parkInfo")}>
             주차등록 전체보기
           </Button>

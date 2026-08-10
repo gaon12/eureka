@@ -84,20 +84,34 @@ export default function Login({ setUserRole }: LoginProps) {
       });
 
       if (data.status === 200) {
-        const role: Exclude<UserRole, ""> = data.role === "admin" ? "admin" : "user";
+        const role: Exclude<UserRole, ""> =
+          data.role === "admin" ? "admin" : "user";
         setUserRole(role);
         navigate(role === "admin" ? "/admin" : "/main");
         return;
       }
 
-      Swal.fire("Message", getLoginErrorMessage(data), data.status === 400 ? "error" : "warning");
+      Swal.fire(
+        "Message",
+        getLoginErrorMessage(data),
+        data.status === 400 ? "error" : "warning",
+      );
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "서버와의 통신 중 오류가 발생했습니다.", "warning");
     } finally {
       setIsSubmitting(false);
     }
-  }, [dong, ho, ip_address, isSubmitting, loginDisabled, navigate, password, setUserRole]);
+  }, [
+    dong,
+    ho,
+    ip_address,
+    isSubmitting,
+    loginDisabled,
+    navigate,
+    password,
+    setUserRole,
+  ]);
 
   const inputStyle: CSSProperties = {
     width: "375px",
@@ -139,7 +153,9 @@ export default function Login({ setUserRole }: LoginProps) {
       <Input.Password
         className="responsive-input"
         style={inputStyle}
-        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+        iconRender={(visible) =>
+          visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+        }
         placeholder="비밀번호를 입력하세요."
         value={password}
         onChange={handlePasswordChange}
@@ -148,7 +164,11 @@ export default function Login({ setUserRole }: LoginProps) {
 
       <Row gutter={[10, 16]} justify="center" style={{ marginTop: "20px" }}>
         <Col>
-          <Button type="primary" onClick={handleSubmit} disabled={isSubmitting || loginDisabled}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            disabled={isSubmitting || loginDisabled}
+          >
             로그인
           </Button>
         </Col>

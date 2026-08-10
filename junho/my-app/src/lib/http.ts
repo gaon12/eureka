@@ -13,13 +13,16 @@ export async function fetchJson<T>(
 
   if (!response.ok) {
     const envelope = data as ApiEnvelope<unknown>;
-    const status = typeof envelope.status === "number" ? envelope.status : response.status;
+    const status =
+      typeof envelope.status === "number" ? envelope.status : response.status;
     throw new Error(`Request failed with status ${status}`);
   }
 
   return data;
 }
 
-export function hasResults<T>(value: ApiEnvelope<T>): value is ApiEnvelope<T> & { results: T } {
+export function hasResults<T>(
+  value: ApiEnvelope<T>,
+): value is ApiEnvelope<T> & { results: T } {
   return value.results !== undefined;
 }

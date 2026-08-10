@@ -34,12 +34,37 @@ const isWeatherApiResponse = (value: unknown): value is WeatherApiResponse =>
   typeof value === "object" && value !== null && "channel" in value;
 
 const weatherColumns: ColumnsType<WeatherRow> = [
-  { title: "발표일시", dataIndex: "발표일시", key: "발표일시", align: "center" },
+  {
+    title: "발표일시",
+    dataIndex: "발표일시",
+    key: "발표일시",
+    align: "center",
+  },
   { title: "지역", dataIndex: "지역", key: "지역", align: "center" },
-  { title: "하늘상태", dataIndex: "하늘상태", key: "하늘상태", align: "center" },
-  { title: "강수확률", dataIndex: "강수확률", key: "강수확률", align: "center" },
-  { title: "최저기온", dataIndex: "최저기온", key: "최저기온", align: "center" },
-  { title: "최고기온", dataIndex: "최고기온", key: "최고기온", align: "center" },
+  {
+    title: "하늘상태",
+    dataIndex: "하늘상태",
+    key: "하늘상태",
+    align: "center",
+  },
+  {
+    title: "강수확률",
+    dataIndex: "강수확률",
+    key: "강수확률",
+    align: "center",
+  },
+  {
+    title: "최저기온",
+    dataIndex: "최저기온",
+    key: "최저기온",
+    align: "center",
+  },
+  {
+    title: "최고기온",
+    dataIndex: "최고기온",
+    key: "최고기온",
+    align: "center",
+  },
   { title: "풍속", dataIndex: "풍속", key: "풍속", align: "center" },
 ];
 
@@ -50,7 +75,12 @@ const newsColumns: ColumnsType<NewsItem> = [
     key: "title",
     align: "center",
     render: (text: string, record) => (
-      <a href={record.link} target="_blank" rel="noopener noreferrer" key={record.link}>
+      <a
+        href={record.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        key={record.link}
+      >
         {text}
       </a>
     ),
@@ -78,7 +108,9 @@ const noticesColumns: ColumnsType<NoticeItem> = [
     dataIndex: "title",
     key: "title",
     align: "center",
-    render: (text: string, record) => <Link to={`/noticeboard/${record.notice_id}`}>{text}</Link>,
+    render: (text: string, record) => (
+      <Link to={`/noticeboard/${record.notice_id}`}>{text}</Link>
+    ),
   },
   {
     title: "작성일",
@@ -86,7 +118,9 @@ const noticesColumns: ColumnsType<NoticeItem> = [
     key: "noti_w_date",
     align: "center",
     render: (text: string, record) => (
-      <span key={record.noti_w_date}>{new Date(text).toLocaleDateString()}</span>
+      <span key={record.noti_w_date}>
+        {new Date(text).toLocaleDateString()}
+      </span>
     ),
   },
 ];
@@ -122,7 +156,9 @@ function Main() {
           },
         ]);
       })
-      .catch((error) => console.error("Error fetching the weather data", error));
+      .catch((error) =>
+        console.error("Error fetching the weather data", error),
+      );
   }, []);
 
   return (
@@ -142,7 +178,11 @@ function Main() {
                 <Title level={2}>오늘의 날씨</Title>
               </div>
               {weatherData.length > 0 ? (
-                <Table<WeatherRow> dataSource={weatherData} columns={weatherColumns} pagination={false} />
+                <Table<WeatherRow>
+                  dataSource={weatherData}
+                  columns={weatherColumns}
+                  pagination={false}
+                />
               ) : (
                 <div>Loading...</div>
               )}
@@ -157,7 +197,11 @@ function Main() {
                 }}
               >
                 <Title level={2}>최신뉴스</Title>
-                <a href="https://www.korea.kr/main.do" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://www.korea.kr/main.do"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   더보기
                 </a>
               </div>

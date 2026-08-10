@@ -18,7 +18,8 @@ const formatDate = (value: string): string =>
     day: "numeric",
   });
 
-const normalizeHtmlSpace = (value: string): string => value.replace(/&nbsp;/g, " ");
+const normalizeHtmlSpace = (value: string): string =>
+  value.replace(/&nbsp;/g, " ");
 
 export const dataState = atom<CarInfo[]>({
   key: "dataState",
@@ -88,7 +89,8 @@ export const userColumnsState = atom<AppColumns<UserInfo>>({
   default: [
     {
       title: "회원아이디",
-      render: (_value: unknown, record: UserInfo) => `${record.dong ?? ""}동 ${record.ho ?? ""}호`,
+      render: (_value: unknown, record: UserInfo) =>
+        `${record.dong ?? ""}동 ${record.ho ?? ""}호`,
       align: "center",
     },
     {
@@ -102,7 +104,8 @@ export const userColumnsState = atom<AppColumns<UserInfo>>({
       dataIndex: "phone1",
       key: "phone1",
       align: "center",
-      render: (value: string) => value.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"),
+      render: (value: string) =>
+        value.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"),
     },
     {
       title: "전입일",
@@ -129,7 +132,9 @@ export const articleColumnsState = atom<AppColumns<ComplaintArticle>>({
       key: "title",
       align: "center",
       render: (value: string, record: ComplaintArticle) => (
-        <Link to={`/article/${record.complaint_id}`}>{normalizeHtmlSpace(value)}</Link>
+        <Link to={`/article/${record.complaint_id}`}>
+          {normalizeHtmlSpace(value)}
+        </Link>
       ),
     },
     {
@@ -138,7 +143,9 @@ export const articleColumnsState = atom<AppColumns<ComplaintArticle>>({
       key: "content",
       align: "center",
       render: (value: string, record: ComplaintArticle) => (
-        <Link to={`/article/${record.complaint_id}`}>{normalizeHtmlSpace(value)}</Link>
+        <Link to={`/article/${record.complaint_id}`}>
+          {normalizeHtmlSpace(value)}
+        </Link>
       ),
     },
     {
@@ -189,7 +196,9 @@ export const workColumnsStata = atom<AppColumns<WorkLog>>({
       dataIndex: "w_l_id",
       key: "w_l_id",
       align: "center",
-      render: (value: number, record: WorkLog) => <Link to={`/work/${record.w_l_id}`}>{value}</Link>,
+      render: (value: number, record: WorkLog) => (
+        <Link to={`/work/${record.w_l_id}`}>{value}</Link>
+      ),
     },
     {
       title: "업무 일지 내용",

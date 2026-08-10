@@ -34,7 +34,9 @@ const iconButtonStyle: CSSProperties = {
 const navTargets = ["/admin", "/Notice", "/work", "", "/searchCar"] as const;
 
 function Header() {
-  const [btnPressed, setBtnPressed] = useState<boolean[]>(() => Array(6).fill(false));
+  const [btnPressed, setBtnPressed] = useState<boolean[]>(() =>
+    Array(6).fill(false),
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [carData, setCarData] = useRecoilState(nCarDataState);
   const [blinking, setBlinking] = useState(false);
@@ -70,7 +72,11 @@ function Header() {
         return;
       }
 
-      Swal.fire("오류", data.error?.message ?? "알 수 없는 오류가 발생했습니다.", "error");
+      Swal.fire(
+        "오류",
+        data.error?.message ?? "알 수 없는 오류가 발생했습니다.",
+        "error",
+      );
     } catch (error) {
       console.error(error);
       Swal.fire("오류", "데이터를 가져오는 중 오류가 발생했습니다.", "error");
@@ -78,7 +84,9 @@ function Header() {
   };
 
   const removePendingCar = (target: PendingCarInfo) => {
-    setCarData((current) => current.filter((item) => item.car_number !== target.car_number));
+    setCarData((current) =>
+      current.filter((item) => item.car_number !== target.car_number),
+    );
   };
 
   const handelApprove = async (target: PendingCarInfo) => {
@@ -120,7 +128,9 @@ function Header() {
   };
 
   const handlePress = (index: number) => {
-    setBtnPressed((current) => current.map((pressed, idx) => (idx === index ? true : pressed)));
+    setBtnPressed((current) =>
+      current.map((pressed, idx) => (idx === index ? true : pressed)),
+    );
 
     if (index === 3) {
       setModalOpen(true);
@@ -132,7 +142,9 @@ function Header() {
     }
 
     window.setTimeout(() => {
-      setBtnPressed((current) => current.map((pressed, idx) => (idx === index ? false : pressed)));
+      setBtnPressed((current) =>
+        current.map((pressed, idx) => (idx === index ? false : pressed)),
+      );
     }, 300);
   };
 
@@ -150,7 +162,9 @@ function Header() {
   }, [carData.length]);
 
   return (
-    <AntHeader style={{ display: "flex", position: "sticky", zIndex: 1, top: 0 }}>
+    <AntHeader
+      style={{ display: "flex", position: "sticky", zIndex: 1, top: 0 }}
+    >
       <div
         style={{
           width: "220px",
@@ -166,7 +180,11 @@ function Header() {
           <Button
             type="text"
             icon={<HomeOutlined style={{ fontSize: "18px" }} />}
-            style={{ color: "#fff", padding: "4px 0px", ...(btnPressed[0] ? pressedStyle : {}) }}
+            style={{
+              color: "#fff",
+              padding: "4px 0px",
+              ...(btnPressed[0] ? pressedStyle : {}),
+            }}
             onClick={() => handlePress(0)}
           />
         </li>
@@ -174,7 +192,10 @@ function Header() {
           <Button
             type="text"
             icon={<EditOutlined style={{ fontSize: "18px" }} />}
-            style={{ ...iconButtonStyle, ...(btnPressed[1] ? pressedStyle : {}) }}
+            style={{
+              ...iconButtonStyle,
+              ...(btnPressed[1] ? pressedStyle : {}),
+            }}
             onClick={() => handlePress(1)}
           />
         </li>
@@ -182,7 +203,11 @@ function Header() {
           <Button
             type="text"
             icon={<SnippetsOutlined style={{ fontSize: "18px" }} />}
-            style={{ color: "#fff", padding: "4px 0px", ...(btnPressed[2] ? pressedStyle : {}) }}
+            style={{
+              color: "#fff",
+              padding: "4px 0px",
+              ...(btnPressed[2] ? pressedStyle : {}),
+            }}
             onClick={() => handlePress(2)}
           />
         </li>
@@ -190,7 +215,10 @@ function Header() {
           <Button
             type="text"
             icon={<BellOutlined style={{ fontSize: "18px" }} />}
-            style={{ ...iconButtonStyle, ...(btnPressed[3] ? pressedStyle : {}) }}
+            style={{
+              ...iconButtonStyle,
+              ...(btnPressed[3] ? pressedStyle : {}),
+            }}
             onClick={() => handlePress(3)}
           >
             {carData.length > 0 && (
@@ -212,7 +240,11 @@ function Header() {
           <Button
             type="text"
             icon={<SearchOutlined style={{ fontSize: "18px" }} />}
-            style={{ color: "#fff", padding: "4px 0px", ...(btnPressed[4] ? pressedStyle : {}) }}
+            style={{
+              color: "#fff",
+              padding: "4px 0px",
+              ...(btnPressed[4] ? pressedStyle : {}),
+            }}
             onClick={() => handlePress(4)}
           />
         </li>

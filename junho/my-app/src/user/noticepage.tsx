@@ -46,7 +46,9 @@ function NoticePage({ noticesData }: NoticePageProps) {
 
   const noticeData = useMemo<RenderNotice | null>(() => {
     const dataId = Number(notice_id);
-    const currentNoticeData = noticesData.find((notice) => notice.notice_id === dataId);
+    const currentNoticeData = noticesData.find(
+      (notice) => notice.notice_id === dataId,
+    );
 
     if (!currentNoticeData) {
       return null;
@@ -127,7 +129,11 @@ function NoticePage({ noticesData }: NoticePageProps) {
             />
           </Card>
         ) : (
-          <div style={{ padding: "20px", textAlign: "center", fontSize: "18px" }}>데이터가 없음</div>
+          <div
+            style={{ padding: "20px", textAlign: "center", fontSize: "18px" }}
+          >
+            데이터가 없음
+          </div>
         )}
       </div>
     </>

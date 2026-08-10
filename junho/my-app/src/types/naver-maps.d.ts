@@ -4,13 +4,20 @@ declare global {
   interface Window {
     naver: {
       maps: {
-        LatLng: new (latitude: number | string, longitude: number | string) => NaverLatLng;
+        LatLng: new (
+          latitude: number | string,
+          longitude: number | string,
+        ) => NaverLatLng;
         Map: new (element: HTMLElement, options: NaverMapOptions) => NaverMap;
         Marker: new (options: NaverMarkerOptions) => NaverMarker;
         InfoWindow: new (options: NaverInfoWindowOptions) => NaverInfoWindow;
         Circle: new (options: NaverCircleOptions) => NaverCircle;
         Event: {
-          addListener: (target: NaverMarker, eventName: "click", listener: () => void) => void;
+          addListener: (
+            target: NaverMarker,
+            eventName: "click",
+            listener: () => void,
+          ) => void;
         };
       };
     };

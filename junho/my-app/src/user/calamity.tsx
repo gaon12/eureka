@@ -108,7 +108,11 @@ const DataTable = () => {
                 "전라남도",
                 "제주특별자치도",
               ].map((label) => (
-                <Radio key={label} value={label} onClick={() => handleRadioClick(label)}>
+                <Radio
+                  key={label}
+                  value={label}
+                  onClick={() => handleRadioClick(label)}
+                >
                   {label}
                 </Radio>
               ))}

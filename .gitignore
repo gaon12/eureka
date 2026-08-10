@@ -290,6 +290,7 @@ FakesAssemblies/
 node_modules/
 App/.expo/
 App/dist/
+junho/my-app/dist/
 
 # Visual Studio 6 build log
 *.plg

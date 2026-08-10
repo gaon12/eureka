@@ -51,7 +51,9 @@ const columns: ColumnsType<NoticeListRow> = [
     title: "작성일",
     dataIndex: "noti_w_date",
     key: "noti_w_date",
-    render: (text: string) => <span>{new Date(text).toLocaleDateString()}</span>,
+    render: (text: string) => (
+      <span>{new Date(text).toLocaleDateString()}</span>
+    ),
   },
 ];
 
@@ -71,7 +73,9 @@ const Noticeboard = ({ noticesData }: NoticeboardProps) => {
   return (
     <>
       <NavBar />
-      <div style={{ padding: "24px", background: "#f4f4f4", minHeight: "100vh" }}>
+      <div
+        style={{ padding: "24px", background: "#f4f4f4", minHeight: "100vh" }}
+      >
         <Typography.Title
           level={2}
           style={{

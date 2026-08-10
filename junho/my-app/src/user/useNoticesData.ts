@@ -12,9 +12,12 @@ export function useNoticesData(): NoticeItem[] {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await axios.get<ApiEnvelope<NoticeItem[]>>(`${ip_address}/notice`, {
-          withCredentials: true,
-        });
+        const response = await axios.get<ApiEnvelope<NoticeItem[]>>(
+          `${ip_address}/notice`,
+          {
+            withCredentials: true,
+          },
+        );
         setNoticesData(response.data.results ?? []);
       } catch (error) {
         console.error("Error fetching notices", error);

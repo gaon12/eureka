@@ -20,11 +20,11 @@ class UploadAdapter {
     try {
       const file = await this.loader.file;
       const data = new FormData();
-      data.append("file", file);  // 'file'이라는 키 이름을 사용
+      data.append("file", file); // 'file'이라는 키 이름을 사용
 
       const response = await fetch(this.url, {
         method: "POST",
-        body: data,  // FormData를 그대로 전송
+        body: data, // FormData를 그대로 전송
         signal: this.controller.signal,
       });
 

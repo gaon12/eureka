@@ -9,9 +9,19 @@ const { Panel } = Collapse;
 
 const columns: ColumnsType<HealthcareFacility> = [
   { title: "이름", dataIndex: "dutyName", align: "center", key: "dutyName" },
-  { title: "구분 ", dataIndex: "dutyDivNam", align: "center", key: "dutyDivNam" },
+  {
+    title: "구분 ",
+    dataIndex: "dutyDivNam",
+    align: "center",
+    key: "dutyDivNam",
+  },
   { title: "주소", dataIndex: "dutyAddr", align: "center", key: "dutyAddr" },
-  { title: "전화번호", dataIndex: "dutyTel1", align: "center", key: "dutyTel1" },
+  {
+    title: "전화번호",
+    dataIndex: "dutyTel1",
+    align: "center",
+    key: "dutyTel1",
+  },
   {
     title: "카카오 맵",
     key: "kakaoMap",
@@ -49,7 +59,8 @@ const DataTable = () => {
     setLoading(true);
     const API_KEY =
       "KgTzxtwXkBg%2Ff4ZrgvZA4mOI719k%2BgOF8lgKTMo63EYuKdIhhRAzX7b4uzQgXlNw9J1l0eQx0jkW4B2%2BW4Qsxw%3D%3D";
-    const searchQuery = searchLocation.length > 0 ? `&Q1=${searchLocation.join(",")}` : "";
+    const searchQuery =
+      searchLocation.length > 0 ? `&Q1=${searchLocation.join(",")}` : "";
 
     fetch(
       `https://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=${API_KEY}&Q0=대전광역시${searchQuery}&numOfRows=10&pageNo=${page}`,
@@ -70,7 +81,8 @@ const DataTable = () => {
           })),
         );
 
-        const totalCount = xml.getElementsByTagName("totalCount")[0]?.textContent;
+        const totalCount =
+          xml.getElementsByTagName("totalCount")[0]?.textContent;
         if (totalCount) {
           setTotalPages(Math.ceil(Number(totalCount) / 10));
         }
@@ -103,7 +115,11 @@ const DataTable = () => {
           <Panel header="Detailed Search" key="1">
             <Radio.Group value={selectedLocation}>
               {["대덕구", "동구", "서구", "중구", "유성구"].map((label) => (
-                <Radio key={label} value={label} onClick={() => handleRadioClick(label)}>
+                <Radio
+                  key={label}
+                  value={label}
+                  onClick={() => handleRadioClick(label)}
+                >
                   {label}
                 </Radio>
               ))}

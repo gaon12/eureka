@@ -16,7 +16,11 @@ export default function SearchCar() {
   const [modalContent, setModalContent] = useState<ReactNode>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleFileUpload: UploadProps["customRequest"] = async ({ file, onSuccess, onError }) => {
+  const handleFileUpload: UploadProps["customRequest"] = async ({
+    file,
+    onSuccess,
+    onError,
+  }) => {
     if (!(file instanceof File)) {
       const error = new Error("Invalid upload file");
       onError?.(error);
@@ -36,10 +40,18 @@ export default function SearchCar() {
       if (response.ok) {
         const data = (await response.json()) as PlatePrediction;
         const modal = (
-          <Modal title="차량 정보" open footer={null} onCancel={() => setModalContent(null)}>
+          <Modal
+            title="차량 정보"
+            open
+            footer={null}
+            onCancel={() => setModalContent(null)}
+          >
             <List>
               <List.Item>
-                <List.Item.Meta title="차량 번호" description={data.carNumber} />
+                <List.Item.Meta
+                  title="차량 번호"
+                  description={data.carNumber}
+                />
               </List.Item>
               <List.Item>
                 <List.Item.Meta
@@ -48,13 +60,22 @@ export default function SearchCar() {
                 />
               </List.Item>
               <List.Item>
-                <List.Item.Meta title="장애차량" description={data.disabledCar ? "예" : "아님"} />
+                <List.Item.Meta
+                  title="장애차량"
+                  description={data.disabledCar ? "예" : "아님"}
+                />
               </List.Item>
               <List.Item>
-                <List.Item.Meta title="전기차량" description={data.electricCar ? "예" : "아님"} />
+                <List.Item.Meta
+                  title="전기차량"
+                  description={data.electricCar ? "예" : "아님"}
+                />
               </List.Item>
               <List.Item>
-                <List.Item.Meta title="외부차량" description={data.guestCar ? "예" : "아님"} />
+                <List.Item.Meta
+                  title="외부차량"
+                  description={data.guestCar ? "예" : "아님"}
+                />
               </List.Item>
             </List>
           </Modal>
@@ -62,7 +83,9 @@ export default function SearchCar() {
         setModalContent(modal);
         onSuccess?.(data);
       } else {
-        const data = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+        const data = (await response.json().catch(() => null)) as {
+          error?: { message?: string };
+        } | null;
         const error = new Error(data?.error?.message ?? "Upload failed");
         message.error(data?.error?.message ?? "파일 업로드에 실패했습니다.");
         onError?.(error);
@@ -70,7 +93,9 @@ export default function SearchCar() {
     } catch (error) {
       console.error("Error uploading file:", error);
       message.error("파일 업로드 중 오류가 발생했습니다.");
-      onError?.(error instanceof Error ? error : new Error("Unknown upload error"));
+      onError?.(
+        error instanceof Error ? error : new Error("Unknown upload error"),
+      );
     } finally {
       setLoading(false);
     }
@@ -78,7 +103,10 @@ export default function SearchCar() {
 
   return (
     <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
-      <Card title="차량 번호판 이미지 검색" style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
+      <Card
+        title="차량 번호판 이미지 검색"
+        style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
+      >
         {loading && (
           <div style={{ textAlign: "center", marginBottom: 16 }}>
             <Spin tip="분석 중..." />
@@ -109,8 +137,12 @@ export default function SearchCar() {
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">번호판 이미지를 클릭하거나 끌어다 놓으세요</p>
-            <p className="ant-upload-hint">PNG 또는 JPG 파일 1개만 업로드할 수 있습니다.</p>
+            <p className="ant-upload-text">
+              번호판 이미지를 클릭하거나 끌어다 놓으세요
+            </p>
+            <p className="ant-upload-hint">
+              PNG 또는 JPG 파일 1개만 업로드할 수 있습니다.
+            </p>
           </div>
         </Dragger>
       </Card>

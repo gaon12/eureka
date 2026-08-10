@@ -88,7 +88,10 @@ export default function Carregister() {
         body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as { status: number; message?: string };
+      const data = (await response.json()) as {
+        status: number;
+        message?: string;
+      };
 
       switch (data.status) {
         case 201:
@@ -123,13 +126,22 @@ export default function Carregister() {
           onChange={handleInputChange}
         />
         <div style={styles.checkboxGrid}>
-          <Checkbox checked={guestCar === 1} onChange={checkboxHandler("external")}>
+          <Checkbox
+            checked={guestCar === 1}
+            onChange={checkboxHandler("external")}
+          >
             외부차량
           </Checkbox>
-          <Checkbox checked={electricCar === 1} onChange={checkboxHandler("electric")}>
+          <Checkbox
+            checked={electricCar === 1}
+            onChange={checkboxHandler("electric")}
+          >
             전기차량
           </Checkbox>
-          <Checkbox checked={disabledCar === 1} onChange={checkboxHandler("disabled")}>
+          <Checkbox
+            checked={disabledCar === 1}
+            onChange={checkboxHandler("disabled")}
+          >
             장애차량
           </Checkbox>
         </div>

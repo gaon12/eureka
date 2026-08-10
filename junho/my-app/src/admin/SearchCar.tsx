@@ -4,7 +4,7 @@ import { Layout, Spin } from "antd";
 import { Card, Upload, Modal } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import Header from "./Header";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { PREDICT_API_URL } from "../config/api";
 import type { PlatePrediction } from "../types/domain";
 
@@ -58,17 +58,17 @@ export default function SearchCar() {
       } else {
         console.error("Response not okay");
         Swal.fire({
-          icon: 'error',
-          title: '업로드 실패',
-          text: '파일 업로드에 실패했습니다. 다시 시도해 주세요.',
+          icon: "error",
+          title: "업로드 실패",
+          text: "파일 업로드에 실패했습니다. 다시 시도해 주세요.",
         });
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       Swal.fire({
-        icon: 'error',
-        title: '오류 발생',
-        text: '파일 업로드 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        icon: "error",
+        title: "오류 발생",
+        text: "파일 업로드 중 오류가 발생했습니다. 다시 시도해 주세요.",
       });
     } finally {
       setLoading(false);
@@ -85,9 +85,9 @@ export default function SearchCar() {
       const isImage = ["image/png", "image/jpeg"].includes(file.type);
       if (!isImage) {
         Swal.fire({
-          icon: 'warning',
-          title: '지원하지 않는 파일',
-          text: 'PNG 또는 JPG 이미지만 업로드할 수 있습니다.',
+          icon: "warning",
+          title: "지원하지 않는 파일",
+          text: "PNG 또는 JPG 이미지만 업로드할 수 있습니다.",
         });
       }
       return isImage || Upload.LIST_IGNORE;
@@ -139,12 +139,16 @@ export default function SearchCar() {
           >
             <div style={{ marginBottom: "16px", fontSize: "16px" }}>
               <strong style={{ fontSize: "24px" }}>{carData.carNumber}</strong>
-              <div>{carData.username}({carData.dong}동 {carData.ho}호)</div>
+              <div>
+                {carData.username}({carData.dong}동 {carData.ho}호)
+              </div>
             </div>
             <div>
               <ul style={{ listStyleType: "none", padding: 0 }}>
                 <li>
-                  장애차량: {carData.disabledCar ? "예" : "아님"} / 전기차량: {carData.electricCar ? "예" : "아님"} / 외부차량: {carData.guestCar ? "예" : "아님"}
+                  장애차량: {carData.disabledCar ? "예" : "아님"} / 전기차량:{" "}
+                  {carData.electricCar ? "예" : "아님"} / 외부차량:{" "}
+                  {carData.guestCar ? "예" : "아님"}
                 </li>
               </ul>
             </div>

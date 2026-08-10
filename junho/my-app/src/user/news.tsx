@@ -14,7 +14,12 @@ const newsColumns: ColumnsType<NewsItem> = [
     dataIndex: "title",
     key: "title",
     render: (text: string, record) => (
-      <a href={record.link} target="_blank" rel="noopener noreferrer" key={record.link}>
+      <a
+        href={record.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        key={record.link}
+      >
         {text}
       </a>
     ),
@@ -34,7 +39,8 @@ function News() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const currentData = useMemo(
-    () => newsData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    () =>
+      newsData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
     [currentPage, newsData],
   );
 
@@ -51,7 +57,11 @@ function News() {
             }}
           >
             <Title level={2}>최신뉴스</Title>
-            <a href="https://www.korea.kr/main.do" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.korea.kr/main.do"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               더보기
             </a>
           </div>
